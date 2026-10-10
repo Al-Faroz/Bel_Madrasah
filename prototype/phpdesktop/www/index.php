@@ -92,6 +92,31 @@ try {
     $storageError = $exception->getMessage();
     $storageMessage = 'FAIL: pengujian penyimpanan belum berhasil. Catat pesan di bawah untuk diagnosis.';
 }
+
+/*
+ * Tahap 2: initialize the real application database separately from the old
+ * diagnostic persistence database. The self-test uses a TEMP table only.
+ */
+$appDatabase = null;
+$appDatabaseReady = false;
+$appDatabasePath = '';
+$appDatabaseError = '';
+$appDatabaseSelfTest = false;
+$appDatabaseTables = [];
+$appDatabaseVersion = 0;
+
+try {
+    require_once __DIR__ . '/lib/Database.php';
+    $appDatabase = new Database();
+    $appDatabasePath = $appDatabase->getPath();
+    $appDatabaseVersion = $appDatabase->getSchemaVersion();
+    $appDatabaseTables = $appDatabase->getTables();
+    $appDatabaseSelfTest = $appDatabase->runSelfTest();
+    $appDatabaseReady = $appDatabaseSelfTest && count($appDatabaseTables) >= 6;
+} catch (Throwable $exception) {
+    $appDatabaseError = $exception->getMessage();
+}
+
 ?>
 <!doctype html>
 <html lang="id">
@@ -203,7 +228,44 @@ try {
 
         <section class="section-heading">
             <div>
-                <p class="eyebrow">03 / LOCAL AUDIO</p>
+                <p class="eyebrow">03 / APPLICATION DATABASE</p>
+                <h2>Database aplikasi utama</h2>
+            </div>
+            <span class="section-note">Terpisah dari database diagnostik Tahap 1A</span>
+        </section>
+
+        <section class="storage-panel panel">
+            <div class="storage-header">
+                <div>
+                    <h3>SQLite · Skema aplikasi Tahap 2</h3>
+                    <p>Database ini menjadi fondasi paket jadwal, aturan hari, kegiatan bel, pengaturan, dan log pemutaran. Belum ada data jadwal produksi yang dimasukkan pada tahap ini.</p>
+                </div>
+                <span class="storage-badge <?= $appDatabaseReady ? 'is-ok' : 'is-warning' ?>"><?= $appDatabaseReady ? 'SKEMA SIAP' : 'PERLU DIPERIKSA' ?></span>
+            </div>
+            <div class="storage-path">
+                <span>Lokasi database aplikasi</span>
+                <code><?= h($appDatabasePath !== '' ? $appDatabasePath : 'Belum tersedia') ?></code>
+            </div>
+            <?php if ($appDatabaseReady): ?>
+                <p class="storage-message is-result">PASS: koneksi database berhasil; skema versi <?= h((string) $appDatabaseVersion) ?> tersedia; uji tulis/baca sementara berhasil. Data uji memakai TEMP table dan tidak disimpan sebagai data permanen.</p>
+                <div class="record-grid">
+                    <div><span>Versi skema</span><strong><?= h((string) $appDatabaseVersion) ?></strong></div>
+                    <div><span>Jumlah tabel inti</span><strong><?= h((string) count($appDatabaseTables)) ?></strong></div>
+                </div>
+                <div class="schema-table-list">
+                    <span>Tabel terdeteksi</span>
+                    <p><?= h(implode(' · ', $appDatabaseTables)) ?></p>
+                </div>
+            <?php else: ?>
+                <p class="storage-message is-warning">FAIL: database aplikasi belum siap. Catat pesan error untuk diagnosis.</p>
+                <?php if ($appDatabaseError !== ''): ?><pre class="storage-error"><?= h($appDatabaseError) ?></pre><?php endif; ?>
+            <?php endif; ?>
+            <p class="storage-help">File ini berbeda dari <code>diagnostics/storage-test.sqlite</code>. Jangan menghapus folder data saat memperbarui program.</p>
+        </section>
+
+        <section class="section-heading">
+            <div>
+                <p class="eyebrow">04 / LOCAL AUDIO</p>
                 <h2>Uji pemutaran audio</h2>
             </div>
             <span class="section-note">Tidak membuka pemutar eksternal</span>
@@ -214,7 +276,7 @@ try {
                 <div class="audio-icon" aria-hidden="true">♫</div>
                 <div>
                     <h3>Pilih file audio dari komputer</h3>
-                    <p>Gunakan file pendek untuk tes awal. Pemutaran dilakukan oleh elemen audio di dalam aplikasi desktop.</p>
+                    <p>Uji MP3/WAV dari komputer. Pemutaran memakai komponen audio internal; uji file panjang sampai benar-benar selesai.</p>
                 </div>
             </div>
             <label class="file-picker">
@@ -222,6 +284,7 @@ try {
                 <input id="audioFile" type="file" accept=".mp3,.wav,audio/mpeg,audio/wav,audio/x-wav">
             </label>
             <p class="file-name" id="fileName">Belum ada file yang dipilih.</p>
+            <p class="file-name" id="audioDuration">Durasi: belum diketahui.</p>
             <audio id="audioPlayer" controls preload="metadata"></audio>
             <p class="test-message" id="audioMessage" role="status">Pilih file lalu tekan Play. Pastikan speaker komputer aktif.</p>
         </section>
@@ -272,6 +335,16 @@ try {
         player.load();
     });
 
+    player.addEventListener('loadedmetadata', () => {
+        if (Number.isFinite(player.duration)) {
+            const total = Math.floor(player.duration);
+            const minutes = Math.floor(total / 60);
+            const seconds = String(total % 60).padStart(2, '0');
+            document.getElementById('audioDuration').textContent = 'Durasi audio: ' + minutes + ':' + seconds;
+        } else {
+            document.getElementById('audioDuration').textContent = 'Durasi audio tidak dapat dibaca oleh runtime.';
+        }
+    });
     player.addEventListener('playing', () => {
         message.textContent = 'Audio sedang diputar. Pastikan suara benar-benar terdengar.';
     });
