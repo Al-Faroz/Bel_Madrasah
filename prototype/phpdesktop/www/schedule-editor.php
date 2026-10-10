@@ -359,6 +359,7 @@ toggleSpecialFields();
     const cards = Array.from(document.querySelectorAll('.day-rule-card[data-weekday]'));
     const emptyMessage = document.getElementById('no-rules-for-day');
     const countLabel = document.getElementById('rules-count');
+    const genericEmpty = document.querySelector('.schedule-empty-state');
 
     function applyDayFilter(day) {
         let visible = 0;
@@ -372,6 +373,8 @@ toggleSpecialFields();
     }
 
     if (daySelect && ruleFormDay) {
+        // Empty state dinamis di bawah filter menggantikan pesan umum lama.
+        if (genericEmpty) genericEmpty.hidden = true;
         // Filter mengikuti hari pada form; pilihan di daftar juga bisa mengubah form.
         daySelect.value = ruleFormDay.value;
         daySelect.addEventListener('change', function () {
