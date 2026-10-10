@@ -236,7 +236,7 @@ try {
                 </div>
                 <label class="checkbox-line"><input type="checkbox" name="is_enabled" value="1" <?= $ruleForm['is_enabled'] === '1' ? 'checked' : '' ?>> Aturan aktif</label>
                 <p class="form-note">Untuk setiap hari, buat satu aturan Normal sebagai jadwal dasar. Aturan Khusus dapat ditambahkan lebih dari satu kali untuk atribut yang berbeda.</p>
-                <div class="form-actions"><button type="submit"><?= $editingRuleId > 0 ? 'Simpan aturan' : 'Tambah aturan' ?></button><?php if ($editingRuleId > 0): ?><a class="button-link-secondary" href="schedule-editor.php?package_id=<?= $selectedPackageId ?>">Batal</a><?php endif; ?></div>
+                <div class="form-actions rule-submit-actions"><button type="submit" class="rule-submit-button"><?= $editingRuleId > 0 ? 'Simpan Perubahan Aturan' : '+ Tambah Aturan Hari' ?></button><?php if ($editingRuleId > 0): ?><a class="button-link-secondary" href="schedule-editor.php?package_id=<?= $selectedPackageId ?>">Batal Edit</a><?php endif; ?></div>
             </form>
         </section>
 
