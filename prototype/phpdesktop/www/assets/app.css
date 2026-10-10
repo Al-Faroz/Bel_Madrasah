@@ -892,3 +892,17 @@ footer { color: #68786d; font-size: 11px; }
 @media(max-width:850px){.public-hero{grid-template-columns:1fr}.public-clock-block{max-width:100%}.public-overview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.public-overview-card:last-child{grid-column:1/-1}}
 @media(max-width:600px){.public-shell{padding:18px 13px}.public-header{align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:18px}.public-brand-mark{width:46px;height:46px;border-radius:15px}.public-live-indicator{margin-left:0}.public-hero{padding:22px;border-radius:22px}.public-clock-block{padding:16px}.public-overview-grid{grid-template-columns:1fr;gap:10px}.public-overview-card,.public-overview-card:last-child{grid-column:auto;padding:17px}.public-section-heading{align-items:flex-start;flex-direction:column}.public-event{grid-template-columns:70px 14px minmax(0,1fr);gap:9px;padding:14px 8px}.public-event-time{font-size:18px}.public-event-copy strong{font-size:13px}.public-next-badge{grid-column:3;justify-self:start}.public-footer{flex-direction:column;gap:5px}}
 @media(prefers-reduced-motion:reduce){.public-dashboard-body *{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important}}
+
+/* UI-5 — Settings and backup polish */
+.backup-panel{display:grid;gap:16px;padding:24px}
+.backup-panel>p{margin:0;color:var(--muted);font-size:12px;line-height:1.7}
+.backup-panel form{margin:0}
+.backup-panel form button{min-height:44px;padding:11px 19px;border-radius:999px}
+.backup-result{border-color:#b9e1c3;background:var(--success-container)}
+.storage-path{display:grid;gap:7px;padding:14px 16px;border:1px solid var(--line);border-radius:var(--radius-md);background:#f6f9f6}
+.storage-path>span{color:var(--muted);font-size:11px;font-weight:700}
+.storage-path code{display:block;overflow-wrap:anywhere;white-space:normal;color:var(--ink);font-size:11px;line-height:1.6}
+.form-panel form>label small{display:block;color:var(--muted);font-size:11px;line-height:1.6}
+.form-panel .form-actions{display:flex;align-items:center;flex-wrap:wrap;gap:10px}
+.dashboard-action-row{display:flex;flex-wrap:wrap;align-items:center;gap:9px}
+@media(max-width:460px){.backup-panel{padding:17px}.dashboard-action-row{align-items:stretch;flex-direction:column}.dashboard-action-row .md-button{width:100%}}
