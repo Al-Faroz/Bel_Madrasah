@@ -294,3 +294,10 @@ footer { display: flex; justify-content: space-between; gap: 12px; padding: 20px
     .event-form-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
     .event-form-grid .audio-upload-label { grid-column: 1 / -1; }
 }
+
+
+/* Final specificity override: keep the heading action compact on desktop. */
+.editor-rule-form .editor-rule-heading .rule-submit-button-top { width: auto; }
+@media (max-width: 560px) {
+    .editor-rule-form .editor-rule-heading .rule-submit-button-top { width: 100%; }
+}
