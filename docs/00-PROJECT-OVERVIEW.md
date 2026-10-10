@@ -53,7 +53,11 @@ Aplikasi dinyatakan memenuhi tujuan inti ketika:
 - Kegagalan audio atau jadwal terlewat dapat ditelusuri melalui status/log.
 - Konsumsi sumber daya saat menunggu jadwal terukur dan dianggap layak pada komputer target.
 
-## 6. Pola kolaborasi
+## 6. Acuan UI/UX
+
+Seluruh halaman Admin Dashboard dan Public Dashboard/status mengikuti [Standar UI/UX Material Design](05-UI-UX-MATERIAL-DESIGN.md). Roadmap di [03-IMPLEMENTATION-PLAN.md](03-IMPLEMENTATION-PLAN.md) menempatkan standarisasi visual setelah editor jadwal dan sebelum implementasi resolver kalender/scheduler berikutnya. Redesign wajib menjaga aturan bisnis dan diuji di runtime Windows lokal.
+
+## 7. Pola kolaborasi
 
 1. Perubahan dikerjakan secara bertahap di repository.
 2. Setiap commit memiliki pesan yang menjelaskan perubahan.
