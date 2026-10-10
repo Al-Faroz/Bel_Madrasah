@@ -242,7 +242,13 @@ try {
 
         <section class="panel editor-rules-list">
             <div class="section-heading"><div><p class="eyebrow">POLA YANG TERSIMPAN</p><h2>Aturan per hari</h2></div><span class="section-note"><?= count($rules ?? []) ?> aturan</span></div>
-            <?php if (($rules ?? []) === []): ?><p class="empty-record">Belum ada pola hari untuk paket ini. Mulailah dengan menambahkan aturan Normal.</p><?php else: ?>
+            <?php if (($rules ?? []) === []): ?>
+                <div class="schedule-empty-state">
+                    <strong>Belum ada aturan hari untuk paket ini</strong>
+                    <p>Buat aturan Normal terlebih dahulu. Setelah aturan tersimpan, tombol <b>Edit aturan</b> dan <b>+ Tambah kegiatan bel</b> akan tersedia pada kartu aturan tersebut.</p>
+                    <a class="schedule-empty-cta" href="#day-rule-form">+ Tambah Aturan Hari</a>
+                </div>
+            <?php else: ?>
                 <?php foreach ($rules as $rule): ?>
                     <?php
                     $weekdayName = $weekdays[(int) $rule['weekday']] ?? 'Hari tidak dikenal';
@@ -261,7 +267,7 @@ try {
                             <span class="package-badge <?= (int) $rule['is_enabled'] === 1 ? 'active' : '' ?>"><?= (int) $rule['is_enabled'] === 1 ? 'AKTIF' : 'NONAKTIF' ?></span>
                         </div>
                         <div class="rule-card-actions">
-                            <form method="post" action="schedule-editor.php"><input type="hidden" name="package_id" value="<?= $selectedPackageId ?>"><input type="hidden" name="editor_action" value="edit_rule"><input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>"><button type="submit" class="button-compact">Edit aturan</button></form>
+                            <form method="post" action="schedule-editor.php"><input type="hidden" name="package_id" value="<?= $selectedPackageId ?>"><input type="hidden" name="editor_action" value="edit_rule"><input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>"><button type="submit" class="button-compact rule-edit-button">Edit Aturan</button></form>
                             <span class="section-note"><?= count($ruleEvents) ?> kegiatan</span>
                         </div>
                         <?php if ($rule['rule_mode'] === 'special'): ?>
@@ -284,7 +290,7 @@ try {
                                 <form method="post" action="schedule-editor.php" class="delete-event-form" onsubmit="return confirm('Hapus kegiatan bel ini?')"><input type="hidden" name="package_id" value="<?= $selectedPackageId ?>"><input type="hidden" name="editor_action" value="delete_event"><input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>"><input type="hidden" name="event_id" value="<?= (int) $event['id'] ?>"><button type="submit" class="text-danger">Hapus kegiatan</button></form>
                             <?php endforeach; ?>
                             <?php if ($ruleEvents === []): ?><p class="empty-event">Belum ada kegiatan untuk pola ini.</p><?php endif; ?>
-                            <details class="add-event-details"><summary>+ Tambah kegiatan bel</summary>
+                            <details class="add-event-details"><summary><span aria-hidden="true">＋</span> Tambah Kegiatan Bel</summary>
                                 <form class="event-edit-card" method="post" action="schedule-editor.php" enctype="multipart/form-data">
                                     <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>"><input type="hidden" name="editor_action" value="save_event"><input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>"><input type="hidden" name="event_id" value="0">
                                     <div class="event-form-grid">
