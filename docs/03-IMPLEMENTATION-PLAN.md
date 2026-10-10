@@ -14,6 +14,8 @@ Semua tahap di bawah berstatus **BELUM DIMULAI** sampai benar-benar dikerjakan d
 - Tidak ada fitur inti yang diasumsikan selesai sebelum diuji.
 
 ## Tahap 1 — Pemeriksaan dan PoC desktop Windows
+**Status saat ini: SEDANG BERJALAN — PoC awal menggunakan PHP Desktop Chrome 130.1 sebagai kandidat, belum final.**
+
 **Pekerjaan**
 - Bandingkan pilihan runtime/pembungkus desktop yang cocok untuk PHP.
 - Buat prototipe terkecil untuk membuka antarmuka desktop.
