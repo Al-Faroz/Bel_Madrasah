@@ -540,8 +540,21 @@ final class Database
 
     public function storeUploadedAudio(array $file): string
     {
-        if (!isset($file['error'], $file['tmp_name'], $file['name']) || (int) $file['error'] !== UPLOAD_ERR_OK) {
-            throw new InvalidArgumentException('File audio belum dipilih atau gagal diunggah.');
+        if (!isset($file['error'], $file['tmp_name'], $file['name'])) {
+            throw new InvalidArgumentException('Informasi unggahan audio tidak lengkap.');
+        }
+        $uploadError = (int) $file['error'];
+        if ($uploadError !== UPLOAD_ERR_OK) {
+            $uploadMessage = match ($uploadError) {
+                UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE => 'File audio melebihi batas unggahan PHP. Periksa upload_max_filesize dan post_max_size; batas aplikasi adalah 50 MB.',
+                UPLOAD_ERR_PARTIAL => 'Unggahan audio terputus sebelum selesai. Silakan coba lagi.',
+                UPLOAD_ERR_NO_FILE => 'Pilih file audio terlebih dahulu.',
+                UPLOAD_ERR_NO_TMP_DIR => 'Folder sementara unggahan PHP tidak tersedia.',
+                UPLOAD_ERR_CANT_WRITE => 'Windows gagal menulis file unggahan ke penyimpanan sementara.',
+                UPLOAD_ERR_EXTENSION => 'Unggahan audio dihentikan oleh konfigurasi ekstensi PHP.',
+                default => 'Unggahan audio gagal dengan kode ' . $uploadError . '.',
+            };
+            throw new InvalidArgumentException($uploadMessage);
         }
         if (!is_uploaded_file((string) $file['tmp_name'])) {
             throw new InvalidArgumentException('Berkas audio tidak dikenali sebagai unggahan yang valid.');
