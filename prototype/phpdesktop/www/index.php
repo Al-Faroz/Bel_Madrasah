@@ -134,11 +134,16 @@ try {
         <div>
             <p class="eyebrow">PROTOTIPE TAHAP 2</p>
             <h1>Bel Madrasah</h1>
-            <p class="subtitle">Pemeriksaan fondasi aplikasi desktop Windows</p>
+            <p class="subtitle">Kerangka aplikasi desktop Windows</p>
         </div>
         <span class="status-pill"><span class="status-dot"></span> MODE DIAGNOSTIK</span>
     </header>
 
+    <nav class="main-nav" aria-label="Navigasi utama">
+        <a class="active" href="index.php">Dashboard diagnostik</a>
+        <a href="settings.php">Konfigurasi</a>
+        <a href="backup.php">Backup data</a>
+    </nav>
     <main>
         <section class="intro panel">
             <div>
