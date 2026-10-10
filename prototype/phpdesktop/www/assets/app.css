@@ -406,3 +406,24 @@ footer { display: flex; justify-content: space-between; gap: 12px; padding: 20px
 @media (max-width: 560px) {
     .editor-rule-form .editor-rule-heading .rule-submit-button-top { width: 100%; }
 }
+
+
+/* Stage 5 — editable bell-event table */
+.bell-events-table-wrap{width:100%;overflow-x:auto;margin:14px 0 18px;border:1px solid var(--border-color,#dbe3ee);border-radius:12px;background:var(--panel-bg,#fff)}
+.bell-events-table{width:100%;min-width:760px;border-collapse:separate;border-spacing:0;font-size:.9rem}
+.bell-events-table th{padding:11px 12px;text-align:left;font-size:.76rem;letter-spacing:.035em;text-transform:uppercase;color:var(--muted,#64748b);background:var(--surface-muted,#f5f7fb);border-bottom:1px solid var(--border-color,#dbe3ee)}
+.bell-events-table td{padding:12px;vertical-align:middle;border-bottom:1px solid var(--border-color,#e5eaf1)}
+.bell-events-table tbody tr:last-child td{border-bottom:0}
+.bell-events-table tbody tr:hover{background:var(--surface-hover,#f8fafc)}
+.bell-events-table .bell-time-cell{white-space:nowrap;font-variant-numeric:tabular-nums;font-size:1rem}
+.bell-event-row-form{display:grid;grid-template-columns:minmax(145px,1fr) 112px 74px;gap:7px;align-items:center}
+.bell-event-row-form input,.bell-events-table input[type=file]{max-width:100%;min-width:0}
+.bell-event-row-form input[type=text],.bell-event-row-form input:not([type]){width:100%}
+.bell-audio-input{display:grid;gap:5px;font-size:.8rem;font-weight:600}
+.bell-audio-input input{width:190px;max-width:100%;font-size:.78rem}
+.bell-audio-status{display:block;margin-top:5px;color:var(--muted,#64748b);overflow-wrap:anywhere;max-width:210px}
+.bell-enabled-toggle{margin:0;white-space:nowrap}
+.bell-actions-cell{min-width:92px;white-space:nowrap}
+.bell-actions-cell .delete-event-form{margin-top:7px}
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+@media(max-width:760px){.bell-events-table{min-width:700px}.bell-events-table td,.bell-events-table th{padding:9px}.bell-event-row-form{grid-template-columns:minmax(130px,1fr) 100px 64px}}
