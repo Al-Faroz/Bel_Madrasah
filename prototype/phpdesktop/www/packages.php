@@ -210,13 +210,18 @@ try {
                 <label>Nama paket <span class="required-mark">*</span>
                     <input type="text" name="name" maxlength="80" required value="<?= h($formName) ?>" placeholder="Contoh: Normal, Ujian, Ramadan">
                 </label>
+                <?php if ($editId === 0): ?>
                 <fieldset class="package-off-days">
                     <legend>Hari libur mingguan <span class="required-mark">*</span></legend>
                     <label class="off-day-choice"><input type="radio" name="off_days" value="5" <?= $formOffDays === '5' ? 'checked' : '' ?> required><span><strong>Jumat</strong><small>Sekolah Senin–Kamis dan Sabtu–Minggu</small></span></label>
                     <label class="off-day-choice"><input type="radio" name="off_days" value="7" <?= $formOffDays === '7' ? 'checked' : '' ?> required><span><strong>Minggu</strong><small>Sekolah Senin–Sabtu</small></span></label>
                     <label class="off-day-choice"><input type="radio" name="off_days" value="6,7" <?= $formOffDays === '6,7' ? 'checked' : '' ?> required><span><strong>Sabtu–Minggu</strong><small>Sekolah Senin–Jumat</small></span></label>
-                    <p class="form-note">Untuk paket baru, aplikasi otomatis membuat aturan Normal pada setiap hari sekolah. Hari libur tidak dibuatkan aturan bel otomatis.</p>
+                    <p class="form-note">Paket baru otomatis dibuatkan aturan Normal pada setiap hari sekolah, lengkap dengan contoh kegiatan bel yang bisa diedit.</p>
                 </fieldset>
+                <?php else: ?>
+                <input type="hidden" name="off_days" value="<?= h($formOffDays) ?>">
+                <p class="form-note package-off-day-readonly">Hari libur paket ini: <strong><?= $formOffDays === '5' ? 'Jumat' : ($formOffDays === '7' ? 'Minggu' : 'Sabtu–Minggu') ?></strong>. Pengaturan hari libur hanya ditentukan saat paket dibuat agar aturan dan kegiatan yang sudah tersimpan tidak berubah diam-diam.</p>
+                <?php endif; ?>
                 <label>Keterangan (opsional)
                     <textarea name="description" maxlength="300" rows="4" placeholder="Jelaskan kapan paket ini digunakan"><?= h($formDescription) ?></textarea>
                     <small>Maksimal 300 karakter. Nama paket harus unik.</small>
