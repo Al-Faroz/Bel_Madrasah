@@ -3,9 +3,17 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/lib/Database.php';
 
-function h(string $value): string
+function h(mixed $value): string
 {
-    return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+    // PHP mengubah key array numerik seperti '1' menjadi int 1.
+    // Escape harus aman untuk angka, string, dan nilai null dari database/form.
+    if ($value === null) {
+        $value = '';
+    } elseif (!is_string($value) && !is_numeric($value) && !is_bool($value)) {
+        $value = '';
+    }
+
+    return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
 
 $weekdays = [1 => 'Senin', 2 => 'Selasa', 3 => 'Rabu', 4 => 'Kamis', 5 => 'Jumat', 6 => 'Sabtu', 7 => 'Minggu'];
