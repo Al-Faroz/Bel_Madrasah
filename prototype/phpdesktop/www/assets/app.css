@@ -906,3 +906,6 @@ footer { color: #68786d; font-size: 11px; }
 .form-panel .form-actions{display:flex;align-items:center;flex-wrap:wrap;gap:10px}
 .dashboard-action-row{display:flex;flex-wrap:wrap;align-items:center;gap:9px}
 @media(max-width:460px){.backup-panel{padding:17px}.dashboard-action-row{align-items:stretch;flex-direction:column}.dashboard-action-row .md-button{width:100%}}
+
+/* Ensure hidden state remains respected by themed components */
+[hidden]{display:none!important}
