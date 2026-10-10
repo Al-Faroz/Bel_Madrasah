@@ -480,3 +480,6 @@ footer { display: flex; justify-content: space-between; gap: 12px; padding: 20px
 .off-day-choice span { display: grid; gap: 3px; }
 .off-day-choice strong { color: var(--ink); font-size: 12px; }
 .off-day-choice small { color: var(--muted); font-size: 11px; line-height: 1.5; }
+
+.package-off-day-summary { margin-top: 7px !important; color: var(--muted); font-size: 11px; }
+.package-off-day-summary strong { color: var(--ink); }
