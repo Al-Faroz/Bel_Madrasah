@@ -116,6 +116,8 @@ Halaman `schedule-editor.php` memungkinkan operator:
 - Menambah, mengedit, mengaktifkan/menonaktifkan, mengurutkan, dan menghapus kegiatan bel.
 - Mengunggah audio MP3, WAV, OGG, M4A, atau AAC. File disalin ke `%APPDATA%\\BelMadrasah\\audio` (fallback `%LOCALAPPDATA%`) dan tidak disimpan di folder runtime.
 - Mendapatkan validasi nama, waktu 24 jam, urutan, serta duplikasi aturan.
+- Jalur audio saat edit dipertahankan dari database (bukan dari hidden field formulir); jika penyimpanan gagal setelah unggahan baru, file unggahan baru dibersihkan.
+- Kesalahan unggahan PHP (misalnya batas `upload_max_filesize`/`post_max_size`) menampilkan pesan yang lebih spesifik.
 
 Peringatan benturan pada aturan Khusus merupakan peringatan awal. Resolver yang menentukan aturan mana berlaku untuk suatu tanggal belum tersedia sampai Tahap 6. Menyimpan jadwal belum mengaktifkan pemutaran otomatis.
 
