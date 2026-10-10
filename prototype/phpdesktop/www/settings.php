@@ -34,6 +34,7 @@ try {
         <a href="schedule-editor.php">Editor jadwal</a>
         <a class="active" href="settings.php" aria-current="page">Konfigurasi</a>
         <a href="backup.php">Backup data</a>
+            <a href="public.php">Tampilan publik</a>
     </nav>
 <section class="intro panel page-intro"><div><p class="eyebrow">PENGATURAN LOKAL</p><h2>Konfigurasi aplikasi</h2><p>Nilai disimpan di SQLite lokal dan tetap ada setelah aplikasi ditutup. Volume di sini adalah preferensi untuk integrasi pemutar pada tahap berikutnya, belum mengubah volume audio otomatis.</p></div></section>
 <?php if ($message !== ''): ?><p class="action-feedback success" role="status"><?=h($message)?></p><?php endif; ?><?php if ($error !== ''): ?><p class="action-feedback error" role="alert"><?=h($error)?></p><?php endif; ?>
