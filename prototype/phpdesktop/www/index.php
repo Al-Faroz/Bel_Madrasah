@@ -140,7 +140,8 @@ try {
     </header>
 
     <nav class="main-nav" aria-label="Navigasi utama">
-        <a class="active" href="index.php">Dashboard diagnostik</a>
+        <a href="dashboard.php">Dashboard</a>
+        <a class="active" href="index.php" aria-current="page">Pemeriksaan</a>
         <a href="packages.php">Paket jadwal</a>
         <a href="schedule-editor.php">Editor jadwal</a>
         <a href="settings.php">Konfigurasi</a>
