@@ -24,11 +24,30 @@ PoC ini menggunakan **PHP Desktop Chrome 130.1 untuk Windows** sebagai kandidat 
 
 > Nama executable dan isi paket dapat berbeda antarversi. Jangan menghapus file runtime bawaan; cukup ganti isi folder aplikasi `www/`.
 
+## Tahap 1A — Tes persistensi SQLite
+
+Prototipe sekarang menyediakan panel **Uji simpan dan baca database**. Panel membuat database diagnostik terpisah di folder data pengguna Windows:
+
+`%APPDATA%\\BelMadrasah\\diagnostics\\storage-test.sqlite`
+
+Jika `APPDATA` tidak tersedia, aplikasi mencoba `LOCALAPPDATA`. Aplikasi tidak sengaja menaruh database di folder runtime/program.
+
+1. Jalankan aplikasi dan pastikan status **DATABASE SIAP**.
+2. Tekan **Simpan data uji**. Catat nilai **Marker tersimpan** dan **Waktu simpan**. Pesan harus menyatakan `PASS`.
+3. Tutup jendela aplikasi sepenuhnya.
+4. Jalankan kembali executable PHP Desktop.
+5. Tekan **Baca data tersimpan**.
+6. Pastikan marker dan waktu simpan sama dengan yang dicatat sebelum aplikasi ditutup. Jangan tekan Simpan lagi sebelum nilai lama dicocokkan, karena tombol itu membuat marker baru.
+7. Bila muncul `FAIL`, catat seluruh pesan error dan lokasi database yang ditampilkan.
+
+Tes ini memeriksa pembuatan database, operasi tulis/baca, dan persistensi setelah aplikasi ditutup. Ini belum merupakan database jadwal produksi.
+
 ## Apa yang diperiksa prototipe
 
 - Halaman PHP dirender di jendela desktop.
 - Versi PHP dan jenis SAPI dapat ditampilkan.
 - Ekstensi PDO SQLite / SQLite3 terdeteksi.
+- Database SQLite diagnostik dapat dibuat, ditulis, dan dibaca ulang setelah restart.
 - File audio lokal dapat dipilih dan dicoba diputar melalui elemen audio yang berada di dalam aplikasi, bukan melalui pemutar eksternal.
 - Jam komputer ditampilkan sebagai informasi diagnostik.
 
