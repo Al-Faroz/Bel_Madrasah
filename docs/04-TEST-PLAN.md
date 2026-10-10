@@ -37,13 +37,23 @@ Pengujian dilakukan pada komputer Windows lokal, bukan hanya berdasarkan pemerik
 - **Status:** PASS untuk uji persistensi diagnostik yang dilaporkan pengguna.
 - **Batas cakupan:** Belum menguji kegagalan tulis, pemadaman paksa, backup/restore, maupun skema database jadwal produksi.
 
+### Uji tambahan Tahap 2 — database aplikasi utama
+- [ ] Panel menampilkan `SKEMA SIAP`.
+- [ ] Lokasi database berada di `%APPDATA%\\BelMadrasah\\data\\bel-madrasah.sqlite` atau fallback `%LOCALAPPDATA%`, bukan di folder runtime.
+- [ ] Versi skema tampil `1` dan tabel inti terdeteksi.
+- [ ] Tutup dan buka kembali aplikasi; skema tetap siap dan database tidak berubah menjadi database diagnostik.
+- [ ] Bila folder data tidak bisa ditulis, aplikasi menampilkan pesan error yang terbaca.
+- [ ] Uji tulis/baca sementara tidak menambah record permanen.
+
 ## 4. Uji audio
 
 - [ ] Audio uji dapat diputar tanpa membuka pemutar eksternal.
 - [ ] Suara keluar melalui perangkat output yang diharapkan.
 - [ ] File MP3 pendek dapat diputar sampai selesai.
 - [ ] File WAV dapat diputar jika format tersebut masuk dukungan final.
-- [ ] Audio panjang, termasuk lagu kebangsaan, tidak terpotong.
+- [ ] Audio panjang (disarankan lagu kebangsaan atau audio 3–5 menit) diputar sampai selesai tanpa dipotong.
+- [ ] Durasi audio tampil setelah metadata berhasil dibaca.
+- [ ] File dengan format tidak didukung menampilkan pesan error dan aplikasi tetap responsif.
 - [ ] File yang tidak ditemukan menghasilkan pesan yang jelas.
 - [ ] File rusak/tidak didukung tidak membuat aplikasi macet.
 - [ ] Perilaku ketika audio lain sedang berjalan mengikuti kebijakan benturan.
