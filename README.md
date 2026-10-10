@@ -39,12 +39,12 @@ SQLite menjadi kandidat basis data lokal karena tidak membutuhkan server databas
 
 1. Menetapkan kebutuhan dan keputusan arsitektur.
 2. Membuat fondasi aplikasi desktop Windows.
-3. Menyiapkan penyimpanan lokal dan pengaturan.
-4. Membuat mesin audio internal dan menguji format/durasi audio.
-5. Membuat pengelolaan paket jadwal.
-6. Membuat editor jadwal harian dan pola hari khusus.
-7. Membuat mesin penjadwalan otomatis serta pencegahan pemutaran ganda.
-8. Membuat dashboard operator, status, dan log.
+3. Menyiapkan database lokal, konfigurasi, dan backup.
+4. Membuat pengelolaan paket jadwal dan penetapan satu paket aktif.
+5. Membuat editor jadwal Senin–Minggu dan pola hari khusus.
+6. Membuat resolver kalender, pasaran Jawa, serta prioritas jadwal khusus.
+7. Mengintegrasikan mesin penjadwalan otomatis dan pencegahan pemutaran ganda.
+8. Melengkapi dashboard operator, status audio, log, dan kebutuhan system tray.
 9. Menyiapkan paket aplikasi mandiri untuk Windows.
 10. Melakukan pengujian, perbaikan, dan optimasi.
 
