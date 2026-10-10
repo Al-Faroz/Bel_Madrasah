@@ -135,3 +135,15 @@ Log harus membantu operator mengetahui waktu kejadian, nama kegiatan, paket akti
 - Pengaturan harus tetap tersimpan setelah aplikasi ditutup.
 - Distribusi harus dapat dijalankan pada komputer Windows sasaran tanpa XAMPP.
 - Metode portable atau installer ditentukan setelah uji fondasi teknis.
+
+
+## 10. Standar antarmuka Material Design
+
+Acuan resmi UI/UX: [05-UI-UX-MATERIAL-DESIGN.md](05-UI-UX-MATERIAL-DESIGN.md).
+
+- Admin Dashboard dan Public Dashboard/status wajib dirancang dengan bahasa visual Material Design yang konsisten.
+- Admin berfokus pada pengelolaan paket/jadwal dan kontrol operasional; public/status berfokus pada informasi operasional yang dapat dibaca sekilas dan tidak menampilkan kontrol admin yang tidak diperlukan.
+- Gunakan token dan komponen bersama untuk warna, tipografi, spacing, tombol, formulir, tabel, status, pesan, dan navigasi.
+- UI harus responsif saat jendela desktop diubah ukurannya dan diuji pada lebar 1366 px, 1024 px, serta 390 px.
+- Redesign visual tidak boleh mengubah aturan bisnis, data, lokasi penyimpanan, perilaku audio, atau scheduler tanpa keputusan terpisah.
+- Status implementasi visual tidak dianggap lulus sebelum diperiksa pada runtime Windows lokal.
