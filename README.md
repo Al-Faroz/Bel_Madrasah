@@ -2,7 +2,7 @@
 
 Aplikasi bel otomatis untuk kebutuhan operasional madrasah/sekolah di Windows.
 
-**Status proyek:** tahap perencanaan dan penetapan fondasi teknis.
+**Status proyek:** Tahap 1 — PoC fondasi desktop Windows sedang berjalan.
 
 Bel Madrasah dirancang agar operator dapat mengatur paket jadwal, waktu kegiatan, dan file audio. Saat waktu yang ditentukan tiba, aplikasi menjalankan audio secara otomatis melalui perangkat suara Windows tanpa operator perlu membuka Winamp, VLC, Windows Media Player, atau pemutar musik eksternal lainnya.
 
