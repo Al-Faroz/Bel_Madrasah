@@ -132,7 +132,7 @@ try {
     <header class="topbar">
         <div class="brand-mark" aria-hidden="true">BM</div>
         <div>
-            <p class="eyebrow">PROTOTIPE TAHAP 2</p>
+            <p class="eyebrow">PROTOTIPE TAHAP 4</p>
             <h1>Bel Madrasah</h1>
             <p class="subtitle">Kerangka aplikasi desktop Windows</p>
         </div>
