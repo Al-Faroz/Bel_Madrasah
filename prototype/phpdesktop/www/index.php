@@ -141,6 +141,7 @@ try {
 
     <nav class="main-nav" aria-label="Navigasi utama">
         <a class="active" href="index.php">Dashboard diagnostik</a>
+        <a href="packages.php">Paket jadwal</a>
         <a href="settings.php">Konfigurasi</a>
         <a href="backup.php">Backup data</a>
     </nav>
