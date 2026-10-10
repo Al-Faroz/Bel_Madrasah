@@ -238,6 +238,75 @@ footer { display: flex; justify-content: space-between; gap: 12px; padding: 20px
 .editor-rule-form .rule-submit-button:active { transform: translateY(2px); box-shadow: 0 1px 0 #0f4429; }
 .editor-rule-form .rule-submit-actions .button-link-secondary { align-self: stretch; }
 
+/* Editor jadwal: aksi harus tampak seperti tombol, bukan teks biasa. */
+.schedule-empty-state {
+    display: grid;
+    justify-items: start;
+    gap: 9px;
+    margin-top: 14px;
+    padding: 18px;
+    border: 1px dashed #b9d7c1;
+    border-radius: 12px;
+    background: #f6fbf7;
+}
+.schedule-empty-state > strong { color: var(--ink); font-size: 14px; }
+.schedule-empty-state p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+.schedule-empty-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 9px 14px;
+    border: 1px solid #12472d;
+    border-radius: 9px;
+    color: #fff;
+    background: #17613b;
+    font-size: 12px;
+    font-weight: 800;
+    text-decoration: none;
+}
+.schedule-empty-cta:hover { background: #0f4b2c; }
+.rule-card-actions form { margin: 0; }
+.rule-card-actions .rule-edit-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+    padding: 8px 13px;
+    border: 1px solid #b8d8c1;
+    border-radius: 9px;
+    color: #155b35;
+    background: #f0f8f2;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+}
+.rule-card-actions .rule-edit-button:hover { background: #e1f2e5; }
+.add-event-details { margin-top: 10px; padding: 0; }
+.add-event-details summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 40px;
+    padding: 9px 13px;
+    border: 1px solid #17613b;
+    border-radius: 9px;
+    color: #fff;
+    background: #17613b;
+    font-size: 12px;
+    font-weight: 800;
+    list-style: none;
+    cursor: pointer;
+}
+.add-event-details summary::-webkit-details-marker { display: none; }
+.add-event-details summary:hover { background: #0f4b2c; }
+.add-event-details[open] summary { margin-bottom: 12px; }
+@media (max-width: 560px) {
+    .schedule-empty-cta { width: 100%; }
+    .rule-card-actions { align-items: flex-start; flex-direction: column; }
+}
+ 
 /* Tahap 5 — editor jadwal harian */
 .editor-package-select { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 20px 22px; margin-bottom: 18px; }
 .editor-package-select h2 { margin: 0 0 6px; font-size: 20px; }
