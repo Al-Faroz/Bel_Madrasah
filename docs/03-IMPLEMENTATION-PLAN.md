@@ -108,8 +108,8 @@ Catatan: status PASS berlaku untuk tes persistensi diagnostik yang dilaporkan pe
 **Batasan:** isi jadwal per hari dan kegiatan bel belum diedit pada tahap ini. Status aktif baru menentukan paket global tersimpan; mesin scheduler belum membaca paket untuk memutar audio.
 
 **Pekerjaan**
-- CRUD paket jadwal.
-- Contoh paket awal: Normal, Ujian, Ramadan.
+- Membuat, melihat, dan mengubah paket jadwal; penghapusan ditunda agar data terkait tidak hilang.
+- Contoh paket: Normal, Ujian, Ramadan.
 - Penetapan satu paket aktif secara global.
 - Persistensi paket aktif setelah restart.
 
