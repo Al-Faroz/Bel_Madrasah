@@ -107,6 +107,34 @@ Halaman `packages.php` menyediakan:
 10. Laporkan hasil tiap langkah serta pesan error bila ada. Mesin kalender, jadwal harian, dan pemutaran otomatis belum terhubung pada tahap ini.
 
 **Status Tahap 4:** implementasi tersedia; menunggu uji lokal pengguna.
+## Tahap 5 — Editor jadwal harian
+
+Halaman `schedule-editor.php` memungkinkan operator:
+- Memilih paket jadwal yang akan diedit.
+- Menambah/mengubah pola Normal atau Khusus untuk Senin sampai Minggu.
+- Memilih satu jenis kekhususan: pasaran Jawa (Legi, Pahing, Pon, Wage, Kliwon) atau minggu kalender Model A (ke-1 sampai ke-5, atau minggu terakhir).
+- Menambah, mengedit, mengaktifkan/menonaktifkan, mengurutkan, dan menghapus kegiatan bel.
+- Mengunggah audio MP3, WAV, OGG, M4A, atau AAC. File disalin ke `%APPDATA%\\BelMadrasah\\audio` (fallback `%LOCALAPPDATA%`) dan tidak disimpan di folder runtime.
+- Mendapatkan validasi nama, waktu 24 jam, urutan, serta duplikasi aturan.
+
+Peringatan benturan pada aturan Khusus merupakan peringatan awal. Resolver yang menentukan aturan mana berlaku untuk suatu tanggal belum tersedia sampai Tahap 6. Menyimpan jadwal belum mengaktifkan pemutaran otomatis.
+
+### Cara uji Tahap 5
+1. Jalankan `git pull origin main`, lalu salin ulang isi `prototype/phpdesktop/www/` ke folder `www/` runtime. Jangan menghapus folder data `%APPDATA%\\BelMadrasah`.
+2. Buka **Editor jadwal**. Pastikan pilihan paket berfungsi dan label paket aktif/nonaktif sesuai.
+3. Tambahkan pola Normal untuk Senin. Pastikan bidang kekhususan tidak terlihat.
+4. Tambahkan pola Khusus untuk Selasa dengan Pasaran Jawa Legi. Ubah jenis menjadi Minggu dalam bulan dan pastikan pilihan nilai berganti.
+5. Coba menambahkan pola Normal kedua untuk Senin; aplikasi harus menolak duplikasi. Coba juga nilai khusus yang sama pada hari yang sama.
+6. Tambahkan pola Khusus lain pada hari yang sama dengan atribut berbeda. Pastikan aturan tersimpan dan peringatan benturan tampil.
+7. Tambahkan kegiatan bel, misalnya `Bel masuk` pada `07:00`, urutan 1, dan unggah MP3. Ulangi dengan WAV bila tersedia.
+8. Pastikan file audio berada di folder audio lokal aplikasi. Jika unggah file besar gagal, periksa `upload_max_filesize` dan `post_max_size` pada konfigurasi PHP Desktop.
+9. Edit kegiatan, ganti waktu/nama/urutan, ubah status, dan ganti file audio. Pastikan perubahan tersimpan. Coba waktu tidak valid melalui request modifikasi jika mampu.
+10. Hapus kegiatan percobaan dan pastikan hanya kegiatan itu yang hilang.
+11. Tutup aplikasi sepenuhnya lalu buka kembali. Pastikan aturan, kegiatan, status, dan jalur audio tetap ada.
+12. Laporkan langkah yang PASS/FAIL dan pesan error. Pemutaran otomatis belum aktif pada tahap ini.
+
+**Status Tahap 5:** implementasi tersedia; menunggu uji lokal pengguna.
+
 ## Apa yang diperiksa prototipe
 
 - Halaman PHP dirender di jendela desktop.
