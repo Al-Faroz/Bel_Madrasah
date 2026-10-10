@@ -32,7 +32,27 @@ Diagram alur konseptual:
 
 Status dari proses tersebut dikirim ke dashboard dan log.
 
-## 4. Hal yang belum diputuskan
+## 4. Kandidat runtime desktop untuk Tahap 1
+
+Kandidat pertama untuk diuji adalah **PHP Desktop Chrome 130.1 untuk Windows**. Proyek PHP Desktop membungkus aplikasi PHP/HTML dalam aplikasi desktop portabel dan menyertakan browser Chromium, web server internal, serta runtime PHP. Rilis Windows 130.1 menyebut dukungan Windows 10+ dan PHP 8.3.
+
+Referensi resmi:
+- [Repositori PHP Desktop](https://github.com/cztomczak/phpdesktop)
+- [Rilis PHP Desktop](https://github.com/cztomczak/phpdesktop/releases)
+
+Alasan sebagai kandidat awal:
+- Alur kerja utama tetap PHP, HTML, CSS, dan JavaScript.
+- Runtime PHP dan server internal dapat disertakan; pengguna tidak perlu memasang XAMPP.
+- Dapat dikemas sebagai folder portable atau installer.
+- Cocok untuk membuat proof of concept kecil sebelum membangun modul aplikasi.
+
+Risiko dan batasan yang wajib diuji:
+- Browser Chromium tertanam dapat menambah ukuran paket dan penggunaan RAM dibanding aplikasi native sederhana.
+- Dukungan codec audio (terutama MP3), pemutaran audio panjang, perilaku saat aplikasi diminimalkan, dan penggunaan CPU idle belum dianggap lulus sebelum diuji di komputer Bro.
+- System tray dan perilaku saat Windows tidur/bangun harus dibuktikan; tidak diasumsikan tersedia otomatis.
+- Kandidat ini belum dikunci sebagai arsitektur final. Jika hasil uji ukuran/kinerja/audio tidak memenuhi kebutuhan, evaluasi alternatif sebelum masuk implementasi besar.
+
+## 5. Hal yang belum diputuskan
 
 Keputusan final harus dibuat setelah proof of concept (PoC):
 - Pembungkus/runtime desktop untuk aplikasi PHP.
@@ -46,7 +66,7 @@ Keputusan final harus dibuat setelah proof of concept (PoC):
 
 Jangan mengunci teknologi hanya karena mudah dibuat sebagai halaman web. Uji apakah teknologi tersebut benar-benar memenuhi target desktop mandiri dan audio otomatis.
 
-## 5. Kriteria PoC teknis
+## 6. Kriteria PoC teknis
 
 PoC awal harus membuktikan:
 1. Aplikasi PHP dapat dibuka sebagai aplikasi desktop tanpa XAMPP.
@@ -59,13 +79,13 @@ PoC awal harus membuktikan:
 8. Perilaku minimize/tray tidak menghentikan penjadwalan.
 9. Paket dapat dijalankan di komputer Windows sasaran yang tidak memiliki lingkungan pengembangan.
 
-## 6. Prinsip penyimpanan
+## 7. Prinsip penyimpanan
 
 Data konfigurasi dan database sebaiknya ditempatkan di direktori data pengguna Windows yang dapat ditulis, bukan di dalam direktori aplikasi yang mungkin dilindungi izin Windows. Folder audio harus memiliki aturan yang jelas: apakah file disalin ke folder data aplikasi atau tetap dirujuk dari lokasi pilihan operator. Jika file dipindah atau dihapus, aplikasi harus menampilkan peringatan yang bisa dipahami.
 
 Database dan file audio pengguna tidak boleh terhapus saat aplikasi diperbarui atau dipasang ulang.
 
-## 7. Keandalan audio
+## 8. Keandalan audio
 
 - Jadwal dan mesin audio harus dipisahkan secara logis.
 - Notifikasi visual Windows tidak menjadi ketergantungan pemutaran audio.
@@ -74,11 +94,11 @@ Database dan file audio pengguna tidak boleh terhapus saat aplikasi diperbarui a
 - Audio panjang harus dibiarkan selesai kecuali operator secara eksplisit menghentikannya.
 - Benturan waktu harus ditangani secara eksplisit, bukan memotong audio tanpa aturan.
 
-## 8. Zona waktu
+## 9. Zona waktu
 
 Jadwal mengikuti jam lokal komputer Windows. Untuk konteks pengguna di Indonesia, konfigurasi komputer harus menggunakan zona waktu yang sesuai, misalnya WIB bila sekolah berada di wilayah WIB. Aplikasi perlu menampilkan jam sistem yang dipakai sehingga perbedaan jam komputer mudah diketahui.
 
-## 9. Keamanan dan pemeliharaan
+## 10. Keamanan dan pemeliharaan
 
 - Jangan menyimpan rahasia atau kredensial yang tidak dibutuhkan.
 - Validasi jalur file dan masukan operator.
