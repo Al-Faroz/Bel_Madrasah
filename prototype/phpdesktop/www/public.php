@@ -1,0 +1,170 @@
+<?php
+declare(strict_types=1);
+
+require_once __DIR__ . '/lib/Database.php';
+
+function h(mixed $value): string
+{
+    if ($value === null || (!is_string($value) && !is_numeric($value) && !is_bool($value))) {
+        $value = '';
+    }
+    return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+}
+
+$days = [1 => 'Senin', 2 => 'Selasa', 3 => 'Rabu', 4 => 'Kamis', 5 => 'Jumat', 6 => 'Sabtu', 7 => 'Minggu'];
+$months = [1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April', 5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus', 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'];
+$now = new DateTimeImmutable('now');
+$weekday = (int) $now->format('N');
+$dateLabel = $days[$weekday] . ', ' . $now->format('j') . ' ' . $months[(int) $now->format('n')] . ' ' . $now->format('Y');
+$schoolName = 'Bel Madrasah';
+$activePackage = null;
+$events = [];
+$nextEvent = null;
+$specialRulesExist = false;
+$error = '';
+
+try {
+    $db = new Database();
+    $schoolName = trim((string) $db->getSetting('school_name', '')) ?: 'Bel Madrasah';
+    foreach ($db->getSchedulePackages() as $package) {
+        if ((int) $package['is_active'] === 1) {
+            $activePackage = $package;
+            break;
+        }
+    }
+    if ($activePackage !== null) {
+        foreach ($db->getDayRules((int) $activePackage['id'], $weekday) as $rule) {
+            if ((int) $rule['is_enabled'] !== 1) {
+                continue;
+            }
+            if ((string) $rule['rule_mode'] === 'special') {
+                $specialRulesExist = true;
+                continue;
+            }
+            foreach ($db->getBellEvents((int) $rule['id']) as $event) {
+                if ((int) $event['is_enabled'] !== 1) {
+                    continue;
+                }
+                $events[] = $event;
+            }
+        }
+    }
+    usort($events, static fn(array $a, array $b): int => strcmp((string) $a['event_time'], (string) $b['event_time']));
+    foreach ($events as $event) {
+        if ((string) $event['event_time'] >= $now->format('H:i')) {
+            $nextEvent = $event;
+            break;
+        }
+    }
+} catch (Throwable $exception) {
+    $error = 'Data jadwal belum dapat dibaca. Hubungi operator untuk pemeriksaan.';
+}
+?>
+<!doctype html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#17633e">
+    <title>Status Bel Madrasah — <?= h($schoolName) ?></title>
+    <link rel="stylesheet" href="assets/app.css">
+</head>
+<body class="public-dashboard-body">
+<div class="public-shell">
+    <header class="public-header">
+        <div class="public-brand-mark" aria-hidden="true">BM</div>
+        <div class="public-brand-copy">
+            <p class="public-kicker">INFORMASI OPERASIONAL</p>
+            <h1><?= h($schoolName) ?></h1>
+            <p>Informasi jadwal bel madrasah</p>
+        </div>
+        <div class="public-live-indicator"><span></span> PANEL INFORMASI</div>
+    </header>
+
+    <main>
+        <section class="public-hero">
+            <div class="public-date-block">
+                <p class="public-kicker">HARI INI</p>
+                <h2><?= h($dateLabel) ?></h2>
+                <p>Jadwal dan informasi operasional</p>
+            </div>
+            <div class="public-clock-block">
+                <span>Waktu komputer</span>
+                <strong id="public-clock"><?= h($now->format('H:i:s')) ?></strong>
+                <small>Waktu lokal perangkat</small>
+            </div>
+        </section>
+
+        <?php if ($error !== ''): ?>
+            <section class="public-alert is-error" role="alert"><strong>Data belum tersedia</strong><p><?= h($error) ?></p></section>
+        <?php else: ?>
+            <section class="public-overview-grid" aria-label="Ringkasan jadwal">
+                <article class="public-overview-card">
+                    <span class="public-card-icon" aria-hidden="true">▦</span>
+                    <span class="public-card-label">Paket aktif</span>
+                    <strong><?= $activePackage !== null ? h((string) $activePackage['name']) : 'Belum ditentukan' ?></strong>
+                    <small><?= $activePackage !== null ? 'Sumber konfigurasi jadwal' : 'Operator perlu mengaktifkan paket' ?></small>
+                </article>
+                <article class="public-overview-card">
+                    <span class="public-card-icon" aria-hidden="true">◷</span>
+                    <span class="public-card-label">Kegiatan berikutnya</span>
+                    <strong><?= $nextEvent !== null ? h(substr((string) $nextEvent['event_time'], 0, 5)) : '—' ?></strong>
+                    <small><?= $nextEvent !== null ? h((string) $nextEvent['name']) : 'Tidak ada kegiatan Normal tersimpan berikutnya' ?></small>
+                </article>
+                <article class="public-overview-card">
+                    <span class="public-card-icon" aria-hidden="true">♫</span>
+                    <span class="public-card-label">Kegiatan hari ini</span>
+                    <strong><?= count($events) ?></strong>
+                    <small>Kegiatan Normal aktif yang tersimpan</small>
+                </article>
+            </section>
+
+            <?php if ($specialRulesExist): ?>
+                <section class="public-alert is-warning">
+                    <strong>Perhatian jadwal khusus</strong>
+                    <p>Paket ini memiliki aturan Khusus untuk hari ini. Pemilihan jadwal final menurut kalender belum tersedia pada versi ini, sehingga daftar di bawah hanya menampilkan pola Normal yang tersimpan.</p>
+                </section>
+            <?php endif; ?>
+
+            <section class="public-schedule-panel">
+                <div class="public-section-heading">
+                    <div><p class="public-kicker">RINCIAN WAKTU</p><h2>Jadwal bel hari ini</h2></div>
+                    <span class="public-count"><?= count($events) ?> kegiatan</span>
+                </div>
+                <?php if ($activePackage === null): ?>
+                    <div class="public-empty-state"><strong>Belum ada paket aktif</strong><p>Silakan hubungi operator madrasah untuk mengaktifkan paket jadwal.</p></div>
+                <?php elseif ($events === []): ?>
+                    <div class="public-empty-state"><strong>Belum ada kegiatan yang ditampilkan</strong><p>Belum ada kegiatan Normal aktif yang tersimpan untuk hari ini.</p></div>
+                <?php else: ?>
+                    <div class="public-timeline">
+                        <?php foreach ($events as $event): $isNext = $nextEvent !== null && (int) $nextEvent['id'] === (int) $event['id']; ?>
+                            <article class="public-event <?= $isNext ? 'is-next' : '' ?>">
+                                <div class="public-event-time"><?= h(substr((string) $event['event_time'], 0, 5)) ?></div>
+                                <div class="public-event-marker" aria-hidden="true"></div>
+                                <div class="public-event-copy"><strong><?= h((string) $event['name']) ?></strong><span><?= $isNext ? 'Kegiatan berikutnya berdasarkan waktu jadwal' : 'Kegiatan terkonfigurasi' ?></span></div>
+                                <?php if ($isNext): ?><span class="public-next-badge">BERIKUTNYA</span><?php endif; ?>
+                            </article>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </section>
+        <?php endif; ?>
+    </main>
+    <footer class="public-footer"><span><?= h($schoolName) ?> · Panel Informasi</span><span>Informasi jadwal tersimpan · bukan indikator pemutaran audio real-time</span></footer>
+</div>
+<script>
+(function () {
+    const clock = document.getElementById('public-clock');
+    if (!clock) return;
+    function updateClock() {
+        const now = new Date();
+        clock.textContent = [now.getHours(), now.getMinutes(), now.getSeconds()].map(function (part) {
+            return String(part).padStart(2, '0');
+        }).join(':');
+    }
+    updateClock();
+    window.setInterval(updateClock, 1000);
+})();
+</script>
+</body>
+</html>
