@@ -67,6 +67,19 @@ final class Database
                     updated_at TEXT NOT NULL
                 )'
             );
+            // Migration additive: existing packages default to the established Sat–Sun off pattern.
+            $packageColumns = $this->pdo->query('PRAGMA table_info(schedule_packages)')->fetchAll();
+            $hasOffDays = false;
+            foreach ($packageColumns as $column) {
+                if ((string) $column['name'] === 'off_days') {
+                    $hasOffDays = true;
+                    break;
+                }
+            }
+            if (!$hasOffDays) {
+                $this->pdo->exec("ALTER TABLE schedule_packages ADD COLUMN off_days TEXT NOT NULL DEFAULT '6,7'");
+            }
+
             $this->pdo->exec(
                 'CREATE UNIQUE INDEX IF NOT EXISTS ux_schedule_packages_one_active
                  ON schedule_packages (is_active) WHERE is_active = 1'
@@ -264,15 +277,14 @@ final class Database
      */
     public function ensureStarterScheduleRules(int $packageId): bool
     {
-        $ruleCount = (int) $this->pdo->query('SELECT COUNT(*) FROM day_rules')->fetchColumn();
-        if ($ruleCount > 0 || $this->getSchedulePackage($packageId) === null) {
+        if ($this->getDayRules($packageId) !== [] || $this->getSchedulePackage($packageId) === null) {
             return false;
         }
 
         $now = date('Y-m-d H:i:s');
         $this->pdo->beginTransaction();
         try {
-            // Seed the five usual school days with an editable Normal pattern.
+            // Seed only school days according to this package's weekly off-day choice.
             $insertRule = $this->pdo->prepare(
                 "INSERT INTO day_rules
                     (package_id, weekday, rule_mode, special_type, special_value, is_enabled, created_at, updated_at)
@@ -288,7 +300,12 @@ final class Database
                 ['name' => 'Bel istirahat', 'time' => '09:30', 'order' => 2],
                 ['name' => 'Bel pulang', 'time' => '12:00', 'order' => 3],
             ];
-            for ($weekday = 1; $weekday <= 5; $weekday++) {
+            $package = $this->getSchedulePackage($packageId);
+            $offDays = array_map('intval', explode(',', (string) ($package['off_days'] ?? '6,7')));
+            for ($weekday = 1; $weekday <= 7; $weekday++) {
+                if (in_array($weekday, $offDays, true)) {
+                    continue;
+                }
                 $insertRule->execute([
                     ':package_id' => $packageId,
                     ':weekday' => $weekday,
@@ -317,11 +334,76 @@ final class Database
         }
     }
 
+    /**
+     * Create default Normal day rules for a newly created package based on its off days.
+     * Example events are starter rows, editable by the operator.
+     */
+    public function initializePackageDays(int $packageId, string $offDays): void
+    {
+        if (!in_array($offDays, ['5', '7', '6,7'], true)) {
+            throw new InvalidArgumentException('Pilihan hari libur mingguan tidak valid.');
+        }
+        if ($this->getSchedulePackage($packageId) === null) {
+            throw new InvalidArgumentException('Paket jadwal tidak ditemukan.');
+        }
+        if ($this->getDayRules($packageId) !== []) {
+            return;
+        }
+        $daysOff = array_map('intval', explode(',', $offDays));
+        $now = date('Y-m-d H:i:s');
+        $this->pdo->beginTransaction();
+        try {
+            $insertRule = $this->pdo->prepare(
+                "INSERT INTO day_rules
+                    (package_id, weekday, rule_mode, special_type, special_value, is_enabled, created_at, updated_at)
+                 VALUES (:package_id, :weekday, 'normal', NULL, NULL, 1, :created_at, :updated_at)"
+            );
+            $insertEvent = $this->pdo->prepare(
+                "INSERT INTO bell_events
+                    (day_rule_id, name, event_time, audio_path, is_enabled, sort_order, created_at, updated_at)
+                 VALUES (:day_rule_id, :name, :event_time, '', 1, :sort_order, :created_at, :updated_at)"
+            );
+            $starterEvents = [
+                ['name' => 'Bel masuk', 'time' => '07:00', 'order' => 1],
+                ['name' => 'Bel istirahat', 'time' => '09:30', 'order' => 2],
+                ['name' => 'Bel pulang', 'time' => '12:00', 'order' => 3],
+            ];
+            for ($weekday = 1; $weekday <= 7; $weekday++) {
+                if (in_array($weekday, $daysOff, true)) {
+                    continue;
+                }
+                $insertRule->execute([
+                    ':package_id' => $packageId,
+                    ':weekday' => $weekday,
+                    ':created_at' => $now,
+                    ':updated_at' => $now,
+                ]);
+                $ruleId = (int) $this->pdo->lastInsertId();
+                foreach ($starterEvents as $event) {
+                    $insertEvent->execute([
+                        ':day_rule_id' => $ruleId,
+                        ':name' => $event['name'],
+                        ':event_time' => $event['time'],
+                        ':sort_order' => $event['order'],
+                        ':created_at' => $now,
+                        ':updated_at' => $now,
+                    ]);
+                }
+            }
+            $this->pdo->commit();
+        } catch (Throwable $exception) {
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
+            throw $exception;
+        }
+    }
+
     /** @return array<int, array<string, mixed>> */
     public function getSchedulePackages(): array
     {
         return $this->pdo->query(
-            'SELECT id, name, description, is_active, created_at, updated_at
+            'SELECT id, name, description, off_days, is_active, created_at, updated_at
              FROM schedule_packages ORDER BY is_active DESC, name COLLATE NOCASE ASC, id ASC'
         )->fetchAll();
     }
@@ -330,7 +412,7 @@ final class Database
     public function getSchedulePackage(int $id): ?array
     {
         $statement = $this->pdo->prepare(
-            'SELECT id, name, description, is_active, created_at, updated_at
+            'SELECT id, name, description, off_days, is_active, created_at, updated_at
              FROM schedule_packages WHERE id = :id'
         );
         $statement->execute([':id' => $id]);
@@ -338,7 +420,7 @@ final class Database
         return $package === false ? null : $package;
     }
 
-    public function saveSchedulePackage(?int $id, string $name, string $description): int
+    public function saveSchedulePackage(?int $id, string $name, string $description, string $offDays = '6,7'): int
     {
         $name = trim($name);
         $description = trim($description);
@@ -348,16 +430,20 @@ final class Database
         if (strlen($description) > 300) {
             throw new InvalidArgumentException('Keterangan maksimal 300 karakter.');
         }
+        if (!in_array($offDays, ['5', '7', '6,7'], true)) {
+            throw new InvalidArgumentException('Pilihan hari libur mingguan tidak valid.');
+        }
 
         $now = date('Y-m-d H:i:s');
         if ($id === null) {
             $statement = $this->pdo->prepare(
-                'INSERT INTO schedule_packages (name, description, is_active, created_at, updated_at)
-                 VALUES (:name, :description, 0, :created_at, :updated_at)'
+                'INSERT INTO schedule_packages (name, description, off_days, is_active, created_at, updated_at)
+                 VALUES (:name, :description, :off_days, 0, :created_at, :updated_at)'
             );
             $statement->execute([
                 ':name' => $name,
                 ':description' => $description,
+                ':off_days' => $offDays,
                 ':created_at' => $now,
                 ':updated_at' => $now,
             ]);
@@ -368,12 +454,13 @@ final class Database
             throw new RuntimeException('Paket yang akan diubah tidak ditemukan.');
         }
         $statement = $this->pdo->prepare(
-            'UPDATE schedule_packages SET name = :name, description = :description, updated_at = :updated_at
+            'UPDATE schedule_packages SET name = :name, description = :description, off_days = :off_days, updated_at = :updated_at
              WHERE id = :id'
         );
         $statement->execute([
             ':name' => $name,
             ':description' => $description,
+            ':off_days' => $offDays,
             ':updated_at' => $now,
             ':id' => $id,
         ]);
