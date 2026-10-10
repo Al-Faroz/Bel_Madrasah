@@ -68,6 +68,19 @@ Pengujian dilakukan pada komputer Windows lokal, bukan hanya berdasarkan pemerik
 - [ ] Perilaku ketika audio lain sedang berjalan mengikuti kebijakan benturan.
 - [ ] Pemutaran manual tidak merusak status scheduler.
 
+### Uji Tahap 3 — kerangka, konfigurasi, dan backup
+- [ ] Navigasi Dashboard, Konfigurasi, dan Backup data terbuka.
+- [ ] Simpan nama madrasah dan nama operator; setelah berpindah halaman dan restart, nilainya tetap.
+- [ ] Volume menerima nilai 0 dan 100; menolak nilai di luar rentang.
+- [ ] Pesan keberhasilan/kegagalan penyimpanan terlihat dan terbaca.
+- [ ] Tombol Buat backup sekarang membuat file .sqlite nonkosong di folder backup pengguna.
+- [ ] Database aktif tetap ada dan tidak berubah lokasi setelah backup.
+- [ ] Backup dapat diperiksa sebagai database SQLite yang valid pada salinan terpisah; jangan mengganti database aktif.
+- [ ] Ulangi backup; nama file berbeda dan backup sebelumnya tidak tertimpa.
+- [ ] Gagal membuat folder atau file backup menghasilkan pesan error yang terbaca.
+- [ ] Data konfigurasi dan database tetap ada setelah menyalin pembaruan aplikasi.
+- [ ] Volume saat ini hanya preferensi tersimpan; jangan menganggapnya sudah mengubah output audio.
+
 ## 5. Uji paket dan persistensi
 
 - [ ] Paket Normal dapat dibuat dan diubah.
