@@ -224,7 +224,8 @@ try {
         <div><p class="eyebrow">TAHAP 5 · EDITOR JADWAL HARIAN</p><h1>Bel Madrasah</h1><p class="subtitle">Atur pola hari dan kegiatan bel dalam setiap paket</p></div>
     </header>
     <nav class="main-nav" aria-label="Navigasi utama">
-        <a href="index.php">Dashboard diagnostik</a>
+        <a href="dashboard.php">Dashboard</a>
+        <a href="index.php">Pemeriksaan</a>
         <a href="packages.php">Paket jadwal</a>
         <a href="schedule-editor.php" class="active">Editor jadwal</a>
         <a href="settings.php">Konfigurasi</a>
