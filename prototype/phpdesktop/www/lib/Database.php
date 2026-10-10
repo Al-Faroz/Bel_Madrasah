@@ -513,6 +513,60 @@ final class Database
         return $id;
     }
 
+    /**
+     * Replace all events in a target weekday rule with a source rule's events.
+     * The package and weekday checks prevent cross-package or wrong-day edits.
+     * Audio paths are copied as references; the audio files themselves are untouched.
+     */
+    public function replaceDayScheduleFromSource(int $packageId, int $sourceRuleId, int $targetRuleId): int
+    {
+        $sourceRule = $this->getDayRule($sourceRuleId);
+        $targetRule = $this->getDayRule($targetRuleId);
+        if ($sourceRule === null || $targetRule === null) {
+            throw new InvalidArgumentException('Aturan sumber atau tujuan tidak ditemukan. Silakan buat pratinjau ulang.');
+        }
+        if ((int) $sourceRule['package_id'] !== $packageId || (int) $targetRule['package_id'] !== $packageId) {
+            throw new InvalidArgumentException('Sumber dan tujuan harus berada pada paket jadwal yang sama.');
+        }
+        if ((int) $sourceRule['weekday'] !== 1 || $sourceRule['rule_mode'] !== 'normal'
+            || (int) $targetRule['weekday'] !== 2 || $targetRule['rule_mode'] !== 'normal') {
+            throw new InvalidArgumentException('Operasi ini hanya menyalin aturan Normal Senin ke aturan Normal Selasa.');
+        }
+
+        $sourceEvents = $this->getBellEvents($sourceRuleId);
+        $now = date('Y-m-d H:i:s');
+        $this->pdo->beginTransaction();
+        try {
+            $delete = $this->pdo->prepare('DELETE FROM bell_events WHERE day_rule_id = :day_rule_id');
+            $delete->execute([':day_rule_id' => $targetRuleId]);
+            $insert = $this->pdo->prepare(
+                'INSERT INTO bell_events
+                    (day_rule_id, name, event_time, audio_path, is_enabled, sort_order, created_at, updated_at)
+                 VALUES
+                    (:day_rule_id, :name, :event_time, :audio_path, :is_enabled, :sort_order, :created_at, :updated_at)'
+            );
+            foreach ($sourceEvents as $event) {
+                $insert->execute([
+                    ':day_rule_id' => $targetRuleId,
+                    ':name' => (string) $event['name'],
+                    ':event_time' => (string) $event['event_time'],
+                    ':audio_path' => (string) $event['audio_path'],
+                    ':is_enabled' => (int) $event['is_enabled'],
+                    ':sort_order' => (int) $event['sort_order'],
+                    ':created_at' => $now,
+                    ':updated_at' => $now,
+                ]);
+            }
+            $this->pdo->commit();
+            return count($sourceEvents);
+        } catch (Throwable $exception) {
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
+            throw $exception;
+        }
+    }
+
     public function getBellEvents(int $dayRuleId): array
     {
         $statement = $this->pdo->prepare(
