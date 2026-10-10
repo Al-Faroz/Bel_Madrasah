@@ -38,21 +38,30 @@ Pengujian dilakukan pada komputer Windows lokal, bukan hanya berdasarkan pemerik
 - **Batas cakupan:** Belum menguji kegagalan tulis, pemadaman paksa, backup/restore, maupun skema database jadwal produksi.
 
 ### Uji tambahan Tahap 2 — database aplikasi utama
-- [ ] Panel menampilkan `SKEMA SIAP`.
-- [ ] Lokasi database berada di `%APPDATA%\\BelMadrasah\\data\\bel-madrasah.sqlite` atau fallback `%LOCALAPPDATA%`, bukan di folder runtime.
-- [ ] Versi skema tampil `1` dan tabel inti terdeteksi.
-- [ ] Tutup dan buka kembali aplikasi; skema tetap siap dan database tidak berubah menjadi database diagnostik.
+- [x] Panel menampilkan `SKEMA SIAP` (hasil pengguna: PASS).
+- [ ] Lokasi database berada di `%APPDATA%\\BelMadrasah\\data\\bel-madrasah.sqlite` atau fallback `%LOCALAPPDATA%`, bukan di folder runtime (lokasi tepat belum disalin dalam laporan).
+- [x] Versi skema tampil `1` dan tabel inti terdeteksi (tercakup dalam laporan database PASS; detail tampilan tidak disalin).
+- [x] Tutup dan buka kembali aplikasi; skema tetap siap (hasil pengguna: PASS).
 - [ ] Bila folder data tidak bisa ditulis, aplikasi menampilkan pesan error yang terbaca.
-- [ ] Uji tulis/baca sementara tidak menambah record permanen.
+- [x] Uji tulis/baca sementara tidak menambah record permanen (uji otomatis menggunakan TEMP table dan rollback; hasil panel database PASS).
+
+### Catatan hasil uji Tahap 2 — laporan pengguna
+- **Database aplikasi:** PASS.
+- **Restart aplikasi:** PASS.
+- **MP3 panjang:** PASS.
+- **WAV:** PASS.
+- **Pesan error/catatan:** Tidak ada.
+- **Kesimpulan:** Tahap 2 dinyatakan PASS untuk skenario yang dilaporkan pengguna. Tidak ada perbaikan kode yang diindikasikan oleh laporan ini.
+- **Belum tercakup:** uji file hilang/rusak, durasi/ukuran file yang tepat, lokasi path aktual yang dikonfirmasi, perangkat audio terputus, pemadaman paksa, dan scheduler otomatis.
 
 ## 4. Uji audio
 
 - [ ] Audio uji dapat diputar tanpa membuka pemutar eksternal.
 - [ ] Suara keluar melalui perangkat output yang diharapkan.
 - [ ] File MP3 pendek dapat diputar sampai selesai.
-- [ ] File WAV dapat diputar jika format tersebut masuk dukungan final.
-- [ ] Audio panjang (disarankan lagu kebangsaan atau audio 3–5 menit) diputar sampai selesai tanpa dipotong.
-- [ ] Durasi audio tampil setelah metadata berhasil dibaca.
+- [x] File WAV dapat diputar pada runtime uji (hasil pengguna: PASS; format WAV spesifik belum dicatat).
+- [x] Audio MP3 panjang diputar sampai selesai tanpa terpotong (hasil pengguna: PASS; durasi/ukuran file tidak dicatat).
+- [ ] Durasi audio tampil setelah metadata berhasil dibaca (belum dilaporkan secara terpisah).
 - [ ] File dengan format tidak didukung menampilkan pesan error dan aplikasi tetap responsif.
 - [ ] File yang tidak ditemukan menghasilkan pesan yang jelas.
 - [ ] File rusak/tidak didukung tidak membuat aplikasi macet.
