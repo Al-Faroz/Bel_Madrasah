@@ -257,6 +257,66 @@ final class Database
         ]);
     }
 
+    /**
+     * Populate a clearly editable starter schedule only when the database has
+     * no day rules at all. Never overwrite a schedule that the user has begun
+     * configuring. The times are examples and must be reviewed by the school.
+     */
+    public function ensureStarterScheduleRules(int $packageId): bool
+    {
+        $ruleCount = (int) $this->pdo->query('SELECT COUNT(*) FROM day_rules')->fetchColumn();
+        if ($ruleCount > 0 || $this->getSchedulePackage($packageId) === null) {
+            return false;
+        }
+
+        $now = date('Y-m-d H:i:s');
+        $this->pdo->beginTransaction();
+        try {
+            // Seed the five usual school days with an editable Normal pattern.
+            $insertRule = $this->pdo->prepare(
+                "INSERT INTO day_rules
+                    (package_id, weekday, rule_mode, special_type, special_value, is_enabled, created_at, updated_at)
+                 VALUES (:package_id, :weekday, 'normal', NULL, NULL, 1, :created_at, :updated_at)"
+            );
+            $insertEvent = $this->pdo->prepare(
+                'INSERT INTO bell_events
+                    (day_rule_id, name, event_time, audio_path, is_enabled, sort_order, created_at, updated_at)
+                 VALUES (:day_rule_id, :name, :event_time, \'\', 1, :sort_order, :created_at, :updated_at)'
+            );
+            $starterEvents = [
+                ['name' => 'Bel masuk', 'time' => '07:00', 'order' => 1],
+                ['name' => 'Bel istirahat', 'time' => '09:30', 'order' => 2],
+                ['name' => 'Bel pulang', 'time' => '12:00', 'order' => 3],
+            ];
+            for ($weekday = 1; $weekday <= 5; $weekday++) {
+                $insertRule->execute([
+                    ':package_id' => $packageId,
+                    ':weekday' => $weekday,
+                    ':created_at' => $now,
+                    ':updated_at' => $now,
+                ]);
+                $ruleId = (int) $this->pdo->lastInsertId();
+                foreach ($starterEvents as $event) {
+                    $insertEvent->execute([
+                        ':day_rule_id' => $ruleId,
+                        ':name' => $event['name'],
+                        ':event_time' => $event['time'],
+                        ':sort_order' => $event['order'],
+                        ':created_at' => $now,
+                        ':updated_at' => $now,
+                    ]);
+                }
+            }
+            $this->pdo->commit();
+            return true;
+        } catch (Throwable $exception) {
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
+            throw $exception;
+        }
+    }
+
     /** @return array<int, array<string, mixed>> */
     public function getSchedulePackages(): array
     {
