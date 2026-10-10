@@ -127,7 +127,7 @@ try {
     <nav class="main-nav" aria-label="Navigasi utama">
         <a href="dashboard.php">Dashboard</a>
         <a href="index.php">Pemeriksaan</a>
-        <a class="active" href="packages.php">Paket jadwal</a>
+        <a class="active" href="packages.php" aria-current="page">Paket jadwal</a>
         <a href="schedule-editor.php">Editor jadwal</a>
         <a href="settings.php">Konfigurasi</a>
         <a href="backup.php">Backup data</a>
@@ -185,10 +185,10 @@ try {
                             <div class="package-card-actions">
                                 <a class="text-action" href="packages.php?edit=<?= (int) $package['id'] ?>">Edit</a>
                                 <?php if ((int) $package['is_active'] !== 1): ?>
-                                    <form method="post" action="packages.php">
+                                    <form method="post" action="packages.php" class="package-activate-form" data-package-name="<?= h((string) $package['name']) ?>">
                                         <input type="hidden" name="package_action" value="activate">
                                         <input type="hidden" name="package_id" value="<?= (int) $package['id'] ?>">
-                                        <button type="submit" class="button-compact">Aktifkan</button>
+                                        <button type="submit" class="button-compact">Aktifkan paket</button>
                                     </form>
                                 <?php endif; ?>
                             </div>
@@ -208,8 +208,8 @@ try {
             <form method="post" action="packages.php<?= $editId > 0 ? '?edit=' . $editId : '' ?>">
                 <input type="hidden" name="package_action" value="save">
                 <input type="hidden" name="package_id" value="<?= $editId > 0 ? $editId : 0 ?>">
-                <label>Nama paket <span class="required-mark">*</span>
-                    <input type="text" name="name" maxlength="80" required value="<?= h($formName) ?>" placeholder="Contoh: Normal, Ujian, Ramadan">
+                <label for="package-name">Nama paket <span class="required-mark">*</span>
+                    <input type="text" id="package-name" name="name" maxlength="80" required value="<?= h($formName) ?>" placeholder="Contoh: Normal, Ujian, Ramadan">
                 </label>
                 <?php if ($editId === 0): ?>
                 <fieldset class="package-off-days">
@@ -223,8 +223,8 @@ try {
                 <input type="hidden" name="off_days" value="<?= h($formOffDays) ?>">
                 <p class="form-note package-off-day-readonly">Hari libur paket ini: <strong><?= $formOffDays === '5' ? 'Jumat' : ($formOffDays === '7' ? 'Minggu' : 'Sabtu–Minggu') ?></strong>. Pengaturan hari libur hanya ditentukan saat paket dibuat agar aturan dan kegiatan yang sudah tersimpan tidak berubah diam-diam.</p>
                 <?php endif; ?>
-                <label>Keterangan (opsional)
-                    <textarea name="description" maxlength="300" rows="4" placeholder="Jelaskan kapan paket ini digunakan"><?= h($formDescription) ?></textarea>
+                <label for="package-description">Keterangan (opsional)
+                    <textarea id="package-description" name="description" maxlength="300" rows="4" placeholder="Jelaskan kapan paket ini digunakan"><?= h($formDescription) ?></textarea>
                     <small>Maksimal 300 karakter. Nama paket harus unik.</small>
                 </label>
                 <?php if ($editId === 0): ?><p class="form-note">Paket baru dibuat dalam keadaan nonaktif agar paket yang sedang digunakan tidak berubah tanpa sengaja.</p><?php else: ?><p class="form-note">Mengedit nama atau keterangan tidak mengubah status aktif paket ini.</p><?php endif; ?>
@@ -248,5 +248,15 @@ try {
 
     <footer><span>Bel Madrasah · Tahap 4</span><span>Data paket tersimpan lokal</span></footer>
 </div>
+<script>
+(function () {
+    document.querySelectorAll(".package-activate-form").forEach(function (form) {
+        form.addEventListener("submit", function (event) {
+            const name = form.dataset.packageName || "paket ini";
+            if (!window.confirm("Aktifkan paket " + name + "? Paket ini menjadi sumber jadwal global. Paket aktif sebelumnya tidak dihapus.")) event.preventDefault();
+        });
+    });
+})();
+</script>
 </body>
 </html>
