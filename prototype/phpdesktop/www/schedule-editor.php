@@ -148,6 +148,12 @@ try {
     if ($selectedPackage === null) {
         throw new RuntimeException('Paket jadwal yang dipilih tidak tersedia.');
     }
+    // Database yang masih benar-benar kosong mendapat pola awal yang bisa diedit.
+    // Seed hanya berjalan sekali dan tidak menimpa aturan yang sudah dibuat pengguna.
+    $starterScheduleCreated = $db->ensureStarterScheduleRules($selectedPackageId);
+    if ($starterScheduleCreated) {
+        $message = 'Pola awal Senin–Jumat dibuat. Waktu bel adalah contoh—silakan sesuaikan dengan jadwal madrasah.';
+    }
     $rules = $db->getDayRules($selectedPackageId);
     $eventsByRule = [];
     foreach ($rules as $rule) {
