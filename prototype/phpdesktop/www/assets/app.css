@@ -427,3 +427,45 @@ footer { display: flex; justify-content: space-between; gap: 12px; padding: 20px
 .bell-actions-cell .delete-event-form{margin-top:7px}
 .sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
 @media(max-width:760px){.bell-events-table{min-width:700px}.bell-events-table td,.bell-events-table th{padding:9px}.bell-event-row-form{grid-template-columns:minmax(130px,1fr) 100px 64px}}
+
+
+/* Stage 5 — Salin Jadwal dengan pratinjau dan konfirmasi */
+.copy-schedule-panel { margin: 0 0 18px; padding: 22px; }
+.copy-schedule-description { max-width: 680px; margin: 7px 0 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+.copy-schedule-form { display: grid; gap: 16px; }
+.copy-schedule-route { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 12px; max-width: 650px; }
+.copy-schedule-day { display: grid; gap: 5px; padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: #f7faf7; }
+.copy-schedule-day span { color: var(--muted); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; }
+.copy-schedule-day strong { color: var(--ink); font-size: 18px; }
+.copy-schedule-day small { color: var(--muted); font-size: 11px; }
+.copy-schedule-day.is-target { border-color: #e5c978; background: #fffbef; }
+.copy-schedule-arrow { color: var(--green-2); font-size: 23px; font-weight: 800; }
+.copy-schedule-button { display: inline-flex; align-items: center; justify-content: center; min-height: 43px; width: fit-content; max-width: 100%; padding: 10px 15px; border: 1px solid #12472d; border-radius: 9px; color: #fff; background: #17613b; font: inherit; font-size: 12px; font-weight: 800; cursor: pointer; }
+.copy-schedule-button:hover { background: #0f4b2c; }
+.copy-schedule-button:focus-visible { outline: 3px solid #e2b94c; outline-offset: 3px; }
+.copy-preview-panel { display: grid; gap: 12px; }
+.copy-preview-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.copy-preview-heading strong { font-size: 14px; }
+.copy-preview-heading span { padding: 5px 9px; border-radius: 999px; color: #205d36; background: #e4f4e9; font-size: 11px; font-weight: 800; }
+.copy-preview-panel > p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+.copy-preview-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; }
+.copy-preview-table { width: 100%; min-width: 450px; border-collapse: collapse; font-size: 12px; }
+.copy-preview-table th, .copy-preview-table td { padding: 10px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.copy-preview-table th { color: var(--muted); background: #f5f8f5; font-size: 10px; text-transform: uppercase; letter-spacing: .04em; }
+.copy-preview-table tr:last-child td { border-bottom: 0; }
+.copy-preview-table td:first-child { white-space: nowrap; font-variant-numeric: tabular-nums; font-weight: 800; }
+.copy-preview-warning { padding: 12px 14px; border: 1px solid #f0dfb0; border-radius: 10px; color: #775817; background: #fff9e9; font-size: 12px; line-height: 1.6; }
+.copy-preview-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.copy-preview-actions form { margin: 0; }
+.copy-schedule-button.is-confirm { background: #a13a2f; border-color: #852d25; }
+.copy-schedule-button.is-confirm:hover { background: #852d25; }
+.copy-preview-actions .button-link-secondary { min-height: 43px; }
+@media (max-width: 560px) {
+    .copy-schedule-panel { padding: 16px; }
+    .copy-schedule-route { gap: 7px; }
+    .copy-schedule-day { padding: 12px 10px; }
+    .copy-schedule-day strong { font-size: 16px; }
+    .copy-schedule-arrow { font-size: 18px; }
+    .copy-preview-actions, .copy-preview-actions form, .copy-preview-actions .copy-schedule-button { width: 100%; }
+    .copy-preview-actions .button-link-secondary { width: 100%; }
+}
