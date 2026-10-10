@@ -230,6 +230,7 @@ try {
         <a href="schedule-editor.php" class="active" aria-current="page">Editor jadwal</a>
         <a href="settings.php">Konfigurasi</a>
         <a href="backup.php">Backup data</a>
+            <a href="public.php">Tampilan publik</a>
     </nav>
 
     <?php if ($message !== ''): ?><p class="action-feedback success" role="status"><?= h($message) ?></p><?php endif; ?>
