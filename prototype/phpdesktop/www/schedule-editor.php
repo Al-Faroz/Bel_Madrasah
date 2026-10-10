@@ -295,27 +295,29 @@ try {
                                         <tbody>
                                         <?php foreach ($ruleEvents as $event): ?>
                                             <tr>
-                                                <td class="bell-time-cell"><strong><?= h(substr((string) $event['event_time'], 0, 5)) ?></strong></td>
-                                                <td>
+                                                <td class="bell-time-cell">
                                                     <form id="event-form-<?= (int) $event['id'] ?>" class="bell-event-row-form" method="post" action="schedule-editor.php" enctype="multipart/form-data">
                                                         <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>"><input type="hidden" name="editor_action" value="save_event"><input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>"><input type="hidden" name="event_id" value="<?= (int) $event['id'] ?>">
-                                                        <label class="sr-only" for="event-name-<?= (int) $event['id'] ?>">Keterangan bel</label>
-                                                        <input id="event-name-<?= (int) $event['id'] ?>" name="event_name" maxlength="100" required value="<?= h((string) $event['name']) ?>">
-                                                        <label class="sr-only" for="event-time-<?= (int) $event['id'] ?>">Jam</label>
-                                                        <input id="event-time-<?= (int) $event['id'] ?>" type="time" name="event_time" required value="<?= h((string) $event['event_time']) ?>">
-                                                        <label class="sr-only" for="event-order-<?= (int) $event['id'] ?>">Urutan</label>
-                                                        <input id="event-order-<?= (int) $event['id'] ?>" type="number" name="sort_order" min="0" max="9999" required value="<?= (int) $event['sort_order'] ?>" title="Urutan pemutaran">
+                                                    </form>
+                                                    <strong><?= h(substr((string) $event['event_time'], 0, 5)) ?></strong>
                                                 </td>
                                                 <td>
-                                                        <label class="bell-audio-input">Pilih/ganti audio<input type="file" name="audio_file" accept=".mp3,.wav,.ogg,.m4a,.aac,audio/*"></label>
+                                                        <label class="sr-only" for="event-name-<?= (int) $event['id'] ?>">Keterangan bel</label>
+                                                        <input form="event-form-<?= (int) $event['id'] ?>" id="event-name-<?= (int) $event['id'] ?>" name="event_name" maxlength="100" required value="<?= h((string) $event['name']) ?>">
+                                                        <label class="sr-only" for="event-time-<?= (int) $event['id'] ?>">Jam</label>
+                                                        <input form="event-form-<?= (int) $event['id'] ?>" id="event-time-<?= (int) $event['id'] ?>" type="time" name="event_time" required value="<?= h((string) $event['event_time']) ?>">
+                                                        <label class="sr-only" for="event-order-<?= (int) $event['id'] ?>">Urutan</label>
+                                                        <input form="event-form-<?= (int) $event['id'] ?>" id="event-order-<?= (int) $event['id'] ?>" type="number" name="sort_order" min="0" max="9999" required value="<?= (int) $event['sort_order'] ?>" title="Urutan pemutaran">
+                                                </td>
+                                                <td>
+                                                        <label class="bell-audio-input">Pilih/ganti audio<input form="event-form-<?= (int) $event['id'] ?>" type="file" name="audio_file" accept=".mp3,.wav,.ogg,.m4a,.aac,audio/*"></label>
                                                         <small class="bell-audio-status"><?= $event['audio_path'] !== '' ? 'Tersimpan: ' . h(basename((string) $event['audio_path'])) : 'Belum ada audio' ?></small>
                                                 </td>
                                                 <td>
-                                                        <label class="checkbox-line bell-enabled-toggle"><input type="checkbox" name="event_enabled" value="1" <?= (int) $event['is_enabled'] === 1 ? 'checked' : '' ?>> Aktif</label>
+                                                        <label class="checkbox-line bell-enabled-toggle"><input form="event-form-<?= (int) $event['id'] ?>" type="checkbox" name="event_enabled" value="1" <?= (int) $event['is_enabled'] === 1 ? 'checked' : '' ?>> Aktif</label>
                                                 </td>
                                                 <td class="bell-actions-cell">
-                                                        <button type="submit" class="button-compact">Simpan</button>
-                                                    </form>
+                                                        <button type="submit" form="event-form-<?= (int) $event['id'] ?>" class="button-compact">Simpan</button>
                                                     <form method="post" action="schedule-editor.php" class="delete-event-form" onsubmit="return confirm('Hapus kegiatan bel ini?')"><input type="hidden" name="package_id" value="<?= $selectedPackageId ?>"><input type="hidden" name="editor_action" value="delete_event"><input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>"><input type="hidden" name="event_id" value="<?= (int) $event['id'] ?>"><button type="submit" class="text-danger">Hapus</button></form>
                                                 </td>
                                             </tr>
