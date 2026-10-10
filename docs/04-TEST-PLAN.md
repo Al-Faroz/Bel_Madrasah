@@ -1,0 +1,101 @@
+# 04 — Rencana Pengujian
+
+## 1. Prinsip
+
+Pengujian dilakukan pada komputer Windows lokal, bukan hanya berdasarkan pemeriksaan kode. Uji audio harus benar-benar mendengarkan keluaran speaker/amplifier dan memastikan tidak ada pemutar musik eksternal yang perlu dibuka.
+
+## 2. Lingkungan uji yang perlu dicatat
+
+- Edisi dan versi Windows.
+- Arsitektur Windows (x64/ARM64 bila relevan).
+- Perangkat output suara yang dipilih.
+- Jalur koneksi komputer ke speaker/amplifier.
+- Versi paket aplikasi.
+- Ukuran file dan format audio yang diuji.
+- Pengaturan daya Windows, termasuk sleep.
+- Zona waktu dan ketepatan jam sistem.
+
+## 3. Uji fondasi desktop
+
+- [ ] Aplikasi berjalan tanpa XAMPP.
+- [ ] Aplikasi berjalan tanpa instalasi Apache/MySQL.
+- [ ] Aplikasi berjalan pada komputer uji yang tidak memiliki lingkungan pengembangan.
+- [ ] Data dapat disimpan dan dibaca setelah aplikasi dimulai ulang.
+- [ ] Aplikasi tidak menghapus data pengguna saat pembaruan.
+- [ ] Penggunaan CPU/RAM saat idle diukur.
+- [ ] Ukuran paket distribusi dicatat.
+
+## 4. Uji audio
+
+- [ ] Audio uji dapat diputar tanpa membuka pemutar eksternal.
+- [ ] Suara keluar melalui perangkat output yang diharapkan.
+- [ ] File MP3 pendek dapat diputar sampai selesai.
+- [ ] File WAV dapat diputar jika format tersebut masuk dukungan final.
+- [ ] Audio panjang, termasuk lagu kebangsaan, tidak terpotong.
+- [ ] File yang tidak ditemukan menghasilkan pesan yang jelas.
+- [ ] File rusak/tidak didukung tidak membuat aplikasi macet.
+- [ ] Perilaku ketika audio lain sedang berjalan mengikuti kebijakan benturan.
+- [ ] Pemutaran manual tidak merusak status scheduler.
+
+## 5. Uji paket dan persistensi
+
+- [ ] Paket Normal dapat dibuat dan diubah.
+- [ ] Paket Ujian dapat dibuat tanpa mengubah isi paket Normal.
+- [ ] Paket Ramadan/kegiatan khusus dapat dibuat.
+- [ ] Hanya satu paket aktif pada satu waktu.
+- [ ] Paket aktif tetap sama setelah aplikasi dimulai ulang.
+- [ ] Mengubah paket aktif langsung mengubah sumber jadwal yang berlaku.
+- [ ] Paket yang tidak aktif tidak memicu audio.
+
+## 6. Uji kalender
+
+- [ ] Jadwal Normal Senin–Minggu.
+- [ ] Pasaran Legi, Pahing, Pon, Wage, Kliwon.
+- [ ] Minggu kalender ke-1 sampai ke-5 jika tersedia.
+- [ ] Minggu terakhir.
+- [ ] Awal bulan ketika tanggal 1 bukan Senin.
+- [ ] Akhir bulan ketika minggu terakhir tidak penuh.
+- [ ] Pergantian bulan dan tahun.
+- [ ] Tanggal yang cocok dengan aturan pasaran dan minggu kalender sekaligus.
+- [ ] Aturan khusus mengesampingkan Normal.
+- [ ] Jika tidak ada aturan khusus yang cocok, Normal digunakan.
+- [ ] Konflik aturan khusus memberi peringatan dan tidak menghasilkan pemutaran ganda.
+
+## 7. Uji scheduler
+
+- [ ] Audio dimulai pada waktu uji yang dijadwalkan.
+- [ ] Pemeriksaan waktu berulang tidak memicu audio berkali-kali.
+- [ ] Kejadian yang sama tidak diputar ulang setelah dashboard diperbarui.
+- [ ] Kejadian terlewat dicatat, tidak diputar massal otomatis.
+- [ ] Aplikasi tetap menjadwalkan ketika diminimalkan jika fitur tersebut tersedia.
+- [ ] Menutup aplikasi memiliki perilaku yang jelas.
+- [ ] Restart aplikasi tidak mengulang kejadian yang sudah diproses.
+- [ ] Perilaku setelah Windows bangun dari sleep didokumentasikan dan diuji.
+- [ ] Jam sistem yang salah dapat dikenali operator.
+
+## 8. Uji operasional
+
+- [ ] Operator dapat mengubah nama kegiatan.
+- [ ] Operator dapat mengganti waktu kegiatan.
+- [ ] Operator dapat memilih file audio.
+- [ ] Operator dapat menonaktifkan kegiatan tanpa menghapus datanya.
+- [ ] Dashboard menampilkan kegiatan berikutnya.
+- [ ] Status sedang diputar/selesai/gagal sesuai kondisi nyata.
+- [ ] Log membantu menjelaskan hasil pemutaran.
+- [ ] Popup Windows tidak dibutuhkan agar audio tetap berjalan.
+
+## 9. Kinerja dan stabilitas
+
+Lakukan pengukuran pada komputer sasaran:
+- Idle selama minimal satu jam.
+- Pemutaran audio pendek berulang.
+- Pemutaran satu audio panjang.
+- Aplikasi berjalan selama satu hari sekolah simulasi.
+- Restart aplikasi dan Windows.
+- Kondisi file audio hilang atau perangkat output berubah.
+
+Target numerik CPU/RAM akan ditentukan setelah PoC dan disesuaikan dengan spesifikasi komputer sekolah; jangan mengklaim aplikasi ringan sebelum ada pengukuran.
+
+## 10. Catatan operasional
+
+Aplikasi tidak dapat menjamin pemutaran tepat waktu jika komputer mati, Windows tidur, aplikasi dihentikan, atau perangkat audio terputus. Rekomendasi pengaturan daya dan langkah pemulihan harus ditulis dalam panduan pengguna setelah perilaku final diuji.
