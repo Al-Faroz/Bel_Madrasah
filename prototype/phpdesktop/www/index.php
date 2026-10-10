@@ -132,7 +132,7 @@ try {
     <header class="topbar">
         <div class="brand-mark" aria-hidden="true">BM</div>
         <div>
-            <p class="eyebrow">PROTOTIPE TAHAP 1A</p>
+            <p class="eyebrow">PROTOTIPE TAHAP 2</p>
             <h1>Bel Madrasah</h1>
             <p class="subtitle">Pemeriksaan fondasi aplikasi desktop Windows</p>
         </div>
@@ -299,7 +299,7 @@ try {
     </main>
 
     <footer>
-        <span>Bel Madrasah · PoC Tahap 1A</span>
+        <span>Bel Madrasah · PoC Tahap 2</span>
         <span>Data diagnostik lokal · Tidak dikirim ke internet</span>
     </footer>
 </div>
