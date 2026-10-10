@@ -206,8 +206,8 @@ try {
 
     <section class="editor-grid">
         <section class="panel editor-rule-form">
-            <div class="section-heading"><div><p class="eyebrow"><?= $editingRuleId > 0 ? 'EDIT ATURAN' : 'ATURAN HARI BARU' ?></p><h2><?= $editingRuleId > 0 ? 'Ubah pola hari' : 'Tambah pola hari' ?></h2></div></div>
-            <form method="post" action="schedule-editor.php">
+            <div class="section-heading editor-rule-heading"><div><p class="eyebrow"><?= $editingRuleId > 0 ? 'EDIT ATURAN' : 'ATURAN HARI BARU' ?></p><h2><?= $editingRuleId > 0 ? 'Ubah pola hari' : 'Tambah pola hari' ?></h2></div><button type="submit" form="day-rule-form" class="rule-submit-button rule-submit-button-top"><?= $editingRuleId > 0 ? 'Simpan Perubahan' : '+ Tambah Aturan Hari' ?></button></div>
+            <form id="day-rule-form" method="post" action="schedule-editor.php">
                 <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>">
                 <input type="hidden" name="editor_action" value="save_rule">
                 <input type="hidden" name="rule_id" value="<?= $editingRuleId ?>">
