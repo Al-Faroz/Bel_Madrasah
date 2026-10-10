@@ -61,6 +61,10 @@ Skema versi 1 menyiapkan tabel `app_meta`, `app_settings`, `schedule_packages`, 
 
 **Status Tahap 2:** implementasi awal tersedia; menunggu hasil uji lokal. Jangan menandai PASS hanya berdasarkan kode.
 
+## Hasil pengujian Tahap 2
+
+**Status: PASS berdasarkan laporan pengguna.** Hasil yang dilaporkan: database aplikasi PASS; setelah restart tetap PASS; MP3 panjang PASS; WAV PASS; tidak ada error/catatan tambahan. Belum ada detail durasi/ukuran file yang dicatat. Pengujian file hilang/rusak, audio device terputus, pemadaman paksa, scheduler, tray, dan sleep/wake masih diperlukan.
+
 ## Apa yang diperiksa prototipe
 
 - Halaman PHP dirender di jendela desktop.
