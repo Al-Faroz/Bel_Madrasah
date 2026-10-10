@@ -26,6 +26,20 @@ Semua tahap di bawah berstatus **BELUM DIMULAI** sampai benar-benar dikerjakan d
 - Prototipe bisa dijalankan di Windows sasaran tanpa XAMPP.
 - Keputusan runtime ditulis beserta alasan dan keterbatasannya.
 
+## Tahap 1A — Validasi persistensi SQLite
+**Status: KODE DI REPOSITORY — MENUNGGU UJI LOKAL WINDOWS.**
+
+**Pekerjaan**
+- Tambahkan tes diagnostik yang membuat database SQLite di AppData pengguna Windows.
+- Tulis marker uji dan tampilkan kembali marker/waktu simpan.
+- Sediakan langkah uji setelah aplikasi ditutup dan dibuka kembali.
+- Tampilkan error yang dapat dilaporkan jika direktori atau PDO SQLite gagal.
+
+**Kriteria selesai**
+- Marker yang disimpan sebelum aplikasi ditutup terbaca identik setelah aplikasi dibuka kembali.
+- Lokasi database bukan di dalam folder program/runtime.
+- Hasil uji aktual dicatat sebelum status tahap dinyatakan lulus.
+
 ## Tahap 2 — PoC SQLite dan audio internal
 **Pekerjaan**
 - Buat/baca/tulis database SQLite.
