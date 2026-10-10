@@ -216,3 +216,20 @@ Acuan: [05-UI-UX-MATERIAL-DESIGN.md](05-UI-UX-MATERIAL-DESIGN.md).
 ## 10. Catatan operasional
 
 Aplikasi tidak dapat menjamin pemutaran tepat waktu jika komputer mati, Windows tidur, aplikasi dihentikan, atau perangkat audio terputus. Rekomendasi pengaturan daya dan langkah pemulihan harus ditulis dalam panduan pengguna setelah perilaku final diuji.
+
+
+## UI-3 — Paket Jadwal (Material Design)
+
+Acuan visual: [05-UI-UX-MATERIAL-DESIGN.md](05-UI-UX-MATERIAL-DESIGN.md).
+
+- [ ] Halaman daftar dan formulir paket konsisten dengan design tokens dan app shell.
+- [ ] Paket aktif tampak berbeda dengan label teks dan indikator visual.
+- [ ] Nama paket dan keterangan mempunyai label aksesibel yang terkait langsung dengan input.
+- [ ] Ringkasan hari libur pada setiap paket sesuai data yang tersimpan.
+- [ ] Pilihan hari libur pada paket baru tetap sama: Jumat, Minggu, atau Sabtu–Minggu.
+- [ ] Mengedit paket lama tidak mengubah aturan hari libur yang sudah ada.
+- [ ] Aktivasi paket meminta konfirmasi sebelum mengganti sumber jadwal global.
+- [ ] Membatalkan dialog konfirmasi tidak mengirim perubahan.
+- [ ] Konfirmasi aktivasi yang disetujui tetap mengaktifkan paket melalui handler backend yang ada.
+- [ ] Layout diuji pada lebar 1366 px, 1024 px, dan 390 px.
+- [ ] Pemeriksaan runtime dilakukan pada Windows lokal; pemeriksaan repository bukan pengganti uji runtime.
