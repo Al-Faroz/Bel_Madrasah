@@ -2,7 +2,7 @@
 
 Folder ini berisi prototipe awal untuk memeriksa apakah antarmuka PHP dapat berjalan di jendela desktop Windows tanpa XAMPP.
 
-**Status:** prototipe sumber tersedia; belum dinyatakan lulus sebelum dijalankan di komputer Windows target.
+**Status:** PoC desktop dan uji persistensi SQLite Tahap 1A dilaporkan PASS oleh pengguna pada Windows 11 64-bit. Pengujian lanjutan tetap diperlukan sebelum runtime ditetapkan final.
 
 ## Kandidat runtime
 
@@ -41,6 +41,8 @@ Jika `APPDATA` tidak tersedia, aplikasi mencoba `LOCALAPPDATA`. Aplikasi tidak s
 7. Bila muncul `FAIL`, catat seluruh pesan error dan lokasi database yang ditampilkan.
 
 Tes ini memeriksa pembuatan database, operasi tulis/baca, dan persistensi setelah aplikasi ditutup. Ini belum merupakan database jadwal produksi.
+
+**Hasil uji lokal yang dilaporkan:** DATABASE SIAP; Simpan data uji berhasil; setelah restart marker dan waktu sama; tidak ada error. Status tes persistensi diagnostik: **PASS**.
 
 ## Apa yang diperiksa prototipe
 
