@@ -233,6 +233,122 @@ final class Database
         return $destination;
     }
 
+    /**
+     * Seed one sensible starting package only when the package list is empty.
+     * Existing user packages and the selected active package are never replaced.
+     */
+    public function ensureDefaultSchedulePackage(): void
+    {
+        $count = (int) $this->pdo->query('SELECT COUNT(*) FROM schedule_packages')->fetchColumn();
+        if ($count > 0) {
+            return;
+        }
+
+        $now = date('Y-m-d H:i:s');
+        $statement = $this->pdo->prepare(
+            'INSERT INTO schedule_packages (name, description, is_active, created_at, updated_at)
+             VALUES (:name, :description, 1, :created_at, :updated_at)'
+        );
+        $statement->execute([
+            ':name' => 'Normal',
+            ':description' => 'Paket jadwal utama sekolah.',
+            ':created_at' => $now,
+            ':updated_at' => $now,
+        ]);
+    }
+
+    /** @return array<int, array<string, mixed>> */
+    public function getSchedulePackages(): array
+    {
+        return $this->pdo->query(
+            'SELECT id, name, description, is_active, created_at, updated_at
+             FROM schedule_packages ORDER BY is_active DESC, name COLLATE NOCASE ASC, id ASC'
+        )->fetchAll();
+    }
+
+    /** @return array<string, mixed>|null */
+    public function getSchedulePackage(int $id): ?array
+    {
+        $statement = $this->pdo->prepare(
+            'SELECT id, name, description, is_active, created_at, updated_at
+             FROM schedule_packages WHERE id = :id'
+        );
+        $statement->execute([':id' => $id]);
+        $package = $statement->fetch();
+        return $package === false ? null : $package;
+    }
+
+    public function saveSchedulePackage(?int $id, string $name, string $description): int
+    {
+        $name = trim($name);
+        $description = trim($description);
+        if ($name === '' || strlen($name) > 80) {
+            throw new InvalidArgumentException('Nama paket wajib diisi dan maksimal 80 karakter.');
+        }
+        if (strlen($description) > 300) {
+            throw new InvalidArgumentException('Keterangan maksimal 300 karakter.');
+        }
+
+        $now = date('Y-m-d H:i:s');
+        if ($id === null) {
+            $statement = $this->pdo->prepare(
+                'INSERT INTO schedule_packages (name, description, is_active, created_at, updated_at)
+                 VALUES (:name, :description, 0, :created_at, :updated_at)'
+            );
+            $statement->execute([
+                ':name' => $name,
+                ':description' => $description,
+                ':created_at' => $now,
+                ':updated_at' => $now,
+            ]);
+            return (int) $this->pdo->lastInsertId();
+        }
+
+        if ($this->getSchedulePackage($id) === null) {
+            throw new RuntimeException('Paket yang akan diubah tidak ditemukan.');
+        }
+        $statement = $this->pdo->prepare(
+            'UPDATE schedule_packages SET name = :name, description = :description, updated_at = :updated_at
+             WHERE id = :id'
+        );
+        $statement->execute([
+            ':name' => $name,
+            ':description' => $description,
+            ':updated_at' => $now,
+            ':id' => $id,
+        ]);
+        return $id;
+    }
+
+    /**
+     * Atomically switch the globally active package. The partial unique index
+     * remains the final guard against two active packages.
+     */
+    public function activateSchedulePackage(int $id): void
+    {
+        if ($this->getSchedulePackage($id) === null) {
+            throw new RuntimeException('Paket yang akan diaktifkan tidak ditemukan.');
+        }
+
+        $this->pdo->beginTransaction();
+        try {
+            $this->pdo->exec('UPDATE schedule_packages SET is_active = 0 WHERE is_active = 1');
+            $statement = $this->pdo->prepare(
+                'UPDATE schedule_packages SET is_active = 1, updated_at = :updated_at WHERE id = :id'
+            );
+            $statement->execute([':updated_at' => date('Y-m-d H:i:s'), ':id' => $id]);
+            if ($statement->rowCount() !== 1) {
+                throw new RuntimeException('Paket tidak berhasil diaktifkan.');
+            }
+            $this->pdo->commit();
+        } catch (Throwable $exception) {
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
+            throw $exception;
+        }
+    }
+
     public function getTables(): array
     {
         return $this->pdo->query(
