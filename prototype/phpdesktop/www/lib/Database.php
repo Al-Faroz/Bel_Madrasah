@@ -171,6 +171,68 @@ final class Database
         }
     }
 
+    public function getSetting(string $key, string $default = ''): string
+    {
+        $statement = $this->pdo->prepare('SELECT setting_value FROM app_settings WHERE setting_key = :key');
+        $statement->execute([':key' => $key]);
+        $value = $statement->fetchColumn();
+        return $value === false ? $default : (string) $value;
+    }
+
+    public function saveSettings(array $settings): void
+    {
+        $allowed = ['school_name', 'operator_name', 'default_volume'];
+        $now = date('Y-m-d H:i:s');
+        $statement = $this->pdo->prepare(
+            'INSERT INTO app_settings (setting_key, setting_value, updated_at)
+             VALUES (:key, :value, :updated_at)
+             ON CONFLICT(setting_key) DO UPDATE SET setting_value = excluded.setting_value, updated_at = excluded.updated_at'
+        );
+
+        $this->pdo->beginTransaction();
+        try {
+            foreach ($settings as $key => $value) {
+                if (!in_array($key, $allowed, true)) {
+                    continue;
+                }
+                $statement->execute([
+                    ':key' => $key,
+                    ':value' => trim((string) $value),
+                    ':updated_at' => $now,
+                ]);
+            }
+            $this->pdo->commit();
+        } catch (Throwable $exception) {
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
+            throw $exception;
+        }
+    }
+
+    /**
+     * Create a consistent SQLite backup using VACUUM INTO.
+     * The caller must provide a new destination path that does not exist yet.
+     */
+    public function createBackup(string $destination): string
+    {
+        $directory = dirname($destination);
+        if (!is_dir($directory) && !mkdir($directory, 0770, true) && !is_dir($directory)) {
+            throw new RuntimeException('Folder backup tidak dapat dibuat.');
+        }
+        if (file_exists($destination)) {
+            throw new RuntimeException('File backup sudah ada. Buat nama backup baru.');
+        }
+
+        $escapedDestination = str_replace("'", "''", $destination);
+        $this->pdo->exec("VACUUM INTO '" . $escapedDestination . "'");
+        if (!is_file($destination) || filesize($destination) === 0) {
+            throw new RuntimeException('Backup tidak terbentuk atau ukurannya kosong.');
+        }
+
+        return $destination;
+    }
+
     public function getTables(): array
     {
         return $this->pdo->query(
