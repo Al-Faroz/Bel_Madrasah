@@ -2,7 +2,7 @@
 
 Aplikasi bel otomatis untuk kebutuhan operasional madrasah/sekolah di Windows.
 
-**Status proyek:** PoC desktop dan uji persistensi SQLite diagnostik Tahap 1A dilaporkan PASS pada Windows 11 64-bit. Implementasi awal database aplikasi utama Tahap 2 sudah tersedia di repository dan menunggu uji lokal. Scheduler otomatis, tray, audio panjang, sleep/wake, dan pengemasan masih perlu diuji.
+**Status proyek:** PoC desktop dan uji persistensi SQLite diagnostik Tahap 1A dilaporkan PASS pada Windows 11 64-bit. Database aplikasi utama dan uji audio Tahap 2 dilaporkan PASS oleh pengguna pada Windows 11 64-bit (SQLite, restart, MP3 panjang, dan WAV). Scheduler otomatis, tray, audio panjang, sleep/wake, dan pengemasan masih perlu diuji.
 
 Bel Madrasah dirancang agar operator dapat mengatur paket jadwal, waktu kegiatan, dan file audio. Saat waktu yang ditentukan tiba, aplikasi menjalankan audio secara otomatis melalui perangkat suara Windows tanpa operator perlu membuka Winamp, VLC, Windows Media Player, atau pemutar musik eksternal lainnya.
 
