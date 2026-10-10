@@ -57,8 +57,10 @@ try {
                 $ruleForm['is_enabled'] === '1'
             );
             $message = $editingRuleId > 0 ? 'Aturan hari berhasil diperbarui.' : 'Aturan hari berhasil ditambahkan.';
+            // Pertahankan hari yang baru disimpan agar kartu aturan tidak tampak menghilang setelah submit.
+            $savedWeekday = $ruleForm['weekday'];
             $editingRuleId = 0;
-            $ruleForm = ['weekday' => '1', 'rule_mode' => 'normal', 'special_type' => 'pasaran', 'special_value' => 'Legi', 'is_enabled' => '1'];
+            $ruleForm = ['weekday' => $savedWeekday, 'rule_mode' => 'normal', 'special_type' => 'pasaran', 'special_value' => 'Legi', 'is_enabled' => '1'];
         } elseif ($action === 'edit_rule') {
             $editingRuleId = (int) ($_POST['rule_id'] ?? 0);
             $rule = $db->getDayRule($editingRuleId);
