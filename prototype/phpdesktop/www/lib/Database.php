@@ -9,7 +9,7 @@ final class Database
 {
     private PDO $pdo;
     private string $path;
-    private const SCHEMA_VERSION = 1;
+    private const SCHEMA_VERSION = 2;
 
     public function __construct()
     {
@@ -347,6 +347,220 @@ final class Database
             }
             throw $exception;
         }
+    }
+
+    /** Return rules for a package, optionally limited to a weekday (1=Monday ... 7=Sunday). */
+    public function getDayRules(int $packageId, ?int $weekday = null): array
+    {
+        $sql = 'SELECT r.*, p.name AS package_name FROM day_rules r
+                INNER JOIN schedule_packages p ON p.id = r.package_id
+                WHERE r.package_id = :package_id';
+        $params = [':package_id' => $packageId];
+        if ($weekday !== null) {
+            $sql .= ' AND r.weekday = :weekday';
+            $params[':weekday'] = $weekday;
+        }
+        $sql .= ' ORDER BY r.weekday ASC,
+                  CASE r.rule_mode WHEN \'normal\' THEN 0 ELSE 1 END,
+                  r.special_type ASC, r.special_value ASC, r.id ASC';
+        $statement = $this->pdo->prepare($sql);
+        $statement->execute($params);
+        return $statement->fetchAll();
+    }
+
+    public function getDayRule(int $id): ?array
+    {
+        $statement = $this->pdo->prepare('SELECT * FROM day_rules WHERE id = :id');
+        $statement->execute([':id' => $id]);
+        $row = $statement->fetch();
+        return $row === false ? null : $row;
+    }
+
+    public function saveDayRule(?int $id, int $packageId, int $weekday, string $mode, ?string $specialType, ?string $specialValue, bool $enabled): int
+    {
+        if ($weekday < 1 || $weekday > 7) {
+            throw new InvalidArgumentException('Hari harus dipilih dari Senin sampai Minggu.');
+        }
+        if ($this->getSchedulePackage($packageId) === null) {
+            throw new InvalidArgumentException('Paket jadwal tidak ditemukan.');
+        }
+        if (!in_array($mode, ['normal', 'special'], true)) {
+            throw new InvalidArgumentException('Pola hari tidak valid.');
+        }
+
+        if ($mode === 'normal') {
+            $specialType = null;
+            $specialValue = null;
+        } else {
+            if (!in_array($specialType, ['pasaran', 'month_week'], true)) {
+                throw new InvalidArgumentException('Pilih satu jenis kekhususan.');
+            }
+            $allowedValues = $specialType === 'pasaran'
+                ? ['Legi', 'Pahing', 'Pon', 'Wage', 'Kliwon']
+                : ['1', '2', '3', '4', '5', 'last'];
+            if (!in_array((string) $specialValue, $allowedValues, true)) {
+                throw new InvalidArgumentException('Nilai kekhususan tidak valid.');
+            }
+        }
+
+        $duplicateSql = $mode === 'normal'
+            ? 'SELECT id FROM day_rules WHERE package_id = :package_id AND weekday = :weekday AND rule_mode = \'normal\''
+            : 'SELECT id FROM day_rules WHERE package_id = :package_id AND weekday = :weekday AND rule_mode = \'special\' AND special_type = :special_type AND special_value = :special_value';
+        $duplicate = $this->pdo->prepare($duplicateSql);
+        $duplicateParams = [':package_id' => $packageId, ':weekday' => $weekday];
+        if ($mode === 'special') {
+            $duplicateParams[':special_type'] = $specialType;
+            $duplicateParams[':special_value'] = $specialValue;
+        }
+        $duplicate->execute($duplicateParams);
+        $duplicateId = $duplicate->fetchColumn();
+        if ($duplicateId !== false && (int) $duplicateId !== (int) $id) {
+            throw new InvalidArgumentException($mode === 'normal'
+                ? 'Pola Normal untuk hari ini sudah ada pada paket tersebut.'
+                : 'Aturan khusus dengan atribut yang sama sudah ada untuk hari ini.');
+        }
+
+        $now = date('Y-m-d H:i:s');
+        if ($id === null) {
+            $statement = $this->pdo->prepare(
+                'INSERT INTO day_rules (package_id, weekday, rule_mode, special_type, special_value, is_enabled, created_at, updated_at)
+                 VALUES (:package_id, :weekday, :rule_mode, :special_type, :special_value, :is_enabled, :created_at, :updated_at)'
+            );
+            $statement->execute([
+                ':package_id' => $packageId, ':weekday' => $weekday, ':rule_mode' => $mode,
+                ':special_type' => $specialType, ':special_value' => $specialValue,
+                ':is_enabled' => $enabled ? 1 : 0, ':created_at' => $now, ':updated_at' => $now,
+            ]);
+            return (int) $this->pdo->lastInsertId();
+        }
+
+        $existing = $this->getDayRule($id);
+        if ($existing === null) {
+            throw new InvalidArgumentException('Aturan hari yang akan diubah tidak ditemukan.');
+        }
+        if ((int) $existing['package_id'] !== $packageId) {
+            throw new InvalidArgumentException('Aturan hari tidak sesuai dengan paket yang dipilih.');
+        }
+        $statement = $this->pdo->prepare(
+            'UPDATE day_rules SET weekday = :weekday, rule_mode = :rule_mode, special_type = :special_type,
+             special_value = :special_value, is_enabled = :is_enabled, updated_at = :updated_at WHERE id = :id'
+        );
+        $statement->execute([
+            ':weekday' => $weekday, ':rule_mode' => $mode, ':special_type' => $specialType,
+            ':special_value' => $specialValue, ':is_enabled' => $enabled ? 1 : 0,
+            ':updated_at' => $now, ':id' => $id,
+        ]);
+        return $id;
+    }
+
+    public function getBellEvents(int $dayRuleId): array
+    {
+        $statement = $this->pdo->prepare(
+            'SELECT * FROM bell_events WHERE day_rule_id = :day_rule_id ORDER BY sort_order ASC, event_time ASC, id ASC'
+        );
+        $statement->execute([':day_rule_id' => $dayRuleId]);
+        return $statement->fetchAll();
+    }
+
+    public function getBellEvent(int $id): ?array
+    {
+        $statement = $this->pdo->prepare('SELECT * FROM bell_events WHERE id = :id');
+        $statement->execute([':id' => $id]);
+        $row = $statement->fetch();
+        return $row === false ? null : $row;
+    }
+
+    public function saveBellEvent(?int $id, int $dayRuleId, string $name, string $time, string $audioPath, bool $enabled, int $sortOrder): int
+    {
+        $name = trim($name);
+        if ($name === '' || strlen($name) > 100) {
+            throw new InvalidArgumentException('Nama kegiatan wajib diisi dan maksimal 100 karakter.');
+        }
+        if (!preg_match('/^(?:[01][0-9]|2[0-3]):[0-5][0-9]$/', $time)) {
+            throw new InvalidArgumentException('Waktu harus valid dengan format 00:00 sampai 23:59.');
+        }
+        if ($sortOrder < 0 || $sortOrder > 9999) {
+            throw new InvalidArgumentException('Urutan harus antara 0 dan 9999.');
+        }
+        if ($this->getDayRule($dayRuleId) === null) {
+            throw new InvalidArgumentException('Aturan hari untuk kegiatan ini tidak ditemukan.');
+        }
+        if ($id === null) {
+            $statement = $this->pdo->prepare(
+                'INSERT INTO bell_events (day_rule_id, name, event_time, audio_path, is_enabled, sort_order, created_at, updated_at)
+                 VALUES (:day_rule_id, :name, :event_time, :audio_path, :is_enabled, :sort_order, :created_at, :updated_at)'
+            );
+            $statement->execute([
+                ':day_rule_id' => $dayRuleId, ':name' => $name, ':event_time' => $time,
+                ':audio_path' => $audioPath, ':is_enabled' => $enabled ? 1 : 0,
+                ':sort_order' => $sortOrder, ':created_at' => date('Y-m-d H:i:s'), ':updated_at' => date('Y-m-d H:i:s'),
+            ]);
+            return (int) $this->pdo->lastInsertId();
+        }
+        $existing = $this->getBellEvent($id);
+        if ($existing === null || (int) $existing['day_rule_id'] !== $dayRuleId) {
+            throw new InvalidArgumentException('Kegiatan yang akan diubah tidak ditemukan pada aturan hari ini.');
+        }
+        $statement = $this->pdo->prepare(
+            'UPDATE bell_events SET name = :name, event_time = :event_time, audio_path = :audio_path,
+             is_enabled = :is_enabled, sort_order = :sort_order, updated_at = :updated_at WHERE id = :id'
+        );
+        $statement->execute([
+            ':name' => $name, ':event_time' => $time, ':audio_path' => $audioPath,
+            ':is_enabled' => $enabled ? 1 : 0, ':sort_order' => $sortOrder,
+            ':updated_at' => date('Y-m-d H:i:s'), ':id' => $id,
+        ]);
+        return $id;
+    }
+
+    public function deleteBellEvent(int $id, int $dayRuleId): void
+    {
+        $statement = $this->pdo->prepare('DELETE FROM bell_events WHERE id = :id AND day_rule_id = :day_rule_id');
+        $statement->execute([':id' => $id, ':day_rule_id' => $dayRuleId]);
+        if ($statement->rowCount() !== 1) {
+            throw new InvalidArgumentException('Kegiatan yang akan dihapus tidak ditemukan.');
+        }
+    }
+
+    public function getAudioStorageDirectory(): string
+    {
+        $root = getenv('APPDATA');
+        if ($root === false || trim($root) === '') {
+            $root = getenv('LOCALAPPDATA');
+        }
+        if ($root === false || trim($root) === '') {
+            throw new RuntimeException('Folder AppData/LocalAppData Windows tidak ditemukan.');
+        }
+        $directory = rtrim($root, "\\\\/") . DIRECTORY_SEPARATOR . 'BelMadrasah' . DIRECTORY_SEPARATOR . 'audio';
+        if (!is_dir($directory) && !mkdir($directory, 0770, true) && !is_dir($directory)) {
+            throw new RuntimeException('Folder audio tidak dapat dibuat.');
+        }
+        return $directory;
+    }
+
+    public function storeUploadedAudio(array $file): string
+    {
+        if (!isset($file['error'], $file['tmp_name'], $file['name']) || (int) $file['error'] !== UPLOAD_ERR_OK) {
+            throw new InvalidArgumentException('File audio belum dipilih atau gagal diunggah.');
+        }
+        if (!is_uploaded_file((string) $file['tmp_name'])) {
+            throw new InvalidArgumentException('Berkas audio tidak dikenali sebagai unggahan yang valid.');
+        }
+        if ((int) ($file['size'] ?? 0) <= 0 || (int) $file['size'] > 50 * 1024 * 1024) {
+            throw new InvalidArgumentException('Ukuran audio harus lebih dari 0 dan maksimal 50 MB.');
+        }
+        $original = (string) $file['name'];
+        $extension = strtolower(pathinfo($original, PATHINFO_EXTENSION));
+        $allowed = ['mp3', 'wav', 'ogg', 'm4a', 'aac'];
+        if (!in_array($extension, $allowed, true)) {
+            throw new InvalidArgumentException('Format audio yang diizinkan: MP3, WAV, OGG, M4A, atau AAC.');
+        }
+        $directory = $this->getAudioStorageDirectory();
+        $target = $directory . DIRECTORY_SEPARATOR . bin2hex(random_bytes(12)) . '.' . $extension;
+        if (!move_uploaded_file((string) $file['tmp_name'], $target)) {
+            throw new RuntimeException('File audio tidak dapat disimpan ke penyimpanan lokal.');
+        }
+        return $target;
     }
 
     public function getTables(): array
