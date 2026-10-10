@@ -26,6 +26,7 @@ $databasePath = $db instanceof Database ? $db->getPath() : '';
         <a href="schedule-editor.php">Editor jadwal</a>
         <a href="settings.php">Konfigurasi</a>
         <a class="active" href="backup.php" aria-current="page">Backup data</a>
+            <a href="public.php">Tampilan publik</a>
     </nav>
 <section class="intro panel page-intro"><div><p class="eyebrow">BACKUP SQLITE</p><h2>Cadangkan data lokal</h2><p>Backup membuat salinan konsisten database aktif tanpa menghapus atau memindahkan database sumber.</p></div></section>
 <?php if ($message !== ''): ?><p class="action-feedback success" role="status"><?=h($message)?></p><?php endif; ?><?php if ($error !== ''): ?><p class="action-feedback error" role="alert"><?=h($error)?></p><?php endif; ?>
