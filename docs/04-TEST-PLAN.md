@@ -20,13 +20,22 @@ Pengujian dilakukan pada komputer Windows lokal, bukan hanya berdasarkan pemerik
 - [ ] Aplikasi berjalan tanpa XAMPP.
 - [ ] Aplikasi berjalan tanpa instalasi Apache/MySQL.
 - [ ] Aplikasi berjalan pada komputer uji yang tidak memiliki lingkungan pengembangan.
-- [ ] Data dapat disimpan dan dibaca setelah aplikasi dimulai ulang.
-- [ ] Tes SQLite Tahap 1A: tekan **Simpan data uji**, catat marker/waktu, tutup aplikasi sepenuhnya, buka ulang, lalu tekan **Baca data tersimpan**; marker/waktu harus tetap sama.
+- [x] Data uji dapat disimpan dan dibaca setelah aplikasi dimulai ulang (hasil pengguna: PASS).
+- [x] Tes SQLite Tahap 1A: marker dan waktu simpan tetap sama setelah aplikasi ditutup sepenuhnya dan dibuka kembali (hasil pengguna: PASS).
 - [ ] Tes gagal SQLite: bila status database bermasalah, pesan error dapat dibaca dan dicatat; aplikasi tidak diam-diam menyimpan database di folder program.
-- [ ] Lokasi database diagnostik berada di `%APPDATA%\\BelMadrasah\\diagnostics\\storage-test.sqlite` (atau `LOCALAPPDATA` bila `APPDATA` tidak tersedia).
+- [x] Lokasi database diagnostik dirancang berada di `%APPDATA%\\BelMadrasah\\diagnostics\\storage-test.sqlite` (atau `LOCALAPPDATA` bila `APPDATA` tidak tersedia); lokasi aktual belum dicatat dari laporan.
 - [ ] Aplikasi tidak menghapus data pengguna saat pembaruan.
 - [ ] Penggunaan CPU/RAM saat idle diukur.
 - [ ] Ukuran paket distribusi dicatat.
+
+### Catatan hasil uji Tahap 1A
+- **Lingkungan:** Windows 11 64-bit; PHP 8.3.13; PDO SQLite terdeteksi.
+- **Database siap:** Ya.
+- **Simpan data uji:** Berhasil.
+- **Setelah restart aplikasi:** Marker dan waktu sama.
+- **Error:** Tidak ada.
+- **Status:** PASS untuk uji persistensi diagnostik yang dilaporkan pengguna.
+- **Batas cakupan:** Belum menguji kegagalan tulis, pemadaman paksa, backup/restore, maupun skema database jadwal produksi.
 
 ## 4. Uji audio
 
