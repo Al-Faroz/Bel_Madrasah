@@ -65,6 +65,23 @@ Skema versi 1 menyiapkan tabel `app_meta`, `app_settings`, `schedule_packages`, 
 
 **Status: PASS berdasarkan laporan pengguna.** Hasil yang dilaporkan: database aplikasi PASS; setelah restart tetap PASS; MP3 panjang PASS; WAV PASS; tidak ada error/catatan tambahan. Belum ada detail durasi/ukuran file yang dicatat. Pengujian file hilang/rusak, audio device terputus, pemadaman paksa, scheduler, tray, dan sleep/wake masih diperlukan.
 
+## Tahap 3 — Kerangka aplikasi, konfigurasi, dan backup
+
+Tahap 3 menambahkan halaman berikut:
+- index.php — dashboard diagnostik yang sudah ada, kini dengan navigasi.
+- settings.php — simpan nama madrasah, nama operator, dan preferensi volume (0–100) ke app_settings.
+- backup.php — buat salinan database dengan SQLite VACUUM INTO ke %APPDATA%\\BelMadrasah\\backups (fallback %LOCALAPPDATA%).
+
+### Cara uji Tahap 3
+1. Jalankan `git pull origin main` lalu salin ulang isi `prototype/phpdesktop/www/` ke folder `www/` runtime. Jangan menghapus folder `%APPDATA%\\BelMadrasah`.
+2. Buka aplikasi dan pastikan navigasi Dashboard diagnostik, Konfigurasi, dan Backup data tampil.
+3. Buka Konfigurasi, isi nama madrasah/operator dan volume, lalu simpan. Pindah halaman, kembali lagi, dan pastikan nilai tetap tersimpan. Tutup dan buka aplikasi untuk menguji persistensi.
+4. Coba volume 0 dan 100. Formulir seharusnya menolak nilai di luar rentang. Preferensi volume belum mengatur volume audio otomatis.
+5. Buka Backup data, tekan Buat backup sekarang. Pastikan pesan berhasil dan file .sqlite muncul di folder backup yang ditampilkan.
+6. Pastikan database aktif tetap ada. Ulangi backup dan periksa bahwa nama file baru berbeda, tidak menimpa backup lama.
+7. Jika backup gagal, catat seluruh pesan error. Jangan mengganti atau menimpa database aktif dengan file backup untuk pengujian.
+
+Status Tahap 3: implementasi tersedia; menunggu uji lokal. Fitur restore, editor paket jadwal, scheduler otomatis, dan integrasi volume pemutar belum dibuat.
 ## Apa yang diperiksa prototipe
 
 - Halaman PHP dirender di jendela desktop.
