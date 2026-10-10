@@ -120,6 +120,8 @@ Pengujian dilakukan pada komputer Windows lokal, bukan hanya berdasarkan pemerik
 - [ ] Tambah kegiatan dengan nama, waktu valid, urutan, status aktif, dan file MP3.
 - [ ] Tambah kegiatan WAV; pastikan jalur file tersimpan dan file ada di folder audio lokal aplikasi.
 - [ ] Edit nama/waktu/urutan/status kegiatan dan ganti audio; pastikan perubahan tersimpan.
+- [ ] Simpan edit kegiatan tanpa memilih audio baru; jalur audio lama harus tetap dipertahankan dari database.
+- [ ] Coba unggahan gagal/terlalu besar; pesan harus menjelaskan penyebab dan tidak boleh meninggalkan file audio yatim saat validasi data gagal.
 - [ ] Coba waktu tidak valid melalui request yang dimodifikasi (contoh 25:90); server harus menolak.
 - [ ] Coba file dengan ekstensi yang tidak diizinkan dan file di atas batas ukuran; aplikasi menolak dengan pesan jelas.
 - [ ] Hapus satu kegiatan; hanya kegiatan itu yang hilang.
