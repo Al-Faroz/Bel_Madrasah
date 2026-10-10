@@ -81,7 +81,9 @@ Tahap 3 menambahkan halaman berikut:
 6. Pastikan database aktif tetap ada. Ulangi backup dan periksa bahwa nama file baru berbeda, tidak menimpa backup lama.
 7. Jika backup gagal, catat seluruh pesan error. Jangan mengganti atau menimpa database aktif dengan file backup untuk pengujian.
 
-Status Tahap 3: implementasi tersedia; menunggu uji lokal. Fitur restore, editor paket jadwal, scheduler otomatis, dan integrasi volume pemutar belum dibuat.
+**Status Tahap 3: PASS berdasarkan laporan pengujian lokal pengguna.** Navigasi, penyimpanan konfigurasi, persistensi setelah restart, backup pertama, dan backup kedua dilaporkan PASS; tidak ada error. Tidak ada perbaikan kode yang diindikasikan oleh laporan.
+
+Belum dikonfirmasi secara terpisah: validitas file backup dengan pemeriksaan SQLite independen, bahwa nama backup kedua berbeda dan file pertama tidak tertimpa, serta proses restore. Fitur restore, editor paket jadwal, scheduler otomatis, dan integrasi volume pemutar belum dibuat.
 ## Apa yang diperiksa prototipe
 
 - Halaman PHP dirender di jendela desktop.
