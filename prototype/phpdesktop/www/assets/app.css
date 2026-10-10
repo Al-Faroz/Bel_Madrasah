@@ -238,6 +238,42 @@ footer { display: flex; justify-content: space-between; gap: 12px; padding: 20px
 .editor-rule-form .rule-submit-button:active { transform: translateY(2px); box-shadow: 0 1px 0 #0f4429; }
 .editor-rule-form .rule-submit-actions .button-link-secondary { align-self: stretch; }
 
+/* Filter hari pada Editor Jadwal */
+.schedule-day-filter {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 7px;
+    margin: 0 0 14px;
+    color: var(--ink);
+    font-size: 12px;
+    font-weight: 800;
+}
+.schedule-day-filter select {
+    width: 100%;
+    min-height: 42px;
+    padding: 9px 11px;
+    border: 1px solid #b9d7c1;
+    border-radius: 9px;
+    color: var(--ink);
+    background: #fff;
+    font: inherit;
+    font-weight: 600;
+}
+.schedule-day-filter select:focus {
+    outline: 3px solid rgba(29,91,61,.15);
+    border-color: var(--green-2);
+}
+.day-rule-card[hidden], .schedule-empty-state[hidden], #no-rules-for-day[hidden] {
+    display: none !important;
+}
+#no-rules-for-day {
+    padding: 15px;
+    border: 1px dashed #d8e5da;
+    border-radius: 10px;
+    background: #f8fbf8;
+    line-height: 1.6;
+}
+
 /* Editor jadwal: aksi harus tampak seperti tombol, bukan teks biasa. */
 .schedule-empty-state {
     display: grid;
