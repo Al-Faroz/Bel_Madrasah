@@ -120,3 +120,9 @@ footer { display: flex; justify-content: space-between; gap: 12px; padding: 20px
     .record-grid { grid-template-columns: 1fr; }
     .storage-panel { padding: 17px; }
 }
+
+
+/* Tahap 2 — status database aplikasi utama */
+.schema-table-list { margin: 14px 0 0; padding: 13px 14px; border: 1px solid var(--line); border-radius: 10px; background: #f8faf8; }
+.schema-table-list > span { color: var(--muted); font-size: 11px; }
+.schema-table-list p { margin: 5px 0 0; color: var(--green); font-size: 12px; line-height: 1.8; overflow-wrap: anywhere; }
