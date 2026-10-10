@@ -86,6 +86,7 @@ $offDayLabel = $activePackage === null ? '—' : ($offDayLabels[(string) ($activ
         <a href="schedule-editor.php">Editor jadwal</a>
         <a href="settings.php">Konfigurasi</a>
         <a href="backup.php">Backup data</a>
+        <a href="public.php">Tampilan publik</a>
         <a href="index.php">Pemeriksaan</a>
     </nav>
 
@@ -161,7 +162,7 @@ $offDayLabel = $activePackage === null ? '—' : ($offDayLabels[(string) ($activ
                 <?php else: ?>
                     <p class="dashboard-description">Tidak ada kegiatan Normal aktif setelah waktu sekarang. Periksa Editor Jadwal jika ini tidak sesuai dengan jadwal sekolah.</p>
                 <?php endif; ?>
-                <a class="md-button md-button-outlined" href="schedule-editor.php">Buka editor jadwal</a>
+                <div class="dashboard-action-row"><a class="md-button md-button-outlined" href="schedule-editor.php">Buka editor jadwal</a><a class="md-button md-button-tonal" href="public.php" target="_blank" rel="noopener">Lihat tampilan publik</a></div>
             </article>
         </section>
 
