@@ -22,6 +22,76 @@ $checks = [
     ['label' => 'Memory limit PHP', 'value' => $memoryLimit, 'ok' => true],
     ['label' => 'Server internal', 'value' => $serverSoftware, 'ok' => true],
 ];
+
+/*
+ * Tahap 1A: diagnostic persistence test.
+ * Keep the test database in the current Windows user's writable AppData,
+ * never beside the program/runtime files.
+ */
+$storagePath = '';
+$storageReady = false;
+$storageError = '';
+$storageMessage = '';
+$storageRecord = null;
+$storageAction = (string) ($_POST['storage_action'] ?? '');
+
+try {
+    if (!$pdoSqlite) {
+        throw new RuntimeException('Ekstensi PDO SQLite tidak tersedia.');
+    }
+
+    $userDataRoot = getenv('APPDATA');
+    if ($userDataRoot === false || trim($userDataRoot) === '') {
+        $userDataRoot = getenv('LOCALAPPDATA');
+    }
+    if ($userDataRoot === false || trim($userDataRoot) === '') {
+        throw new RuntimeException('Folder AppData Windows tidak ditemukan. Database tidak dibuat di folder program.');
+    }
+
+    $dataDirectory = rtrim($userDataRoot, "\\/") . DIRECTORY_SEPARATOR . 'BelMadrasah' . DIRECTORY_SEPARATOR . 'diagnostics';
+    if (!is_dir($dataDirectory) && !mkdir($dataDirectory, 0770, true) && !is_dir($dataDirectory)) {
+        throw new RuntimeException('Folder data lokal tidak dapat dibuat. Periksa izin tulis Windows.');
+    }
+
+    $storagePath = $dataDirectory . DIRECTORY_SEPARATOR . 'storage-test.sqlite';
+    $db = new PDO('sqlite:' . $storagePath);
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+    $db->exec(
+        'CREATE TABLE IF NOT EXISTS persistence_probe (
+            id INTEGER PRIMARY KEY CHECK (id = 1),
+            marker TEXT NOT NULL,
+            saved_at TEXT NOT NULL
+        )'
+    );
+    $storageReady = true;
+
+    if ($storageAction === 'save') {
+        $marker = 'BM-' . strtoupper(bin2hex(random_bytes(4)));
+        $savedAt = date('Y-m-d H:i:s');
+        $statement = $db->prepare(
+            'INSERT INTO persistence_probe (id, marker, saved_at)
+             VALUES (1, :marker, :saved_at)
+             ON CONFLICT(id) DO UPDATE SET marker = excluded.marker, saved_at = excluded.saved_at'
+        );
+        $statement->execute([':marker' => $marker, ':saved_at' => $savedAt]);
+        $storageMessage = 'PASS: data uji berhasil ditulis dan dibaca kembali pada sesi ini. Tutup aplikasi sepenuhnya, buka lagi, lalu tekan “Baca data tersimpan” untuk menguji persistensi setelah restart.';
+    } elseif ($storageAction === 'read') {
+        $storageMessage = 'Pembacaan database selesai. Cocokkan marker dan waktu simpan dengan data sebelum aplikasi ditutup.';
+    }
+
+    $storageRecord = $db->query(
+        'SELECT marker, saved_at FROM persistence_probe WHERE id = 1'
+    )->fetch() ?: null;
+
+    if ($storageAction === 'read' && $storageRecord === null) {
+        $storageMessage = 'BELUM ADA DATA: tekan “Simpan data uji” terlebih dahulu, lalu tutup dan buka kembali aplikasi.';
+    }
+} catch (Throwable $exception) {
+    $storageReady = false;
+    $storageError = $exception->getMessage();
+    $storageMessage = 'FAIL: pengujian penyimpanan belum berhasil. Catat pesan di bawah untuk diagnosis.';
+}
 ?>
 <!doctype html>
 <html lang="id">
@@ -37,7 +107,7 @@ $checks = [
     <header class="topbar">
         <div class="brand-mark" aria-hidden="true">BM</div>
         <div>
-            <p class="eyebrow">PROTOTIPE TAHAP 1</p>
+            <p class="eyebrow">PROTOTIPE TAHAP 1A</p>
             <h1>Bel Madrasah</h1>
             <p class="subtitle">Pemeriksaan fondasi aplikasi desktop Windows</p>
         </div>
@@ -49,7 +119,7 @@ $checks = [
             <div>
                 <p class="eyebrow">WINDOWS DESKTOP · PHP</p>
                 <h2>Memastikan fondasi berjalan sebelum membangun fitur.</h2>
-                <p>Halaman ini memeriksa runtime PHP dan kesiapan SQLite, sekaligus menyediakan tes audio lokal di dalam jendela aplikasi. Ini bukan versi aplikasi bel produksi.</p>
+                <p>Halaman ini memeriksa runtime PHP, kesiapan SQLite, persistensi data lokal, dan pemutaran audio uji. Ini bukan versi aplikasi bel produksi.</p>
             </div>
             <div class="clock-card">
                 <span>Jam komputer</span>
@@ -81,7 +151,59 @@ $checks = [
 
         <section class="section-heading">
             <div>
-                <p class="eyebrow">02 / LOCAL AUDIO</p>
+                <p class="eyebrow">02 / SQLITE PERSISTENCE</p>
+                <h2>Uji simpan dan baca database</h2>
+            </div>
+            <span class="section-note">Database lokal pengguna Windows</span>
+        </section>
+
+        <section class="storage-panel panel">
+            <div class="storage-header">
+                <div>
+                    <h3>SQLite · Uji persistensi setelah restart</h3>
+                    <p>Data uji disimpan di folder AppData pengguna, terpisah dari folder program agar tidak hilang saat aplikasi diperbarui.</p>
+                </div>
+                <span class="storage-badge <?= $storageReady ? 'is-ok' : 'is-warning' ?>"><?= $storageReady ? 'DATABASE SIAP' : 'DATABASE BERMASALAH' ?></span>
+            </div>
+
+            <div class="storage-path">
+                <span>Lokasi database uji</span>
+                <code><?= h($storagePath !== '' ? $storagePath : 'Belum tersedia') ?></code>
+            </div>
+
+            <?php if ($storageMessage !== ''): ?>
+                <p class="storage-message <?= $storageReady && $storageAction !== '' ? 'is-result' : 'is-warning' ?>" role="status"><?= h($storageMessage) ?></p>
+            <?php endif; ?>
+
+            <?php if ($storageRecord !== null): ?>
+                <div class="record-grid">
+                    <div>
+                        <span>Marker tersimpan</span>
+                        <strong><?= h((string) $storageRecord['marker']) ?></strong>
+                    </div>
+                    <div>
+                        <span>Waktu simpan</span>
+                        <strong><?= h((string) $storageRecord['saved_at']) ?></strong>
+                    </div>
+                </div>
+            <?php else: ?>
+                <p class="empty-record">Belum ada marker uji yang disimpan.</p>
+            <?php endif; ?>
+
+            <?php if ($storageError !== ''): ?>
+                <pre class="storage-error"><?= h($storageError) ?></pre>
+            <?php endif; ?>
+
+            <form class="storage-actions" method="post">
+                <button type="submit" name="storage_action" value="save">Simpan data uji</button>
+                <button type="submit" name="storage_action" value="read" class="button-secondary">Baca data tersimpan</button>
+            </form>
+            <p class="storage-help">Jangan hapus file database ini selama tes. Ini hanya database diagnostik; database aplikasi utama akan dibuat terpisah pada tahap berikutnya.</p>
+        </section>
+
+        <section class="section-heading">
+            <div>
+                <p class="eyebrow">03 / LOCAL AUDIO</p>
                 <h2>Uji pemutaran audio</h2>
             </div>
             <span class="section-note">Tidak membuka pemutar eksternal</span>
@@ -114,7 +236,7 @@ $checks = [
     </main>
 
     <footer>
-        <span>Bel Madrasah · PoC Tahap 1</span>
+        <span>Bel Madrasah · PoC Tahap 1A</span>
         <span>Data diagnostik lokal · Tidak dikirim ke internet</span>
     </footer>
 </div>
@@ -146,7 +268,7 @@ $checks = [
         currentObjectUrl = URL.createObjectURL(file);
         player.src = currentObjectUrl;
         fileName.textContent = file.name + ' · ' + (file.size / 1024 / 1024).toFixed(2) + ' MB';
-        message.textContent = 'File siap diuji. Tekan Play dan pastikan suara terdengar dari perangkat output Windows.';
+        message.textContent = 'File siap diuji. Tekan Play dan pastikan suara benar-benar terdengar dari perangkat output Windows.';
         player.load();
     });
 
