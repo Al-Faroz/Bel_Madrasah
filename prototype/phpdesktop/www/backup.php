@@ -19,7 +19,13 @@ $databasePath = $db instanceof Database ? $db->getPath() : '';
 ?>
 <!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Backup Data — Bel Madrasah</title><link rel="stylesheet" href="assets/app.css"></head>
 <body><div class="app-shell"><header class="topbar"><div class="brand-mark">BM</div><div><p class="eyebrow">TAHAP 3 · PERLINDUNGAN DATA</p><h1>Bel Madrasah</h1><p class="subtitle">Backup database aplikasi</p></div></header>
-<nav class="main-nav"><a href="index.php">Dashboard diagnostik</a><a href="packages.php">Paket jadwal</a><a href="settings.php">Konfigurasi</a><a class="active" href="backup.php">Backup data</a></nav>
+<nav class="main-nav" aria-label="Navigasi utama">
+        <a href="index.php">Dashboard diagnostik</a>
+        <a href="packages.php">Paket jadwal</a>
+        <a href="schedule-editor.php">Editor jadwal</a>
+        <a href="settings.php">Konfigurasi</a>
+        <a class="active" href="backup.php">Backup data</a>
+    </nav>
 <section class="intro panel page-intro"><div><p class="eyebrow">BACKUP SQLITE</p><h2>Cadangkan data lokal</h2><p>Backup membuat salinan konsisten database aktif tanpa menghapus atau memindahkan database sumber.</p></div></section>
 <?php if ($message !== ''): ?><p class="action-feedback success" role="status"><?=h($message)?></p><?php endif; ?><?php if ($error !== ''): ?><p class="action-feedback error" role="alert"><?=h($error)?></p><?php endif; ?>
 <section class="panel form-panel backup-panel"><div class="storage-path"><span>Database aktif</span><code><?=h($databasePath !== '' ? $databasePath : 'Belum tersedia')?></code></div><p>Folder tujuan: <code>%APPDATA%\\BelMadrasah\\backups</code> (fallback ke <code>%LOCALAPPDATA%</code>). Backup pada komputer yang sama tidak melindungi dari kerusakan disk; salin hasilnya ke media lain.</p><form method="post" action="backup.php"><button type="submit" <?= $db instanceof Database ? '' : 'disabled' ?>>Buat backup sekarang</button></form><?php if ($backupPath !== ''): ?><div class="storage-path backup-result"><span>File backup dibuat</span><code><?=h($backupPath)?></code></div><?php endif; ?></section>
