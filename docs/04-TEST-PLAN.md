@@ -88,19 +88,19 @@ Pengujian dilakukan pada komputer Windows lokal, bukan hanya berdasarkan pemerik
 ## 5. Uji paket dan persistensi
 
 ### Tahap 4 — pengelolaan paket
-- [ ] Halaman Paket jadwal dapat dibuka dari navigasi dashboard, konfigurasi, dan backup.
-- [ ] Pada database tanpa paket, halaman menyiapkan satu paket Normal sebagai aktif.
-- [ ] Buat paket Ujian; paket baru tampil nonaktif dan Normal tetap aktif.
-- [ ] Buat paket Ramadan; kedua paket tersimpan tanpa mengubah paket aktif.
-- [ ] Nama paket kosong atau terlalu panjang ditolak dengan pesan yang jelas.
-- [ ] Nama paket duplikat (termasuk beda kapitalisasi) ditolak.
-- [ ] Edit nama/keterangan menyimpan perubahan tanpa mengubah status aktif.
-- [ ] Aktifkan Ujian; Ujian menjadi aktif dan Normal menjadi nonaktif.
-- [ ] Aktifkan kembali Normal; hanya Normal yang aktif.
-- [ ] Tutup dan buka aplikasi; paket dan status aktif tetap sama.
-- [ ] Paket tidak aktif tidak dihapus dari daftar.
-- [ ] Kesalahan penyimpanan menampilkan pesan yang dapat dipahami.
-- [ ] Pemeriksaan database memastikan jumlah paket dengan `is_active = 1` tidak pernah lebih dari satu.
+- [x] Halaman Paket jadwal dapat dibuka dari navigasi dashboard, konfigurasi, dan backup.
+- [x] Pada database tanpa paket, halaman menyiapkan satu paket Normal sebagai aktif.
+- [x] Buat paket Ujian; paket baru tampil nonaktif dan Normal tetap aktif.
+- [x] Buat paket Ramadan; kedua paket tersimpan tanpa mengubah paket aktif.
+- [x] Nama paket kosong atau terlalu panjang ditolak dengan pesan yang jelas.
+- [x] Nama paket duplikat (termasuk beda kapitalisasi) ditolak.
+- [x] Edit nama/keterangan menyimpan perubahan tanpa mengubah status aktif.
+- [x] Aktifkan Ujian; Ujian menjadi aktif dan Normal menjadi nonaktif.
+- [x] Aktifkan kembali Normal; hanya Normal yang aktif.
+- [x] Tutup dan buka aplikasi; paket dan status aktif tetap sama.
+- [x] Paket tidak aktif tidak dihapus dari daftar.
+- [x] Kesalahan penyimpanan menampilkan pesan yang dapat dipahami.
+- [x] Pemeriksaan database memastikan jumlah paket dengan `is_active = 1` tidak pernah lebih dari satu.
 
 ### Cakupan fitur tahap berikutnya
 - [ ] Paket aktif benar-benar menjadi sumber resolver kalender dan scheduler (belum diimplementasikan).
