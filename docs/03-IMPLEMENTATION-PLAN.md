@@ -75,6 +75,17 @@ Catatan: status PASS berlaku untuk tes persistensi diagnostik yang dilaporkan pe
 - Keputusan teknologi audio dicatat.
 
 ## Tahap 3 — Kerangka aplikasi dan konfigurasi
+**Status: IMPLEMENTASI AWAL TERSEDIA — menunggu uji lokal pengguna.**
+
+**Implementasi yang tersedia**
+- Navigasi dasar Dashboard diagnostik, Konfigurasi, dan Backup data.
+- Halaman konfigurasi menyimpan nama madrasah, nama operator, dan preferensi volume 0–100 ke tabel app_settings.
+- Validasi panjang nama dan rentang volume; pesan berhasil/gagal ditampilkan.
+- Halaman backup membuat salinan database SQLite melalui VACUUM INTO di folder %APPDATA%\\BelMadrasah\\backups (fallback %LOCALAPPDATA%), tanpa memindahkan atau menghapus database aktif.
+- Backup diberi nama unik dan diperiksa keberadaan/ukuran filenya.
+
+**Batasan:** preferensi volume baru disimpan, belum mengatur volume pemutar. Restore belum dibuat. Backup belum diuji di runtime lokal, jadi kompatibilitas VACUUM INTO dan validitas hasil file harus diverifikasi.
+
 **Pekerjaan**
 - Struktur aplikasi dan navigasi dasar.
 - Pengaturan lokal dan lokasi data pengguna.
