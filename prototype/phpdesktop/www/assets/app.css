@@ -88,3 +88,35 @@ footer { display: flex; justify-content: space-between; gap: 12px; padding: 20px
     h1 { font-size: 22px; }
     .audio-panel { padding: 17px; }
 }
+
+
+/* Tahap 1A — SQLite persistence test */
+.storage-panel { padding: 22px; }
+.storage-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; }
+.storage-header h3 { margin: 0 0 5px; font-size: 16px; }
+.storage-header p { max-width: 700px; margin: 0; color: var(--muted); font-size: 13px; }
+.storage-badge { flex: 0 0 auto; border-radius: 999px; padding: 6px 10px; font-size: 10px; font-weight: 800; letter-spacing: .05em; }
+.storage-badge.is-ok { color: #237444; background: #e4f4e9; }
+.storage-badge.is-warning { color: #8c6411; background: #fff1cd; }
+.storage-path { display: grid; gap: 5px; margin-top: 18px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; background: #f8faf8; }
+.storage-path span, .record-grid span { color: var(--muted); font-size: 11px; }
+.storage-path code { overflow-wrap: anywhere; color: var(--green); font-size: 12px; }
+.storage-message { margin: 14px 0; border-radius: 10px; padding: 12px 14px; font-size: 12px; }
+.storage-message.is-result { border: 1px solid #cfe7d5; color: #205d36; background: #f1faf3; }
+.storage-message.is-warning { border: 1px solid #f0e0b7; color: #795b19; background: #fffaf0; }
+.record-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 14px 0; }
+.record-grid > div { display: grid; gap: 4px; min-width: 0; padding: 13px; border: 1px solid var(--line); border-radius: 10px; }
+.record-grid strong { overflow-wrap: anywhere; font-size: 14px; }
+.empty-record { margin: 14px 0; color: var(--muted); font-size: 12px; }
+.storage-error { overflow: auto; padding: 12px; border: 1px solid #f0caca; border-radius: 10px; color: #8b2727; background: #fff6f6; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 12px; }
+.storage-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+.storage-actions button { border: 0; border-radius: 10px; padding: 11px 15px; color: #fff; background: var(--green-2); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+.storage-actions button:hover { background: var(--green); }
+.storage-actions .button-secondary { border: 1px solid #d7e2d9; color: var(--green); background: #f7faf7; }
+.storage-actions .button-secondary:hover { background: #eaf3ec; }
+.storage-help { margin: 12px 0 0; color: var(--muted); font-size: 11px; }
+@media (max-width: 600px) {
+    .storage-header { flex-direction: column; }
+    .record-grid { grid-template-columns: 1fr; }
+    .storage-panel { padding: 17px; }
+}
