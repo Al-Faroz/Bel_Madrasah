@@ -15,6 +15,7 @@ $editId = filter_var($_GET['edit'] ?? 0, FILTER_VALIDATE_INT);
 $editId = $editId !== false && $editId > 0 ? $editId : 0;
 $formName = '';
 $formDescription = '';
+$formOffDays = '7';
 
 try {
     $db = new Database();
@@ -35,13 +36,21 @@ try {
             $postedId = $postedId !== false && $postedId > 0 ? $postedId : 0;
             $formName = trim((string) ($_POST['name'] ?? ''));
             $formDescription = trim((string) ($_POST['description'] ?? ''));
+            $formOffDays = (string) ($_POST['off_days'] ?? '7');
+            if (!in_array($formOffDays, ['5', '7', '6,7'], true)) {
+                throw new InvalidArgumentException('Pilihan hari libur mingguan tidak valid.');
+            }
             try {
-                $savedId = $db->saveSchedulePackage($postedId > 0 ? $postedId : null, $formName, $formDescription);
+                $savedId = $db->saveSchedulePackage($postedId > 0 ? $postedId : null, $formName, $formDescription, $formOffDays);
+                if ($postedId === 0) {
+                    $db->initializePackageDays($savedId, $formOffDays);
+                }
                 $editId = $postedId > 0 ? $savedId : 0;
                 $message = $postedId > 0 ? 'Perubahan paket berhasil disimpan.' : 'Paket baru berhasil dibuat dalam keadaan nonaktif.';
                 if ($postedId === 0) {
                     $formName = '';
                     $formDescription = '';
+                    $formOffDays = '7';
                 }
             } catch (PDOException $exception) {
                 if (stripos($exception->getMessage(), 'UNIQUE constraint failed') !== false) {
@@ -70,6 +79,7 @@ try {
         } else {
             $formName = (string) $editing['name'];
             $formDescription = (string) $editing['description'];
+            $formOffDays = (string) $editing['off_days'];
         }
     }
 } catch (Throwable $exception) {
@@ -199,6 +209,13 @@ try {
                 <label>Nama paket <span class="required-mark">*</span>
                     <input type="text" name="name" maxlength="80" required value="<?= h($formName) ?>" placeholder="Contoh: Normal, Ujian, Ramadan">
                 </label>
+                <fieldset class="package-off-days">
+                    <legend>Hari libur mingguan <span class="required-mark">*</span></legend>
+                    <label class="off-day-choice"><input type="radio" name="off_days" value="5" <?= $formOffDays === '5' ? 'checked' : '' ?> required><span><strong>Jumat</strong><small>Sekolah Senin–Kamis dan Sabtu–Minggu</small></span></label>
+                    <label class="off-day-choice"><input type="radio" name="off_days" value="7" <?= $formOffDays === '7' ? 'checked' : '' ?> required><span><strong>Minggu</strong><small>Sekolah Senin–Sabtu</small></span></label>
+                    <label class="off-day-choice"><input type="radio" name="off_days" value="6,7" <?= $formOffDays === '6,7' ? 'checked' : '' ?> required><span><strong>Sabtu–Minggu</strong><small>Sekolah Senin–Jumat</small></span></label>
+                    <p class="form-note">Untuk paket baru, aplikasi otomatis membuat aturan Normal pada setiap hari sekolah. Hari libur tidak dibuatkan aturan bel otomatis.</p>
+                </fieldset>
                 <label>Keterangan (opsional)
                     <textarea name="description" maxlength="300" rows="4" placeholder="Jelaskan kapan paket ini digunakan"><?= h($formDescription) ?></textarea>
                     <small>Maksimal 300 karakter. Nama paket harus unik.</small>
