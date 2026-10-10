@@ -27,7 +27,15 @@ Semua tahap di bawah berstatus **BELUM DIMULAI** sampai benar-benar dikerjakan d
 - Keputusan runtime ditulis beserta alasan dan keterbatasannya.
 
 ## Tahap 1A — Validasi persistensi SQLite
-**Status: KODE DI REPOSITORY — MENUNGGU UJI LOKAL WINDOWS.**
+**Status: PASS — diuji pengguna pada Windows 11 64-bit.**
+
+**Hasil aktual yang dilaporkan**
+- Status database: siap.
+- Simpan data uji: berhasil.
+- Setelah aplikasi ditutup dan dibuka kembali: marker dan waktu simpan sama.
+- Pesan error: tidak ada.
+
+Catatan: status PASS berlaku untuk tes persistensi diagnostik yang dilaporkan pengguna. Ini belum membuktikan database jadwal produksi, ketahanan terhadap pemadaman paksa, atau keamanan backup.
 
 **Pekerjaan**
 - Tambahkan tes diagnostik yang membuat database SQLite di AppData pengguna Windows.
