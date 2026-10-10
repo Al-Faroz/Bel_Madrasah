@@ -49,6 +49,18 @@ Catatan: status PASS berlaku untuk tes persistensi diagnostik yang dilaporkan pe
 - Hasil uji aktual dicatat sebelum status tahap dinyatakan lulus.
 
 ## Tahap 2 — PoC SQLite dan audio internal
+**Status: IMPLEMENTASI TERSEDIA — menunggu uji lokal pengguna.**
+
+**Sudah dibuat di repository**
+- Database aplikasi utama terpisah dari database diagnostik Tahap 1A, disimpan di `%APPDATA%\\BelMadrasah\\data\\bel-madrasah.sqlite` (fallback `%LOCALAPPDATA%`).
+- Inisialisasi skema versi 1: metadata, pengaturan, paket jadwal, aturan hari, kegiatan bel, dan log pemutaran.
+- Relasi foreign key, validasi nilai dasar, serta unique partial index untuk mencegah lebih dari satu paket aktif di tingkat database.
+- Uji tulis/baca sementara memakai TEMP table dan rollback agar tidak meninggalkan data uji permanen.
+- Panel status menampilkan lokasi database, versi skema, dan tabel yang terdeteksi.
+- Panel audio menampilkan durasi metadata dan tetap menggunakan elemen audio internal.
+
+**Belum dinyatakan lulus:** kode sudah tersedia, tetapi harus diuji dengan runtime lokal pengguna, termasuk audio panjang dan penanganan file audio yang tidak didukung.
+
 **Pekerjaan**
 - Buat/baca/tulis database SQLite.
 - Putar audio lokal melalui komponen internal.
