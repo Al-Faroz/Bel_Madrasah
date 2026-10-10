@@ -21,6 +21,9 @@ Pengujian dilakukan pada komputer Windows lokal, bukan hanya berdasarkan pemerik
 - [ ] Aplikasi berjalan tanpa instalasi Apache/MySQL.
 - [ ] Aplikasi berjalan pada komputer uji yang tidak memiliki lingkungan pengembangan.
 - [ ] Data dapat disimpan dan dibaca setelah aplikasi dimulai ulang.
+- [ ] Tes SQLite Tahap 1A: tekan **Simpan data uji**, catat marker/waktu, tutup aplikasi sepenuhnya, buka ulang, lalu tekan **Baca data tersimpan**; marker/waktu harus tetap sama.
+- [ ] Tes gagal SQLite: bila status database bermasalah, pesan error dapat dibaca dan dicatat; aplikasi tidak diam-diam menyimpan database di folder program.
+- [ ] Lokasi database diagnostik berada di `%APPDATA%\\BelMadrasah\\diagnostics\\storage-test.sqlite` (atau `LOCALAPPDATA` bila `APPDATA` tidak tersedia).
 - [ ] Aplikasi tidak menghapus data pengguna saat pembaruan.
 - [ ] Penggunaan CPU/RAM saat idle diukur.
 - [ ] Ukuran paket distribusi dicatat.
