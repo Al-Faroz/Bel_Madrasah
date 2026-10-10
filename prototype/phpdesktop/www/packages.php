@@ -179,6 +179,7 @@ try {
                                     <?php endif; ?>
                                 </div>
                                 <p><?= h((string) $package['description'] !== '' ? (string) $package['description'] : 'Tidak ada keterangan tambahan.') ?></p>
+                                <p class="package-off-day-summary">Hari libur: <strong><?= (string) ($package['off_days'] ?? '6,7') === '5' ? 'Jumat' : ((string) ($package['off_days'] ?? '6,7') === '7' ? 'Minggu' : 'Sabtu–Minggu') ?></strong></p>
                             </div>
                             <div class="package-card-actions">
                                 <a class="text-action" href="packages.php?edit=<?= (int) $package['id'] ?>">Edit</a>
