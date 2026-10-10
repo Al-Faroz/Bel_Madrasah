@@ -53,11 +53,19 @@ Aplikasi dinyatakan memenuhi tujuan inti ketika:
 - Kegagalan audio atau jadwal terlewat dapat ditelusuri melalui status/log.
 - Konsumsi sumber daya saat menunggu jadwal terukur dan dianggap layak pada komputer target.
 
-## 6. Acuan UI/UX
+## 6. Status UI/UX terbaru
+
+- Standar Material Design telah ditetapkan di [05-UI-UX-MATERIAL-DESIGN.md](05-UI-UX-MATERIAL-DESIGN.md).
+- Design tokens dan komponen dasar awal sudah ditambahkan ke `prototype/phpdesktop/www/assets/app.css`.
+- Dashboard Admin awal tersedia di `prototype/phpdesktop/www/dashboard.php`; halaman diagnostik tetap tersedia terpisah melalui menu Pemeriksaan.
+- UI-3 Paket Jadwal, UI-4 Editor Jadwal, UI-5 Konfigurasi/Backup, dan UI-6 Public Dashboard masih menunggu pengerjaan.
+- Tampilan belum dinyatakan lulus karena belum diuji pada runtime Windows lokal.
+
+## 7. Acuan UI/UX
 
 Seluruh halaman Admin Dashboard dan Public Dashboard/status mengikuti [Standar UI/UX Material Design](05-UI-UX-MATERIAL-DESIGN.md). Roadmap di [03-IMPLEMENTATION-PLAN.md](03-IMPLEMENTATION-PLAN.md) menempatkan standarisasi visual setelah editor jadwal dan sebelum implementasi resolver kalender/scheduler berikutnya. Redesign wajib menjaga aturan bisnis dan diuji di runtime Windows lokal.
 
-## 7. Pola kolaborasi
+## 8. Pola kolaborasi
 
 1. Perubahan dikerjakan secara bertahap di repository.
 2. Setiap commit memiliki pesan yang menjelaskan perubahan.
