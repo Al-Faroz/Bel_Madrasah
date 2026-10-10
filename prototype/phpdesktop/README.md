@@ -44,6 +44,23 @@ Tes ini memeriksa pembuatan database, operasi tulis/baca, dan persistensi setela
 
 **Hasil uji lokal yang dilaporkan:** DATABASE SIAP; Simpan data uji berhasil; setelah restart marker dan waktu sama; tidak ada error. Status tes persistensi diagnostik: **PASS**.
 
+## Tahap 2 — Database aplikasi utama dan audio internal
+
+Tahap 2 menambahkan `www/lib/Database.php` dan panel **Database aplikasi utama**. Database utama berada di `%APPDATA%\\BelMadrasah\\data\\bel-madrasah.sqlite` (fallback `%LOCALAPPDATA%`), terpisah dari database diagnostik `diagnostics/storage-test.sqlite`.
+
+Skema versi 1 menyiapkan tabel `app_meta`, `app_settings`, `schedule_packages`, `day_rules`, `bell_events`, dan `playback_log`. Inisialisasi bersifat idempoten (`CREATE TABLE IF NOT EXISTS`) dan dilakukan dalam transaksi. Uji tulis/baca menggunakan TEMP table dan rollback, sehingga tidak menambahkan data uji permanen. Ini baru fondasi skema, bukan editor jadwal yang sudah berfungsi.
+
+### Cara uji Tahap 2
+1. Ambil perubahan terbaru: `git pull origin main`.
+2. Salin kembali isi `prototype/phpdesktop/www/` ke folder `www/` runtime PHP Desktop seperti saat Tahap 1. Jangan menimpa folder data `%APPDATA%\\BelMadrasah`.
+3. Jalankan ulang aplikasi. Panel **Database aplikasi utama** harus menunjukkan `SKEMA SIAP`, versi `1`, dan enam tabel inti.
+4. Tutup aplikasi sepenuhnya, buka kembali. Pastikan status tetap `SKEMA SIAP` dan lokasi database tetap sama.
+5. Pilih file MP3 panjang (idealnya 3–5 menit) atau audio kegiatan yang boleh dipakai untuk tes. Putar dari awal sampai selesai; jangan hanya melihat kontrol berjalan—pastikan audio terdengar dan tidak terpotong.
+6. Ulangi dengan WAV. Jika ada file yang gagal, catat format, durasi, ukuran, pesan aplikasi, dan apakah aplikasi tetap responsif.
+7. Jangan menguji dengan file penting yang tidak boleh terputus. Scheduler otomatis, tray, sleep/wake, serta pemilihan format audio final belum menjadi bagian yang sudah lulus.
+
+**Status Tahap 2:** implementasi awal tersedia; menunggu hasil uji lokal. Jangan menandai PASS hanya berdasarkan kode.
+
 ## Apa yang diperiksa prototipe
 
 - Halaman PHP dirender di jendela desktop.
