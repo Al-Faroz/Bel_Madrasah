@@ -644,3 +644,44 @@ footer { color: #68786d; font-size: 11px; }
     .package-card { align-items: stretch; flex-direction: column; }
     .package-card-actions { justify-content: flex-start; }
 }
+
+/* UI-2 — Admin dashboard */
+.dashboard-welcome{display:grid;grid-template-columns:minmax(0,1fr) minmax(190px,250px);align-items:center;gap:24px;padding:28px;margin-bottom:18px;background:linear-gradient(120deg,#fff 0%,#f1f8f3 100%)}
+.dashboard-welcome h2{margin:0 0 8px;font-size:clamp(24px,3vw,34px);line-height:1.2}
+.dashboard-welcome p:not(.eyebrow){max-width:680px;margin:0;color:var(--muted)}
+.dashboard-clock{padding:18px 20px;border:1px solid #cfe5d5;border-radius:var(--radius-md);background:#e4f3e9}
+.dashboard-clock span,.dashboard-clock small{display:block;color:var(--muted);font-size:12px}
+.dashboard-clock strong{display:block;margin:4px 0;color:var(--primary);font-size:32px;line-height:1.2;font-variant-numeric:tabular-nums;letter-spacing:-.04em}
+.dashboard-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:18px}
+.dashboard-stat{position:relative;display:grid;align-content:start;gap:5px;min-width:0;padding:20px}
+.stat-icon{display:grid;place-items:center;width:38px;height:38px;margin-bottom:7px;border-radius:13px;color:var(--primary);background:var(--mint);font-size:21px}
+.stat-label{color:var(--muted);font-size:12px;font-weight:600}
+.dashboard-stat>strong{color:var(--ink);font-size:28px;line-height:1.2;font-weight:700;overflow-wrap:anywhere}
+.dashboard-stat>strong.stat-text{font-size:18px;margin:5px 0}
+.dashboard-stat small{color:var(--muted);font-size:11px}
+.dashboard-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.dashboard-main-card{min-width:0;padding:24px}
+.dashboard-section-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:12px}
+.dashboard-section-heading h2{margin:0;font-size:21px;overflow-wrap:anywhere}
+.dashboard-description{margin:10px 0 18px;color:var(--muted);font-size:13px}
+.dashboard-meta-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:20px}
+.dashboard-meta-grid>div{display:grid;gap:4px;padding:13px 14px;border-radius:var(--radius-sm);background:var(--surface-variant)}
+.dashboard-meta-grid span{color:var(--muted);font-size:11px}
+.dashboard-meta-grid strong{font-size:13px}
+.next-event-name{margin:2px 0 8px;font-size:18px;font-weight:700;overflow-wrap:anywhere}
+.dashboard-status-chip{display:inline-flex;align-items:center;flex:0 0 auto;padding:6px 10px;border-radius:999px;font-size:11px;font-weight:700}
+.dashboard-status-chip.is-ready{color:var(--success);background:var(--success-container)}
+.dashboard-status-chip.is-muted{color:#5f6f65;background:var(--surface-variant)}
+.md-button{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:9px 16px;border:1px solid transparent;border-radius:999px;font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap;transition:background-color .15s ease,border-color .15s ease}
+.md-button-filled{color:#fff;background:var(--primary)}
+.md-button-filled:hover{background:var(--primary-hover)}
+.md-button-tonal{color:var(--primary);background:var(--mint)}
+.md-button-tonal:hover{background:#d6ebdc}
+.md-button-outlined{color:var(--primary);border-color:#a9c8b2;background:transparent}
+.md-button-outlined:hover{background:var(--surface-variant)}
+.dashboard-note{display:flex;align-items:flex-start;gap:13px;margin-top:18px;padding:17px 19px;border:1px solid #ead9a7;border-radius:var(--radius-md);background:#fff9e9;color:#634d18}
+.dashboard-note-icon{display:grid;place-items:center;flex:0 0 auto;width:25px;height:25px;border-radius:50%;background:#f4e4b6;font-weight:800}
+.dashboard-note strong{display:block;margin-bottom:3px;font-size:13px}
+.dashboard-note p{margin:0;font-size:12px;line-height:1.6}
+@media(max-width:760px){.dashboard-welcome{grid-template-columns:1fr;padding:21px}.dashboard-clock{max-width:none}.dashboard-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.dashboard-columns{grid-template-columns:1fr}}
+@media(max-width:460px){.dashboard-stats{grid-template-columns:1fr}.dashboard-stat{padding:17px}.dashboard-main-card{padding:18px}.dashboard-section-heading{flex-direction:column}.dashboard-meta-grid{grid-template-columns:1fr}.md-button{white-space:normal;text-align:center}}
