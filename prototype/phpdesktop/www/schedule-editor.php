@@ -288,22 +288,44 @@ try {
                             <p class="overlap-warning"><strong>Perhatian:</strong> aturan Khusus pada hari yang sama dapat bertumpang tindih dengan atribut lain pada tanggal tertentu. Resolver dan peringatan tanggal konflik akan dilengkapi pada Tahap 6. Pastikan aturan ini memang diperlukan.</p>
                         <?php endif; ?>
                         <div class="event-list">
-                            <?php foreach ($ruleEvents as $event): ?>
-                                <form class="event-edit-card" method="post" action="schedule-editor.php" enctype="multipart/form-data">
-                                    <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>"><input type="hidden" name="editor_action" value="save_event"><input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>"><input type="hidden" name="event_id" value="<?= (int) $event['id'] ?>">
-                                    <div class="event-card-title"><strong><?= h((string) $event['name']) ?></strong><span class="event-time"><?= h((string) $event['event_time']) ?></span></div>
-                                    <div class="event-form-grid">
-                                        <label>Nama kegiatan<input name="event_name" maxlength="100" required value="<?= h((string) $event['name']) ?>"></label>
-                                        <label>Waktu<input type="time" name="event_time" required value="<?= h((string) $event['event_time']) ?>"></label>
-                                        <label>Urutan<input type="number" name="sort_order" min="0" max="9999" required value="<?= (int) $event['sort_order'] ?>"></label>
-                                        <label class="audio-upload-label">Ganti file audio (opsional)<input type="file" name="audio_file" accept=".mp3,.wav,.ogg,.m4a,.aac,audio/*"><small><?= $event['audio_path'] !== '' ? 'Tersimpan: ' . h(basename((string) $event['audio_path'])) : 'Belum ada file audio.' ?></small></label>
-                                    </div>
-                                    <label class="checkbox-line"><input type="checkbox" name="event_enabled" value="1" <?= (int) $event['is_enabled'] === 1 ? 'checked' : '' ?>> Kegiatan aktif</label>
-                                    <div class="form-actions"><button type="submit" class="button-compact">Simpan kegiatan</button></div>
-                                </form>
-                                <form method="post" action="schedule-editor.php" class="delete-event-form" onsubmit="return confirm('Hapus kegiatan bel ini?')"><input type="hidden" name="package_id" value="<?= $selectedPackageId ?>"><input type="hidden" name="editor_action" value="delete_event"><input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>"><input type="hidden" name="event_id" value="<?= (int) $event['id'] ?>"><button type="submit" class="text-danger">Hapus kegiatan</button></form>
-                            <?php endforeach; ?>
-                            <?php if ($ruleEvents === []): ?><p class="empty-event">Belum ada kegiatan untuk pola ini.</p><?php endif; ?>
+                            <?php if ($ruleEvents !== []): ?>
+                                <div class="bell-events-table-wrap">
+                                    <table class="bell-events-table">
+                                        <thead><tr><th>Jam</th><th>Keterangan bel</th><th>Audio</th><th>Status</th><th>Aksi</th></tr></thead>
+                                        <tbody>
+                                        <?php foreach ($ruleEvents as $event): ?>
+                                            <tr>
+                                                <td class="bell-time-cell"><strong><?= h(substr((string) $event['event_time'], 0, 5)) ?></strong></td>
+                                                <td>
+                                                    <form id="event-form-<?= (int) $event['id'] ?>" class="bell-event-row-form" method="post" action="schedule-editor.php" enctype="multipart/form-data">
+                                                        <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>"><input type="hidden" name="editor_action" value="save_event"><input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>"><input type="hidden" name="event_id" value="<?= (int) $event['id'] ?>">
+                                                        <label class="sr-only" for="event-name-<?= (int) $event['id'] ?>">Keterangan bel</label>
+                                                        <input id="event-name-<?= (int) $event['id'] ?>" name="event_name" maxlength="100" required value="<?= h((string) $event['name']) ?>">
+                                                        <label class="sr-only" for="event-time-<?= (int) $event['id'] ?>">Jam</label>
+                                                        <input id="event-time-<?= (int) $event['id'] ?>" type="time" name="event_time" required value="<?= h((string) $event['event_time']) ?>">
+                                                        <label class="sr-only" for="event-order-<?= (int) $event['id'] ?>">Urutan</label>
+                                                        <input id="event-order-<?= (int) $event['id'] ?>" type="number" name="sort_order" min="0" max="9999" required value="<?= (int) $event['sort_order'] ?>" title="Urutan pemutaran">
+                                                </td>
+                                                <td>
+                                                        <label class="bell-audio-input">Pilih/ganti audio<input type="file" name="audio_file" accept=".mp3,.wav,.ogg,.m4a,.aac,audio/*"></label>
+                                                        <small class="bell-audio-status"><?= $event['audio_path'] !== '' ? 'Tersimpan: ' . h(basename((string) $event['audio_path'])) : 'Belum ada audio' ?></small>
+                                                </td>
+                                                <td>
+                                                        <label class="checkbox-line bell-enabled-toggle"><input type="checkbox" name="event_enabled" value="1" <?= (int) $event['is_enabled'] === 1 ? 'checked' : '' ?>> Aktif</label>
+                                                </td>
+                                                <td class="bell-actions-cell">
+                                                        <button type="submit" class="button-compact">Simpan</button>
+                                                    </form>
+                                                    <form method="post" action="schedule-editor.php" class="delete-event-form" onsubmit="return confirm('Hapus kegiatan bel ini?')"><input type="hidden" name="package_id" value="<?= $selectedPackageId ?>"><input type="hidden" name="editor_action" value="delete_event"><input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>"><input type="hidden" name="event_id" value="<?= (int) $event['id'] ?>"><button type="submit" class="text-danger">Hapus</button></form>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            <?php else: ?>
+                                <p class="empty-event">Belum ada kegiatan bel untuk aturan ini. Tambahkan kegiatan melalui formulir di bawah.</p>
+                            <?php endif; ?>
                             <details class="add-event-details"><summary><span aria-hidden="true">＋</span> Tambah Kegiatan Bel</summary>
                                 <form class="event-edit-card" method="post" action="schedule-editor.php" enctype="multipart/form-data">
                                     <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>"><input type="hidden" name="editor_action" value="save_event"><input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>"><input type="hidden" name="event_id" value="0">
