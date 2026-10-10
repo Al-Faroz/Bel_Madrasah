@@ -101,6 +101,12 @@ Catatan: status PASS berlaku untuk tes persistensi diagnostik yang dilaporkan pe
 - Memperbarui aplikasi tidak menghapus data pengguna.
 
 ## Tahap 4 — Pengelolaan paket jadwal
+**Status: IMPLEMENTASI TERSEDIA — menunggu uji lokal pengguna.**
+
+**Implementasi awal:** halaman `packages.php`; daftar dan edit paket; buat paket baru; paket Normal dibuat otomatis hanya jika daftar masih kosong; aktivasi paket dilakukan atomik dalam transaksi; indeks unik database tetap menjadi pengaman agar tidak ada dua paket aktif; paket baru nonaktif; belum ada fitur hapus agar data jadwal berikutnya tidak hilang.
+
+**Batasan:** isi jadwal per hari dan kegiatan bel belum diedit pada tahap ini. Status aktif baru menentukan paket global tersimpan; mesin scheduler belum membaca paket untuk memutar audio.
+
 **Pekerjaan**
 - CRUD paket jadwal.
 - Contoh paket awal: Normal, Ujian, Ramadan.
