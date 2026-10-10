@@ -118,6 +118,12 @@ Catatan: status PASS berlaku untuk tes persistensi diagnostik yang dilaporkan pe
 - Mengganti paket memengaruhi semua hari tanpa menghapus paket lainnya.
 
 ## Tahap 5 — Editor jadwal harian
+**Status: IMPLEMENTASI TERSEDIA — menunggu uji lokal pengguna.**
+
+**Implementasi awal:** halaman `schedule-editor.php` dengan pemilihan paket, aturan hari Normal/Khusus, jenis atribut pasaran Jawa atau minggu kalender Model A, kegiatan bel per aturan, waktu tervalidasi, status aktif/nonaktif, urutan, dan unggah file audio lokal. Database dinaikkan ke schema version 2 tanpa mengganti file database; aturan/kegiatan baru memakai operasi terparameterisasi dan validasi server-side. Audio disimpan di `%APPDATA%\\BelMadrasah\\audio` (fallback `%LOCALAPPDATA%`).
+
+**Batasan:** aturan khusus yang berpotensi bertumpang tindih menampilkan peringatan; resolusi tanggal dan prioritas aktual dikerjakan pada Tahap 6. Mesin scheduler/pemutaran otomatis belum diaktifkan. Batas unggah 50 MB di aplikasi juga bergantung pada konfigurasi `upload_max_filesize` dan `post_max_size` runtime PHP Desktop.
+
 **Pekerjaan**
 - Jadwal Senin–Minggu per paket.
 - Pola Normal dan Khusus.
