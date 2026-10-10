@@ -125,7 +125,8 @@ try {
     </header>
 
     <nav class="main-nav" aria-label="Navigasi utama">
-        <a href="index.php">Dashboard diagnostik</a>
+        <a href="dashboard.php">Dashboard</a>
+        <a href="index.php">Pemeriksaan</a>
         <a class="active" href="packages.php">Paket jadwal</a>
         <a href="schedule-editor.php">Editor jadwal</a>
         <a href="settings.php">Konfigurasi</a>
