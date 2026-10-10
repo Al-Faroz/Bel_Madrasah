@@ -69,17 +69,21 @@ Pengujian dilakukan pada komputer Windows lokal, bukan hanya berdasarkan pemerik
 - [ ] Pemutaran manual tidak merusak status scheduler.
 
 ### Uji Tahap 3 — kerangka, konfigurasi, dan backup
-- [ ] Navigasi Dashboard, Konfigurasi, dan Backup data terbuka.
-- [ ] Simpan nama madrasah dan nama operator; setelah berpindah halaman dan restart, nilainya tetap.
-- [ ] Volume menerima nilai 0 dan 100; menolak nilai di luar rentang.
-- [ ] Pesan keberhasilan/kegagalan penyimpanan terlihat dan terbaca.
-- [ ] Tombol Buat backup sekarang membuat file .sqlite nonkosong di folder backup pengguna.
-- [ ] Database aktif tetap ada dan tidak berubah lokasi setelah backup.
+- [x] Navigasi Dashboard, Konfigurasi, dan Backup data terbuka (hasil pengguna: PASS).
+- [x] Simpan konfigurasi berhasil (hasil pengguna: PASS).
+- [x] Persistensi konfigurasi setelah restart (hasil pengguna: PASS).
+- [ ] Volume menerima nilai 0 dan 100; menolak nilai di luar rentang (belum dilaporkan terpisah).
+- [x] Tidak ada error pada skenario yang dilaporkan pengguna.
+- [x] Backup pertama berhasil dibuat (hasil pengguna: PASS; lokasi dan ukuran file belum dicatat).
+- [ ] Database aktif tetap ada dan tidak berubah lokasi setelah backup (belum dikonfirmasi terpisah).
 - [ ] Backup dapat diperiksa sebagai database SQLite yang valid pada salinan terpisah; jangan mengganti database aktif.
-- [ ] Ulangi backup; nama file berbeda dan backup sebelumnya tidak tertimpa.
+- [x] Backup kedua berhasil dibuat (hasil pengguna: PASS).
+- [ ] Nama file berbeda dan backup pertama tidak tertimpa (belum dikonfirmasi terpisah).
 - [ ] Gagal membuat folder atau file backup menghasilkan pesan error yang terbaca.
 - [ ] Data konfigurasi dan database tetap ada setelah menyalin pembaruan aplikasi.
 - [ ] Volume saat ini hanya preferensi tersimpan; jangan menganggapnya sudah mengubah output audio.
+
+**Catatan hasil Tahap 3 — laporan pengguna:** navigasi PASS; simpan konfigurasi PASS; persistensi setelah restart PASS; backup pertama PASS; backup kedua PASS; tidak ada error. Tahap 3 dinyatakan PASS untuk skenario yang dilaporkan. Integritas backup dan restore masih perlu diuji.
 
 ## 5. Uji paket dan persistensi
 
