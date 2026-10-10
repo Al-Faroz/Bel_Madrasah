@@ -27,6 +27,7 @@ $selectedPackageId = $selectedPackageId !== false && $selectedPackageId > 0 ? $s
 $editingRuleId = 0;
 $ruleForm = ['weekday' => '1', 'rule_mode' => 'normal', 'special_type' => 'pasaran', 'special_value' => 'Legi', 'is_enabled' => '1'];
 $eventFormErrors = [];
+$copyPreview = null;
 
 try {
     $db = new Database();
@@ -46,7 +47,32 @@ try {
 
     if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         $action = (string) ($_POST['editor_action'] ?? '');
-        if ($action === 'save_rule') {
+        if ($action === 'preview_copy_schedule') {
+            $sourceRules = array_values(array_filter(
+                $db->getDayRules($selectedPackageId, 1),
+                static fn (array $item): bool => $item['rule_mode'] === 'normal'
+            ));
+            $targetRules = array_values(array_filter(
+                $db->getDayRules($selectedPackageId, 2),
+                static fn (array $item): bool => $item['rule_mode'] === 'normal'
+            ));
+            if ($sourceRules === [] || $targetRules === []) {
+                throw new InvalidArgumentException('Salin jadwal memerlukan aturan Normal untuk Senin dan Selasa pada paket yang dipilih. Buat kedua aturan terlebih dahulu.');
+            }
+            $sourceRule = $sourceRules[0];
+            $targetRule = $targetRules[0];
+            $copyPreview = [
+                'source_rule_id' => (int) $sourceRule['id'],
+                'target_rule_id' => (int) $targetRule['id'],
+                'events' => $db->getBellEvents((int) $sourceRule['id']),
+                'target_count' => count($db->getBellEvents((int) $targetRule['id'])),
+            ];
+        } elseif ($action === 'confirm_copy_schedule') {
+            $sourceRuleId = (int) ($_POST['source_rule_id'] ?? 0);
+            $targetRuleId = (int) ($_POST['target_rule_id'] ?? 0);
+            $copiedCount = $db->replaceDayScheduleFromSource($selectedPackageId, $sourceRuleId, $targetRuleId);
+            $message = 'Jadwal Selasa berhasil diganti dengan ' . $copiedCount . ' kegiatan dari Senin. Paket dan hari lain tidak diubah.';
+        } elseif ($action === 'save_rule') {
             $editingRuleId = (int) ($_POST['rule_id'] ?? 0);
             $ruleForm = [
                 'weekday' => (string) ($_POST['weekday'] ?? '1'),
@@ -218,6 +244,50 @@ try {
             </select>
             <noscript><button type="submit" class="button-compact">Pilih paket</button></noscript>
         </form>
+    </section>
+
+    <section class="panel copy-schedule-panel">
+        <div class="section-heading">
+            <div><p class="eyebrow">AKSI CEPAT</p><h2>Salin jadwal antarhari</h2><p class="copy-schedule-description">Salin seluruh kegiatan dari Senin ke Selasa pada paket ini. Data Selasa akan diganti setelah konfirmasi; paket dan hari lain tetap aman.</p></div>
+        </div>
+        <?php if ($copyPreview === null): ?>
+            <form method="post" action="schedule-editor.php" class="copy-schedule-form">
+                <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>">
+                <input type="hidden" name="editor_action" value="preview_copy_schedule">
+                <div class="copy-schedule-route">
+                    <div class="copy-schedule-day"><span>Sumber</span><strong>Senin</strong><small>Seluruh kegiatan</small></div>
+                    <span class="copy-schedule-arrow" aria-hidden="true">→</span>
+                    <div class="copy-schedule-day is-target"><span>Tujuan</span><strong>Selasa</strong><small>Ganti seluruh kegiatan</small></div>
+                </div>
+                <button type="submit" class="copy-schedule-button">Pratinjau Salin Jadwal</button>
+            </form>
+        <?php else: ?>
+            <div class="copy-preview-panel" aria-live="polite">
+                <div class="copy-preview-heading"><strong>Periksa sebelum menyimpan</strong><span><?= count($copyPreview['events']) ?> kegiatan dari Senin</span></div>
+                <p>Jadwal Selasa saat ini memiliki <?= (int) $copyPreview['target_count'] ?> kegiatan. Jika dilanjutkan, seluruh kegiatan Selasa akan diganti dengan daftar berikut.</p>
+                <?php if ($copyPreview['events'] === []): ?>
+                    <p class="copy-preview-empty">Senin belum memiliki kegiatan. Konfirmasi akan mengosongkan kegiatan Selasa.</p>
+                <?php else: ?>
+                    <div class="copy-preview-table-wrap"><table class="copy-preview-table">
+                        <thead><tr><th>Jam</th><th>Nama kegiatan</th><th>Audio</th><th>Status</th></tr></thead>
+                        <tbody><?php foreach ($copyPreview['events'] as $copyEvent): ?>
+                            <tr><td><?= h(substr((string) $copyEvent['event_time'], 0, 5)) ?></td><td><?= h($copyEvent['name']) ?></td><td><?= trim((string) $copyEvent['audio_path']) !== '' ? h(basename((string) $copyEvent['audio_path'])) : 'Belum diatur' ?></td><td><?= (int) $copyEvent['is_enabled'] === 1 ? 'Aktif' : 'Nonaktif' ?></td></tr>
+                        <?php endforeach; ?></tbody>
+                    </table></div>
+                <?php endif; ?>
+                <div class="copy-preview-warning"><strong>Perhatian:</strong> kegiatan Selasa yang ada sekarang akan dihapus dan diganti. Referensi audio disalin tanpa menggandakan file audio. Data Senin, paket lain, dan hari lain tidak berubah.</div>
+                <div class="copy-preview-actions">
+                    <form method="post" action="schedule-editor.php" onsubmit="return confirm('Yakin mengganti seluruh kegiatan Selasa dengan jadwal Senin? Tindakan ini tidak mengubah paket atau hari lain.');">
+                        <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>">
+                        <input type="hidden" name="editor_action" value="confirm_copy_schedule">
+                        <input type="hidden" name="source_rule_id" value="<?= (int) $copyPreview['source_rule_id'] ?>">
+                        <input type="hidden" name="target_rule_id" value="<?= (int) $copyPreview['target_rule_id'] ?>">
+                        <button type="submit" class="copy-schedule-button is-confirm">Ya, Ganti Seluruh Jadwal Selasa</button>
+                    </form>
+                    <a class="button-link-secondary" href="schedule-editor.php?package_id=<?= $selectedPackageId ?>">Batal</a>
+                </div>
+            </div>
+        <?php endif; ?>
     </section>
 
     <section class="editor-grid">
