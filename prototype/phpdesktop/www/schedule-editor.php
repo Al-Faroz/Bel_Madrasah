@@ -241,7 +241,13 @@ try {
         </section>
 
         <section class="panel editor-rules-list">
-            <div class="section-heading"><div><p class="eyebrow">POLA YANG TERSIMPAN</p><h2>Aturan per hari</h2></div><span class="section-note"><?= count($rules ?? []) ?> aturan</span></div>
+            <div class="section-heading"><div><p class="eyebrow">POLA YANG TERSIMPAN</p><h2>Aturan per hari</h2></div><span class="section-note" id="rules-count"><?= count($rules ?? []) ?> aturan</span></div>
+            <label class="schedule-day-filter">Tampilkan data hari
+                <select id="schedule-day-filter" aria-label="Tampilkan aturan untuk hari">
+                    <?php foreach ($weekdays as $dayNumber => $dayName): ?><option value="<?= $dayNumber ?>" <?= (int) $ruleForm['weekday'] === $dayNumber ? 'selected' : '' ?>><?= h($dayName) ?></option><?php endforeach; ?>
+                </select>
+            </label>
+            <p class="empty-record" id="no-rules-for-day" hidden>Belum ada aturan tersimpan untuk hari ini. Gunakan formulir di sebelah kiri untuk menambahkan aturan bagi hari yang dipilih.</p>
             <?php if (($rules ?? []) === []): ?>
                 <div class="schedule-empty-state">
                     <strong>Belum ada aturan hari untuk paket ini</strong>
@@ -260,7 +266,7 @@ try {
                     }
                     $ruleEvents = $eventsByRule[(int) $rule['id']] ?? [];
                     ?>
-                    <article class="day-rule-card">
+                    <article class="day-rule-card" data-weekday="<?= (int) $rule['weekday'] ?>">
                         <div class="day-rule-header">
                             <div><h3><?= h($weekdayName) ?> · <?= $rule['rule_mode'] === 'normal' ? 'Normal' : 'Khusus' ?></h3>
                                 <p><?= $rule['rule_mode'] === 'special' ? h(($rule['special_type'] === 'pasaran' ? 'Pasaran Jawa: ' : 'Minggu kalender: ') . $specialLabel) : 'Pola dasar untuk hari ini' ?></p></div>
@@ -345,6 +351,40 @@ function toggleSpecialValue() {
     }
 }
 toggleSpecialFields();
+
+// Sinkronkan pilihan hari dengan daftar aturan yang terlihat.
+(function () {
+    const daySelect = document.getElementById('schedule-day-filter');
+    const ruleFormDay = document.querySelector('#day-rule-form select[name="weekday"]');
+    const cards = Array.from(document.querySelectorAll('.day-rule-card[data-weekday]'));
+    const emptyMessage = document.getElementById('no-rules-for-day');
+    const countLabel = document.getElementById('rules-count');
+
+    function applyDayFilter(day) {
+        let visible = 0;
+        cards.forEach(card => {
+            const matches = card.dataset.weekday === String(day);
+            card.hidden = !matches;
+            if (matches) visible++;
+        });
+        if (emptyMessage) emptyMessage.hidden = visible !== 0;
+        if (countLabel) countLabel.textContent = visible + ' aturan untuk hari ini';
+    }
+
+    if (daySelect && ruleFormDay) {
+        // Filter mengikuti hari pada form; pilihan di daftar juga bisa mengubah form.
+        daySelect.value = ruleFormDay.value;
+        daySelect.addEventListener('change', function () {
+            ruleFormDay.value = daySelect.value;
+            applyDayFilter(daySelect.value);
+        });
+        ruleFormDay.addEventListener('change', function () {
+            daySelect.value = ruleFormDay.value;
+            applyDayFilter(ruleFormDay.value);
+        });
+        applyDayFilter(daySelect.value);
+    }
+})();
 </script>
 </body>
 </html>
