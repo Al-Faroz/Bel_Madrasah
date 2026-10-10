@@ -227,7 +227,7 @@ try {
         <a href="dashboard.php">Dashboard</a>
         <a href="index.php">Pemeriksaan</a>
         <a href="packages.php">Paket jadwal</a>
-        <a href="schedule-editor.php" class="active">Editor jadwal</a>
+        <a href="schedule-editor.php" class="active" aria-current="page">Editor jadwal</a>
         <a href="settings.php">Konfigurasi</a>
         <a href="backup.php">Backup data</a>
     </nav>
@@ -235,7 +235,7 @@ try {
     <?php if ($message !== ''): ?><p class="action-feedback success" role="status"><?= h($message) ?></p><?php endif; ?>
     <?php if ($error !== ''): ?><p class="action-feedback error" role="alert"><?= h($error) ?></p><?php endif; ?>
 
-    <section class="panel editor-package-select">
+    <section class="panel editor-package-select" aria-label="Paket jadwal yang dipilih">
         <div><p class="eyebrow">PAKET YANG DIEDIT</p><h2><?= $selectedPackage !== null ? h((string) $selectedPackage['name']) : 'Pilih paket' ?></h2>
         <?php if ($selectedPackage !== null && (int) $selectedPackage['is_active'] === 1): ?><span class="package-badge active">PAKET AKTIF GLOBAL</span><?php else: ?><span class="package-badge">PAKET NONAKTIF</span><?php endif; ?></div>
         <form method="get" action="schedule-editor.php" class="package-switch-form">
@@ -298,8 +298,8 @@ try {
                 <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>">
                 <input type="hidden" name="editor_action" value="save_rule">
                 <input type="hidden" name="rule_id" value="<?= $editingRuleId ?>">
-                <label>Hari
-                    <select name="weekday" required>
+                <label for="rule-weekday">Hari
+                    <select id="rule-weekday" name="weekday" required>
                         <?php foreach ($weekdays as $dayNumber => $dayName): ?><option value="<?= $dayNumber ?>" <?= (int) $ruleForm['weekday'] === $dayNumber ? 'selected' : '' ?>><?= h($dayName) ?></option><?php endforeach; ?>
                     </select>
                 </label>
@@ -308,13 +308,13 @@ try {
                     <label class="choice-row"><input type="radio" name="rule_mode" value="special" <?= $ruleForm['rule_mode'] === 'special' ? 'checked' : '' ?> onchange="toggleSpecialFields()" required><span><strong>Khusus</strong><small>Jadwal yang berlaku saat atribut cocok.</small></span></label>
                 </fieldset>
                 <div id="special-fields" <?= $ruleForm['rule_mode'] !== 'special' ? 'hidden' : '' ?>>
-                    <label>Jenis kekhususan
+                    <label for="special_type">Jenis kekhususan
                         <select name="special_type" id="special_type" onchange="toggleSpecialValue()">
                             <option value="pasaran" <?= $ruleForm['special_type'] === 'pasaran' ? 'selected' : '' ?>>Pasaran Jawa</option>
                             <option value="month_week" <?= $ruleForm['special_type'] === 'month_week' ? 'selected' : '' ?>>Minggu dalam bulan (Model A)</option>
                         </select>
                     </label>
-                    <label>Nilai kekhususan
+                    <label for="special_value">Nilai kekhususan
                         <select name="special_value" id="special_value">
                             <?php foreach ($pasarans as $value): ?><option data-kind="pasaran" value="<?= h($value) ?>" <?= $ruleForm['special_type'] === 'pasaran' && $ruleForm['special_value'] === $value ? 'selected' : '' ?>><?= h($value) ?></option><?php endforeach; ?>
                             <?php foreach ($weekOptions as $value => $label): ?><option data-kind="month_week" value="<?= h($value) ?>" <?= $ruleForm['special_type'] === 'month_week' && $ruleForm['special_value'] === $value ? 'selected' : '' ?>><?= h($label) ?></option><?php endforeach; ?>
