@@ -57,8 +57,8 @@ Aplikasi dinyatakan memenuhi tujuan inti ketika:
 
 - Standar Material Design telah ditetapkan di [05-UI-UX-MATERIAL-DESIGN.md](05-UI-UX-MATERIAL-DESIGN.md).
 - Design tokens dan komponen dasar awal sudah ditambahkan ke `prototype/phpdesktop/www/assets/app.css`.
-- Dashboard Admin awal tersedia di `prototype/phpdesktop/www/dashboard.php`; halaman diagnostik tetap tersedia terpisah melalui menu Pemeriksaan.
-- UI-3 Paket Jadwal, UI-4 Editor Jadwal, UI-5 Konfigurasi/Backup, dan UI-6 Public Dashboard masih menunggu pengerjaan.
+- Dashboard Admin awal tersedia di `prototype/phpdesktop/www/dashboard.php`; halaman diagnostik tetap tersedia terpisah melalui menu Pemeriksaan. Tampilan baca-saja publik tersedia di `prototype/phpdesktop/www/public.php`.
+- UI-3 Paket Jadwal, UI-4 Editor Jadwal, UI-5 Konfigurasi/Backup, dan UI-6 Public Dashboard sudah memiliki implementasi kode awal serta link navigasi bersama; UI-7 polish/regresi masih tersisa.
 - Tampilan belum dinyatakan lulus karena belum diuji pada runtime Windows lokal.
 
 ## 7. Acuan UI/UX
