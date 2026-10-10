@@ -136,6 +136,35 @@ Catatan: status PASS berlaku untuk tes persistensi diagnostik yang dilaporkan pe
 - Khusus meminta tepat satu atribut.
 - Konflik yang berpotensi membuat dua jadwal berlaku pada tanggal sama terdeteksi dan dijelaskan kepada operator.
 
+## Tahap 5A — Standarisasi UI/UX Material Design
+**Status: DOC READY — implementasi visual belum dimulai.**
+
+Acuan wajib: [05-UI-UX-MATERIAL-DESIGN.md](05-UI-UX-MATERIAL-DESIGN.md).
+
+**Alasan perubahan urutan:** editor jadwal dan paket kini sudah memiliki fungsi penting, tetapi sistem visual belum distandarkan untuk semua halaman. Sebelum menambah resolver kalender dan scheduler, rapikan pengalaman admin/public sebagai satu sistem tanpa mengubah aturan bisnis.
+
+**Urutan batch implementasi**
+1. **Batch UI-0 — Audit baseline:** inventarisasi seluruh halaman, navigasi, komponen, form, tabel, status, dan aksi; bedakan UI diagnostik yang ada dengan dashboard operasional final.
+2. **Batch UI-1 — Design tokens & app shell:** token warna, tipografi, spacing, radius, elevation, tombol, form, status, navigasi, dan layout responsif.
+3. **Batch UI-2 — Admin Dashboard:** ringkasan paket aktif, jam sistem, kegiatan berikutnya, status audio/log yang tersedia; hindari mengklaim status runtime yang belum benar-benar diperoleh.
+4. **Batch UI-3 — Paket Jadwal:** daftar, form, status aktif, ringkasan hari libur, dan aksi aktivasi.
+5. **Batch UI-4 — Editor Jadwal:** pilihan paket/hari, aturan, tabel kegiatan, pemilihan audio, validasi, pratinjau, dan Salin Jadwal.
+6. **Batch UI-5 — Konfigurasi & Backup:** konsistensi form, informasi penyimpanan, dan feedback operasi.
+7. **Batch UI-6 — Public Dashboard/status:** pastikan kebutuhan dan route terdefinisi; pisahkan status operasional dari kontrol admin. Bila belum ada halaman khusus, implementasikan sebagai pekerjaan UI tersendiri, bukan sekadar mengubah label halaman admin.
+8. **Batch UI-7 — Polish/regression:** ukuran jendela, empty/error/success states, keyboard/focus, dan regresi fungsi.
+
+**Kriteria selesai**
+- Semua halaman menggunakan token/komponen yang sama dan mengikuti acuan Material Design.
+- Admin dan public/status memiliki tujuan serta hirarki informasi yang jelas.
+- Layout diuji pada 1366 px, 1024 px, dan 390 px.
+- Paket jadwal, pilihan hari libur, editor, file audio, dan Salin Jadwal tetap berfungsi.
+- Perubahan kode diperiksa; pengujian akhir tetap menunggu runtime Windows lokal dan laporan pengguna.
+
+**Ketergantungan dan perlindungan**
+- Jangan merombak skema database, scheduler, audio, path penyimpanan, atau aturan bisnis hanya demi visual.
+- Jangan menghapus fungsi diagnostik sebelum pengganti operasional tersedia.
+- Setiap batch kecil, commit terpisah, dan sertakan langkah uji lokal.
+
 ## Tahap 6 — Resolver kalender dan prioritas
 **Pekerjaan**
 - Hitung hari dalam minggu.
