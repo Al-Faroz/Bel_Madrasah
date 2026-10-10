@@ -106,7 +106,7 @@ Halaman `packages.php` menyediakan:
 9. Tutup aplikasi sepenuhnya, buka kembali halaman Paket jadwal. Pastikan daftar paket dan status aktif bertahan.
 10. Laporkan hasil tiap langkah serta pesan error bila ada. Mesin kalender, jadwal harian, dan pemutaran otomatis belum terhubung pada tahap ini.
 
-**Status Tahap 4:** implementasi tersedia; menunggu uji lokal pengguna.
+**Status Tahap 4:** PASS berdasarkan laporan pengujian pengguna; navigasi, pembuatan/pengeditan paket, aktivasi tunggal, persistensi setelah restart, dan penanganan nama duplikat dilaporkan lulus.
 ## Tahap 5 — Editor jadwal harian
 
 Halaman `schedule-editor.php` memungkinkan operator:
