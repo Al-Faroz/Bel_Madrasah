@@ -137,7 +137,7 @@ Catatan: status PASS berlaku untuk tes persistensi diagnostik yang dilaporkan pe
 - Konflik yang berpotensi membuat dua jadwal berlaku pada tanggal sama terdeteksi dan dijelaskan kepada operator.
 
 ## Tahap 5A — Standarisasi UI/UX Material Design
-**Status: IN PROGRESS — Batch UI-1 dan UI-2 sudah masuk repository. Batch UI-3 (Paket Jadwal) juga sudah diimplementasikan di kode dan menunggu uji runtime lokal. Batch UI-4 sampai UI-7 belum dikerjakan.**
+**Status: IN PROGRESS — Batch UI-1 dan UI-2 sudah masuk repository. Batch UI-3 (Paket Jadwal) juga sudah diimplementasikan di kode dan menunggu uji runtime lokal. Batch UI-4, UI-5, dan UI-6 sudah diimplementasikan pada kode awal; UI-7 serta uji runtime lokal masih menunggu.**
 
 Acuan wajib: [05-UI-UX-MATERIAL-DESIGN.md](05-UI-UX-MATERIAL-DESIGN.md).
 
@@ -148,9 +148,9 @@ Acuan wajib: [05-UI-UX-MATERIAL-DESIGN.md](05-UI-UX-MATERIAL-DESIGN.md).
 2. **Batch UI-1 — Design tokens & app shell:** token warna, tipografi, spacing, radius, elevation, tombol, form, status, navigasi, dan layout responsif.
 3. **Batch UI-2 — Admin Dashboard:** versi awal tersedia di `dashboard.php`; menampilkan ringkasan paket, jam sistem, kegiatan berikutnya, dan peringatan bahwa scheduler/resolver belum tersedia. Runtime lokal belum diuji.
 4. **Batch UI-3 — Paket Jadwal:** IMPLEMENTED di `packages.php` dan `assets/app.css`: tampilan daftar/form diselaraskan dengan Material Design, status paket dan hari libur lebih mudah dipindai, label form dihubungkan ke input, dan aktivasi paket meminta konfirmasi. Runtime lokal belum diuji.
-5. **Batch UI-4 — Editor Jadwal:** pilihan paket/hari, aturan, tabel kegiatan, pemilihan audio, validasi, pratinjau, dan Salin Jadwal.
-6. **Batch UI-5 — Konfigurasi & Backup:** konsistensi form, informasi penyimpanan, dan feedback operasi.
-7. **Batch UI-6 — Public Dashboard/status:** pastikan kebutuhan dan route terdefinisi; pisahkan status operasional dari kontrol admin. Bila belum ada halaman khusus, implementasikan sebagai pekerjaan UI tersendiri, bukan sekadar mengubah label halaman admin.
+5. **Batch UI-4 — Editor Jadwal:** IMPLEMENTED awal di `schedule-editor.php` dan `assets/app.css`: hierarki panel, pemilihan paket, aturan Normal/Khusus, tabel kegiatan/audio, form kegiatan baru, empty state, serta pratinjau Salin Jadwal mendapat styling bersama. Logika jadwal dipertahankan; runtime belum diuji.
+6. **Batch UI-5 — Konfigurasi & Backup:** IMPLEMENTED awal di `settings.php`, `backup.php`, dan `assets/app.css`: label form aksesibel, navigasi aktif, informasi lokasi database/backup lebih terbaca, dan gaya tombol/panel konsisten. Runtime belum diuji.
+7. **Batch UI-6 — Public Dashboard/status:** IMPLEMENTED awal di `public.php` dan `assets/app.css`, dengan link dari Admin Dashboard. Halaman baca-saja menampilkan tanggal/jam, paket aktif, kegiatan tersimpan, dan peringatan bahwa jadwal khusus/resolver serta pemutaran audio real-time belum dapat dipastikan. Runtime belum diuji.
 8. **Batch UI-7 — Polish/regression:** ukuran jendela, empty/error/success states, keyboard/focus, dan regresi fungsi.
 
 **Kriteria selesai**
