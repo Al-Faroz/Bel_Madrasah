@@ -81,19 +81,53 @@ try {
             $eventId = (int) ($_POST['event_id'] ?? 0);
             $eventName = trim((string) ($_POST['event_name'] ?? ''));
             $eventTime = trim((string) ($_POST['event_time'] ?? ''));
-            $audioPath = trim((string) ($_POST['existing_audio_path'] ?? ''));
-            if (isset($_FILES['audio_file']) && (int) ($_FILES['audio_file']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
-                $audioPath = $db->storeUploadedAudio($_FILES['audio_file']);
+            $sortOrder = (int) ($_POST['sort_order'] ?? 0);
+
+            // Validate the form before storing an uploaded file, so invalid data
+            // cannot leave an orphaned audio file in AppData.
+            if ($eventName === '' || strlen($eventName) > 100) {
+                throw new InvalidArgumentException('Nama kegiatan wajib diisi dan maksimal 100 karakter.');
             }
-            $db->saveBellEvent(
-                $eventId > 0 ? $eventId : null,
-                $ruleId,
-                $eventName,
-                $eventTime,
-                $audioPath,
-                isset($_POST['event_enabled']),
-                max(0, (int) ($_POST['sort_order'] ?? 0))
-            );
+            if (!preg_match('/^(?:[01][0-9]|2[0-3]):[0-5][0-9]$/', $eventTime)) {
+                throw new InvalidArgumentException('Waktu harus valid dengan format 00:00 sampai 23:59.');
+            }
+            if ($sortOrder < 0 || $sortOrder > 9999) {
+                throw new InvalidArgumentException('Urutan harus antara 0 dan 9999.');
+            }
+
+            // Never trust a hidden form field for the stored path. Keep the path
+            // from the database and verify that the event belongs to this rule.
+            $audioPath = '';
+            if ($eventId > 0) {
+                $existingEvent = $db->getBellEvent($eventId);
+                if ($existingEvent === null || (int) $existingEvent['day_rule_id'] !== $ruleId) {
+                    throw new InvalidArgumentException('Kegiatan yang akan diubah tidak ditemukan pada aturan hari ini.');
+                }
+                $audioPath = (string) $existingEvent['audio_path'];
+            }
+
+            $uploadedAudioPath = null;
+            try {
+                if (isset($_FILES['audio_file']) && (int) ($_FILES['audio_file']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
+                    $uploadedAudioPath = $db->storeUploadedAudio($_FILES['audio_file']);
+                    $audioPath = $uploadedAudioPath;
+                }
+                $db->saveBellEvent(
+                    $eventId > 0 ? $eventId : null,
+                    $ruleId,
+                    $eventName,
+                    $eventTime,
+                    $audioPath,
+                    isset($_POST['event_enabled']),
+                    $sortOrder
+                );
+            } catch (Throwable $saveException) {
+                // If persistence fails after upload, remove only the new orphan.
+                if ($uploadedAudioPath !== null && is_file($uploadedAudioPath)) {
+                    @unlink($uploadedAudioPath);
+                }
+                throw $saveException;
+            }
             $message = $eventId > 0 ? 'Kegiatan bel berhasil diperbarui.' : 'Kegiatan bel berhasil ditambahkan.';
         } elseif ($action === 'delete_event') {
             $ruleId = (int) ($_POST['rule_id'] ?? 0);
@@ -236,7 +270,7 @@ try {
                         <div class="event-list">
                             <?php foreach ($ruleEvents as $event): ?>
                                 <form class="event-edit-card" method="post" action="schedule-editor.php" enctype="multipart/form-data">
-                                    <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>"><input type="hidden" name="editor_action" value="save_event"><input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>"><input type="hidden" name="event_id" value="<?= (int) $event['id'] ?>"><input type="hidden" name="existing_audio_path" value="<?= h((string) $event['audio_path']) ?>">
+                                    <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>"><input type="hidden" name="editor_action" value="save_event"><input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>"><input type="hidden" name="event_id" value="<?= (int) $event['id'] ?>">
                                     <div class="event-card-title"><strong><?= h((string) $event['name']) ?></strong><span class="event-time"><?= h((string) $event['event_time']) ?></span></div>
                                     <div class="event-form-grid">
                                         <label>Nama kegiatan<input name="event_name" maxlength="100" required value="<?= h((string) $event['name']) ?>"></label>
@@ -252,7 +286,7 @@ try {
                             <?php if ($ruleEvents === []): ?><p class="empty-event">Belum ada kegiatan untuk pola ini.</p><?php endif; ?>
                             <details class="add-event-details"><summary>+ Tambah kegiatan bel</summary>
                                 <form class="event-edit-card" method="post" action="schedule-editor.php" enctype="multipart/form-data">
-                                    <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>"><input type="hidden" name="editor_action" value="save_event"><input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>"><input type="hidden" name="event_id" value="0"><input type="hidden" name="existing_audio_path" value="">
+                                    <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>"><input type="hidden" name="editor_action" value="save_event"><input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>"><input type="hidden" name="event_id" value="0">
                                     <div class="event-form-grid">
                                         <label>Nama kegiatan<input name="event_name" maxlength="100" required placeholder="Contoh: Bel masuk"></label>
                                         <label>Waktu<input type="time" name="event_time" required value="07:00"></label>
