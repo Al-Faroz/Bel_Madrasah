@@ -131,6 +131,7 @@ try {
         <a href="schedule-editor.php">Editor jadwal</a>
         <a href="settings.php">Konfigurasi</a>
         <a href="backup.php">Backup data</a>
+            <a href="public.php">Tampilan publik</a>
     </nav>
 
     <section class="intro panel page-intro">
