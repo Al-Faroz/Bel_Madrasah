@@ -49,7 +49,7 @@ Catatan: status PASS berlaku untuk tes persistensi diagnostik yang dilaporkan pe
 - Hasil uji aktual dicatat sebelum status tahap dinyatakan lulus.
 
 ## Tahap 2 — PoC SQLite dan audio internal
-**Status: IMPLEMENTASI TERSEDIA — menunggu uji lokal pengguna.**
+**Status: PASS — diuji pengguna pada Windows 11 64-bit berdasarkan laporan Tahap 2.**
 
 **Sudah dibuat di repository**
 - Database aplikasi utama terpisah dari database diagnostik Tahap 1A, disimpan di `%APPDATA%\\BelMadrasah\\data\\bel-madrasah.sqlite` (fallback `%LOCALAPPDATA%`).
@@ -59,7 +59,9 @@ Catatan: status PASS berlaku untuk tes persistensi diagnostik yang dilaporkan pe
 - Panel status menampilkan lokasi database, versi skema, dan tabel yang terdeteksi.
 - Panel audio menampilkan durasi metadata dan tetap menggunakan elemen audio internal.
 
-**Belum dinyatakan lulus:** kode sudah tersedia, tetapi harus diuji dengan runtime lokal pengguna, termasuk audio panjang dan penanganan file audio yang tidak didukung.
+**Hasil uji lokal yang dilaporkan:** database aplikasi PASS; setelah restart tetap PASS; MP3 panjang PASS; WAV PASS; tidak ada catatan/error.
+
+**Batas cakupan:** hasil ini berlaku untuk skenario yang dilaporkan. Durasi/ukuran file yang tepat, format WAV spesifik, kegagalan file hilang/rusak, ketahanan pemadaman paksa, dan perilaku perangkat audio yang terputus belum dikonfirmasi.
 
 **Pekerjaan**
 - Buat/baca/tulis database SQLite.
