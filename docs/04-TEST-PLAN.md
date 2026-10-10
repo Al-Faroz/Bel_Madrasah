@@ -177,6 +177,42 @@ Lakukan pengukuran pada komputer sasaran:
 
 Target numerik CPU/RAM akan ditentukan setelah PoC dan disesuaikan dengan spesifikasi komputer sekolah; jangan mengklaim aplikasi ringan sebelum ada pengukuran.
 
+## 10. Uji penerimaan UI/UX Material Design
+
+Acuan: [05-UI-UX-MATERIAL-DESIGN.md](05-UI-UX-MATERIAL-DESIGN.md).
+
+### Konsistensi visual dan interaksi
+- [ ] Semua halaman menggunakan token warna, tipografi, spacing, radius, border, elevation, dan komponen bersama.
+- [ ] Navigasi konsisten dan item halaman aktif terlihat jelas.
+- [ ] Hierarki judul, deskripsi, tindakan utama, isi, dan metadata mudah dibedakan.
+- [ ] Tombol primary/secondary/destructive punya prioritas visual yang konsisten.
+- [ ] Semua kontrol punya label; focus keyboard terlihat; disabled/loading state dapat dibedakan.
+- [ ] Pesan validasi, sukses, gagal, warning, dan empty state jelas serta tidak menggeser layout secara merusak.
+- [ ] Warna status tidak menjadi satu-satunya cara menyampaikan arti.
+
+### Dashboard
+- [ ] Admin Dashboard menunjukkan ringkasan operasional yang relevan, bukan hanya informasi diagnostik mentah.
+- [ ] Jam, paket aktif, kegiatan berikutnya, dan status audio hanya menyatakan kondisi yang benar-benar diketahui aplikasi.
+- [ ] Public Dashboard/status terpisah dari kontrol admin, atau keterbatasan route/fitur dicatat dengan jelas.
+- [ ] Informasi penting public/status dapat dibaca sekilas tanpa detail teknis yang tidak dibutuhkan.
+
+### Responsivitas
+- [ ] Tampilan pada lebar 1366 px.
+- [ ] Tampilan pada lebar 1024 px.
+- [ ] Tampilan pada lebar 390 px.
+- [ ] Resize jendela PHP Desktop tidak membuat tombol tumpang tindih, label terpotong, atau form melebar keluar.
+- [ ] Tabel jadwal tetap dapat dibaca melalui layout/overflow yang disengaja.
+
+### Regresi fungsi setelah redesign
+- [ ] Buat dan edit paket jadwal; paket aktif tetap mengikuti aturan satu paket aktif.
+- [ ] Pilihan hari libur paket baru tetap tersimpan dan hari aktif terbentuk sesuai pilihan.
+- [ ] Paket lama tidak diam-diam berubah aturan hari liburnya.
+- [ ] Tambah/edit/hapus kegiatan tetap menggunakan aturan backend yang sama.
+- [ ] Pilihan file audio dan path tersimpan tidak berubah akibat redesign.
+- [ ] Salin Jadwal menampilkan pratinjau dan konfirmasi, menyalin Senin ke Selasa, mengganti seluruh kegiatan target, serta tidak mengubah paket/hari lain.
+- [ ] Konfigurasi dan backup tetap berfungsi.
+- [ ] Hasil visual diperiksa di runtime Windows lokal; code review saja bukan PASS.
+
 ## 10. Catatan operasional
 
 Aplikasi tidak dapat menjamin pemutaran tepat waktu jika komputer mati, Windows tidur, aplikasi dihentikan, atau perangkat audio terputus. Rekomendasi pengaturan daya dan langkah pemulihan harus ditulis dalam panduan pengguna setelah perilaku final diuji.
