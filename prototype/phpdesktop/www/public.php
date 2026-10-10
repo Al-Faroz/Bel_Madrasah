@@ -108,8 +108,8 @@ try {
                 <article class="public-overview-card">
                     <span class="public-card-icon" aria-hidden="true">◷</span>
                     <span class="public-card-label">Kegiatan berikutnya</span>
-                    <strong><?= $nextEvent !== null ? h(substr((string) $nextEvent['event_time'], 0, 5)) : '—' ?></strong>
-                    <small><?= $nextEvent !== null ? h((string) $nextEvent['name']) : 'Tidak ada kegiatan Normal tersimpan berikutnya' ?></small>
+                    <strong id="public-next-time"><?= $nextEvent !== null ? h(substr((string) $nextEvent['event_time'], 0, 5)) : '—' ?></strong>
+                    <small id="public-next-name"><?= $nextEvent !== null ? h((string) $nextEvent['name']) : 'Tidak ada kegiatan Normal tersimpan berikutnya' ?></small>
                 </article>
                 <article class="public-overview-card">
                     <span class="public-card-icon" aria-hidden="true">♫</span>
@@ -138,11 +138,11 @@ try {
                 <?php else: ?>
                     <div class="public-timeline">
                         <?php foreach ($events as $event): $isNext = $nextEvent !== null && (int) $nextEvent['id'] === (int) $event['id']; ?>
-                            <article class="public-event <?= $isNext ? 'is-next' : '' ?>">
+                            <article class="public-event <?= $isNext ? 'is-next' : '' ?>" data-event-time="<?= h(substr((string) $event['event_time'], 0, 5)) ?>" data-event-name="<?= h((string) $event['name']) ?>">
                                 <div class="public-event-time"><?= h(substr((string) $event['event_time'], 0, 5)) ?></div>
                                 <div class="public-event-marker" aria-hidden="true"></div>
                                 <div class="public-event-copy"><strong><?= h((string) $event['name']) ?></strong><span><?= $isNext ? 'Kegiatan berikutnya berdasarkan waktu jadwal' : 'Kegiatan terkonfigurasi' ?></span></div>
-                                <?php if ($isNext): ?><span class="public-next-badge">BERIKUTNYA</span><?php endif; ?>
+                                <span class="public-next-badge" data-next-badge <?= $isNext ? '' : 'hidden' ?>>BERIKUTNYA</span>
                             </article>
                         <?php endforeach; ?>
                     </div>
@@ -161,6 +161,22 @@ try {
         clock.textContent = [now.getHours(), now.getMinutes(), now.getSeconds()].map(function (part) {
             return String(part).padStart(2, '0');
         }).join(':');
+        const current = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+        const rows = Array.from(document.querySelectorAll('.public-event[data-event-time]'));
+        let next = null;
+        rows.forEach(function (row) {
+            const isUpcoming = next === null && row.dataset.eventTime >= current;
+            row.classList.toggle('is-next', isUpcoming);
+            const badge = row.querySelector('[data-next-badge]');
+            if (badge) badge.hidden = !isUpcoming;
+            if (isUpcoming) next = row;
+        });
+        const nextTime = document.getElementById('public-next-time');
+        const nextName = document.getElementById('public-next-name');
+        if (nextTime && nextName) {
+            nextTime.textContent = next ? next.dataset.eventTime : '—';
+            nextName.textContent = next ? next.dataset.eventName : 'Tidak ada kegiatan Normal tersimpan berikutnya';
+        }
     }
     updateClock();
     window.setInterval(updateClock, 1000);
