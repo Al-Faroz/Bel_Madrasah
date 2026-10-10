@@ -84,7 +84,30 @@ Tahap 3 menambahkan halaman berikut:
 **Status Tahap 3: PASS berdasarkan laporan pengujian lokal pengguna.** Navigasi, penyimpanan konfigurasi, persistensi setelah restart, backup pertama, dan backup kedua dilaporkan PASS; tidak ada error. Tidak ada perbaikan kode yang diindikasikan oleh laporan.
 
 Belum dikonfirmasi secara terpisah: validitas file backup dengan pemeriksaan SQLite independen, bahwa nama backup kedua berbeda dan file pertama tidak tertimpa, serta proses restore. Fitur restore, editor paket jadwal, scheduler otomatis, dan integrasi volume pemutar belum dibuat.
-## Tahap 4 — Pengelolaan paket jadwal\n\nHalaman `packages.php` menyediakan:\n- Daftar paket dan penanda paket aktif/nonaktif.\n- Pembuatan paket baru dengan status nonaktif agar tidak mengganti jadwal yang sedang dipakai tanpa sengaja.\n- Pengubahan nama dan keterangan paket.\n- Aktivasi satu paket secara global. Pergantian dilakukan dalam transaksi SQLite; indeks unik database tetap mencegah dua paket aktif.\n- Paket `Normal` dibuat otomatis hanya bila database belum memiliki paket apa pun.\n- Tidak ada tombol hapus pada tahap ini, untuk melindungi data yang nantinya terkait jadwal/kegiatan.\n\n### Cara uji Tahap 4\n1. Jalankan `git pull origin main`, lalu salin ulang isi `prototype/phpdesktop/www/` ke folder `www/` runtime. Jangan menghapus `%APPDATA%\\BelMadrasah`.\n2. Buka Dashboard diagnostik, Konfigurasi, dan Backup data; pastikan masing-masing menampilkan tautan Paket jadwal. Buka halaman Paket jadwal.\n3. Pastikan paket `Normal` terlihat sebagai AKTIF bila database sebelumnya belum memiliki paket.\n4. Buat paket `Ujian`. Pastikan statusnya NONAKTIF dan `Normal` tetap AKTIF.\n5. Buat paket `Ramadan`. Pastikan paket tersimpan tanpa mengganti paket aktif.\n6. Coba buat nama yang sama dengan paket lain, termasuk perbedaan huruf besar/kecil. Aplikasi harus menolak duplikasi dengan pesan yang jelas.\n7. Edit keterangan/nama paket. Pastikan perubahan tersimpan dan tidak otomatis mengubah status aktif.\n8. Tekan Aktifkan pada `Ujian`. Pastikan hanya `Ujian` yang berstatus AKTIF. Aktifkan kembali `Normal` dan periksa statusnya.\n9. Tutup aplikasi sepenuhnya, buka kembali halaman Paket jadwal. Pastikan daftar paket dan status aktif bertahan.\n10. Laporkan hasil tiap langkah serta pesan error bila ada. Mesin kalender, jadwal harian, dan pemutaran otomatis belum terhubung pada tahap ini.\n\n**Status Tahap 4:** implementasi tersedia; menunggu uji lokal pengguna.\n## Apa yang diperiksa prototipe
+## Tahap 4 — Pengelolaan paket jadwal
+
+Halaman `packages.php` menyediakan:
+- Daftar paket dan penanda paket aktif/nonaktif.
+- Pembuatan paket baru dengan status nonaktif agar tidak mengganti jadwal yang sedang dipakai tanpa sengaja.
+- Pengubahan nama dan keterangan paket.
+- Aktivasi satu paket secara global. Pergantian dilakukan dalam transaksi SQLite; indeks unik database tetap mencegah dua paket aktif.
+- Paket `Normal` dibuat otomatis hanya bila database belum memiliki paket apa pun.
+- Tidak ada tombol hapus pada tahap ini, untuk melindungi data yang nantinya terkait jadwal/kegiatan.
+
+### Cara uji Tahap 4
+1. Jalankan `git pull origin main`, lalu salin ulang isi `prototype/phpdesktop/www/` ke folder `www/` runtime. Jangan menghapus `%APPDATA%\\BelMadrasah`.
+2. Buka Dashboard diagnostik, Konfigurasi, dan Backup data; pastikan masing-masing menampilkan tautan Paket jadwal. Buka halaman Paket jadwal.
+3. Pastikan paket `Normal` terlihat sebagai AKTIF bila database sebelumnya belum memiliki paket.
+4. Buat paket `Ujian`. Pastikan statusnya NONAKTIF dan `Normal` tetap AKTIF.
+5. Buat paket `Ramadan`. Pastikan paket tersimpan tanpa mengganti paket aktif.
+6. Coba buat nama yang sama dengan paket lain, termasuk perbedaan huruf besar/kecil. Aplikasi harus menolak duplikasi dengan pesan yang jelas.
+7. Edit keterangan/nama paket. Pastikan perubahan tersimpan dan tidak otomatis mengubah status aktif.
+8. Tekan Aktifkan pada `Ujian`. Pastikan hanya `Ujian` yang berstatus AKTIF. Aktifkan kembali `Normal` dan periksa statusnya.
+9. Tutup aplikasi sepenuhnya, buka kembali halaman Paket jadwal. Pastikan daftar paket dan status aktif bertahan.
+10. Laporkan hasil tiap langkah serta pesan error bila ada. Mesin kalender, jadwal harian, dan pemutaran otomatis belum terhubung pada tahap ini.
+
+**Status Tahap 4:** implementasi tersedia; menunggu uji lokal pengguna.
+## Apa yang diperiksa prototipe
 
 - Halaman PHP dirender di jendela desktop.
 - Versi PHP dan jenis SAPI dapat ditampilkan.
