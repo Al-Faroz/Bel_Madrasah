@@ -233,3 +233,32 @@ Acuan visual: [05-UI-UX-MATERIAL-DESIGN.md](05-UI-UX-MATERIAL-DESIGN.md).
 - [ ] Konfirmasi aktivasi yang disetujui tetap mengaktifkan paket melalui handler backend yang ada.
 - [ ] Layout diuji pada lebar 1366 px, 1024 px, dan 390 px.
 - [ ] Pemeriksaan runtime dilakukan pada Windows lokal; pemeriksaan repository bukan pengganti uji runtime.
+
+
+## UI-4 — Editor Jadwal (Material Design)
+
+- [ ] Pemilihan paket dan navigasi aktif terlihat jelas.
+- [ ] Form aturan Normal/Khusus, jenis/nilai atribut, dan status aktif tetap berfungsi.
+- [ ] Tabel kegiatan tetap dapat digulir horizontal saat dibutuhkan tanpa merusak layout.
+- [ ] Form edit kegiatan, upload audio, tambah kegiatan, hapus kegiatan, dan validasi server tetap berfungsi.
+- [ ] Salin Jadwal masih menampilkan pratinjau dan konfirmasi; pembatalan tidak mengubah data.
+- [ ] Tampilan diuji pada 1366 px, 1024 px, dan 390 px.
+
+## UI-5 — Konfigurasi dan Backup (Material Design)
+
+- [ ] Label form terhubung ke input dan nilai konfigurasi tetap tersimpan setelah restart.
+- [ ] Jalur database dan jalur backup dapat dibaca pada jendela sempit.
+- [ ] Tombol backup membuat file pada lokasi yang diharapkan; database aktif tidak diubah.
+- [ ] Pesan sukses/gagal tampil jelas tanpa menyembunyikan detail yang diperlukan untuk diagnosis.
+- [ ] Tampilan diuji pada 1366 px, 1024 px, dan 390 px.
+
+## UI-6 — Public Dashboard (Material Design)
+
+- [ ] Halaman `public.php` dapat dibuka terpisah dari kontrol admin.
+- [ ] Tidak ada aksi pengelolaan paket/jadwal pada tampilan publik.
+- [ ] Nama madrasah, tanggal/jam, paket aktif, kegiatan tersimpan, dan kegiatan berikutnya ditampilkan sesuai data yang benar-benar diketahui.
+- [ ] Jika ada aturan Khusus, halaman menjelaskan bahwa resolver kalender belum tersedia dan tidak mengklaim jadwal final.
+- [ ] Halaman tidak mengklaim audio sedang diputar; statusnya menjelaskan bahwa ini ringkasan konfigurasi.
+- [ ] Jam diperbarui di sisi tampilan dan layout diuji pada layar besar serta 1366 px, 1024 px, dan 390 px.
+- [ ] Link dari Admin Dashboard membuka tampilan publik.
+- [ ] Pemeriksaan runtime dilakukan pada Windows lokal.
