@@ -106,6 +106,26 @@ Pengujian dilakukan pada komputer Windows lokal, bukan hanya berdasarkan pemerik
 - [ ] Paket aktif benar-benar menjadi sumber resolver kalender dan scheduler (belum diimplementasikan).
 - [ ] Paket yang tidak aktif tidak memicu audio (perlu diuji setelah scheduler tersedia).
 
+### Tahap 5 — editor jadwal harian
+- [ ] Editor jadwal dapat dibuka dari dashboard, paket jadwal, konfigurasi, dan backup.
+- [ ] Pilih paket berbeda; daftar aturan yang tampil sesuai paket yang dipilih.
+- [ ] Tambah pola Normal Senin; tampil tanpa atribut khusus.
+- [ ] Tambah pola Khusus Selasa dengan Pasaran Jawa; nilai yang tersedia hanya Legi, Pahing, Pon, Wage, Kliwon.
+- [ ] Ubah jenis kekhususan menjadi minggu kalender; nilai yang tersedia hanya minggu ke-1 s.d. ke-5 dan minggu terakhir.
+- [ ] Pilih Normal; bidang jenis/nilai kekhususan tersembunyi dan tidak disimpan.
+- [ ] Coba tambah pola Normal kedua pada hari/paket yang sama; aplikasi menolak duplikasi.
+- [ ] Coba tambah aturan Khusus dengan jenis/nilai identik pada hari/paket yang sama; aplikasi menolak duplikasi.
+- [ ] Aturan khusus yang berbeda pada hari yang sama dapat disimpan dan menampilkan peringatan potensi benturan.
+- [ ] Status aktif/nonaktif aturan tersimpan setelah halaman dibuka kembali.
+- [ ] Tambah kegiatan dengan nama, waktu valid, urutan, status aktif, dan file MP3.
+- [ ] Tambah kegiatan WAV; pastikan jalur file tersimpan dan file ada di folder audio lokal aplikasi.
+- [ ] Edit nama/waktu/urutan/status kegiatan dan ganti audio; pastikan perubahan tersimpan.
+- [ ] Coba waktu tidak valid melalui request yang dimodifikasi (contoh 25:90); server harus menolak.
+- [ ] Coba file dengan ekstensi yang tidak diizinkan dan file di atas batas ukuran; aplikasi menolak dengan pesan jelas.
+- [ ] Hapus satu kegiatan; hanya kegiatan itu yang hilang.
+- [ ] Tutup dan buka aplikasi; aturan dan kegiatan tetap tersimpan.
+- [ ] Pastikan belum ada audio otomatis yang diputar hanya karena data jadwal disimpan (scheduler ada pada tahap berikutnya).
+
 ## 6. Uji kalender
 
 - [ ] Jadwal Normal Senin–Minggu.
