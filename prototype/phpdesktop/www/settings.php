@@ -29,7 +29,7 @@ try {
 <body><div class="app-shell"><header class="topbar"><div class="brand-mark">BM</div><div><p class="eyebrow">TAHAP 3 · KONFIGURASI</p><h1>Bel Madrasah</h1><p class="subtitle">Pengaturan lokal aplikasi</p></div></header>
 <nav class="main-nav" aria-label="Navigasi utama">
         <a href="dashboard.php">Dashboard</a>
-        <a href="index.php">Pemeriksaan</a>
+        <a href="diagnostics.php">Pemeriksaan</a>
         <a href="packages.php">Paket jadwal</a>
         <a href="schedule-editor.php">Editor jadwal</a>
         <a class="active" href="settings.php" aria-current="page">Konfigurasi</a>
