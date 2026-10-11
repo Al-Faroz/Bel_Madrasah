@@ -79,6 +79,7 @@ try {
             <p>Informasi jadwal bel madrasah</p>
         </div>
         <div class="public-live-indicator"><span></span> PANEL INFORMASI</div>
+        <a class="md-button md-button-tonal" href="dashboard.php">Dashboard Admin</a>
     </header>
 
     <main>
