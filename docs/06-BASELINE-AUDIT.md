@@ -1,6 +1,6 @@
 # Fase A — Audit Baseline
 
-**Status:** audit statis awal selesai; audit runtime dan seluruh dependency masih terbuka.  
+**Status:** audit statis awal selesai; batch entry point pertama sudah diterapkan; audit runtime dan seluruh dependency masih terbuka.  
 **Tanggal:** 2026-10-11  
 **Metode:** pembacaan file pada default branch repository. Tidak menjalankan PHP Desktop/Windows dari lingkungan ini.
 
@@ -10,7 +10,7 @@
 
 - `prototype/phpdesktop/www/lib/Database.php` adalah pusat akses SQLite; database utama ditempatkan di `%APPDATA%/BelMadrasah/data/bel-madrasah.sqlite`, dengan fallback ke `%LOCALAPPDATA%`.
 - Kelas database membuat skema dan menjalankan migrasi saat inisialisasi. Perubahan skema harus ditinjau hati-hati karena constructor dipakai oleh banyak halaman.
-- `index.php` masih berisi pemeriksaan runtime dan tes persistensi/diagnostik, sementara dashboard operasional ada di `dashboard.php`. Perlu diputuskan apakah halaman pemeriksaan tetap menjadi entry point teknis atau dipisah jelas dari dashboard produk.
+- Saat audit awal, `index.php` berisi pemeriksaan runtime dan tes persistensi. Pada batch implementasi pertama, isi pemeriksaan dipertahankan di `diagnostics.php` dan `index.php` diarahkan ke `public.php`; perilaku ini masih perlu dikonfirmasi pada runtime PHP Desktop Windows.
 - Tidak boleh menghapus database diagnostik maupun database utama hanya untuk merapikan alur.
 
 ### Halaman yang teridentifikasi
@@ -25,7 +25,7 @@
 
 ## 2. Temuan dan risiko yang perlu ditangani
 
-1. **Entry point belum jelas untuk produk.** `index.php` berorientasi pemeriksaan teknis, sedangkan `dashboard.php` adalah dashboard admin. Tentukan alur pembukaan aplikasi agar pengguna tidak menganggap halaman diagnostik sebagai beranda produk.
+1. **Entry point sudah diubah di kode, belum diuji di runtime.** `index.php` mengarahkan ke `public.php`; pemeriksaan teknis tersedia di `diagnostics.php`. Pastikan redirect relatif bekerja di PHP Desktop Windows.
 2. **CSS tumbuh secara aditif.** Gaya dari beberapa batch ditambahkan di bagian bawah stylesheet; hal ini berisiko menghasilkan override dan perbedaan visual antarlaman. Jangan menambah patch kosmetik lagi sebelum inventarisasi selector dan token.
 3. **Navigasi tidak seragam.** Urutan item menu berbeda antara beberapa halaman (contoh settings/backup menempatkan Pemeriksaan lebih awal daripada dashboard/packages). Perlu satu partial/template navigasi bersama atau strategi render bersama.
 4. **Aturan kalender belum menjadi sumber jadwal final.** `dashboard.php` dan `public.php` membaca aturan Normal hari ini secara langsung dan melewatkan aturan Khusus. Public dashboard sudah memberi peringatan, tetapi informasi berikutnya belum mencerminkan resolver kalender final.
