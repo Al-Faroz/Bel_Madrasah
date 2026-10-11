@@ -58,3 +58,8 @@ Belum menjadi kebutuhan awal: sinkronisasi cloud, kontrol jarak jauh internet, a
 4. Tiap perubahan mempunyai commit dan checklist uji.
 5. Pengguna melakukan pull dan pengujian runtime Windows; screenshot/error digunakan untuk perbaikan.
 6. Kode baru tidak boleh merusak penyimpanan AppData, SQLite, audio internal, atau data lama.
+
+
+## Dokumen audit baseline
+
+Audit awal kode dan risiko pengembangan dicatat di [06-BASELINE-AUDIT.md](06-BASELINE-AUDIT.md). Fase audit masih terbuka sampai pemeriksaan method database, form/action, CSS, navigasi, dan kontrak data diselesaikan.
