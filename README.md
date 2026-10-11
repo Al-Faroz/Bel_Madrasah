@@ -2,62 +2,53 @@
 
 Aplikasi bel otomatis untuk kebutuhan operasional madrasah/sekolah di Windows.
 
-**Status proyek:** PoC desktop dan uji persistensi SQLite diagnostik Tahap 1A dilaporkan PASS pada Windows 11 64-bit. Database aplikasi utama dan uji audio Tahap 2 dilaporkan PASS oleh pengguna pada Windows 11 64-bit (SQLite, restart, MP3 panjang, dan WAV). Kerangka navigasi, konfigurasi lokal, dan backup database Tahap 3 dilaporkan PASS oleh pengguna. Pengelolaan paket jadwal Tahap 4 dilaporkan PASS oleh pengguna. Editor jadwal harian Tahap 5 sudah diimplementasikan dan menunggu uji lokal. Pemeriksaan integritas backup independen, restore, mesin kalender, scheduler otomatis, tray, sleep/wake, dan pengemasan masih perlu diuji.
+**Status proyek:** Proof of Concept (PoC) runtime `phpdesktop-chrome-130.1-php-8.3`, SQLite lokal, dan audio internal telah dilaporkan berjalan untuk skenario uji awal. Pengembangan produk kini menggunakan roadmap baru yang dimulai dari audit baseline, spesifikasi, dan desain UI yang bersih. Implementasi UI sebelumnya belum dianggap final atau lulus regresi hanya karena tersedia di repository.
 
-Bel Madrasah dirancang agar operator dapat mengatur paket jadwal, waktu kegiatan, dan file audio. Saat waktu yang ditentukan tiba, aplikasi menjalankan audio secara otomatis melalui perangkat suara Windows tanpa operator perlu membuka Winamp, VLC, Windows Media Player, atau pemutar musik eksternal lainnya.
+## Tujuan
 
-## Tujuan utama
+- Mengelola paket jadwal dan kegiatan bel sekolah.
+- Memutar audio lokal secara otomatis sesuai jadwal setelah scheduler selesai dikembangkan dan diuji.
+- Berjalan lokal tanpa XAMPP, Apache/MySQL terpisah, atau pemutar audio eksternal.
+- Menjaga data pengguna tetap ada saat aplikasi diperbarui.
+- Menyediakan dashboard admin untuk operator dan dashboard publik untuk status operasional.
 
-- Pemutaran bel dan audio kegiatan sekolah secara otomatis berdasarkan jadwal.
-- Ringan ketika menunggu jadwal dan tidak menjalankan pemutar musik eksternal.
-- Dapat digunakan secara lokal tanpa koneksi internet untuk fungsi inti.
-- Tidak membutuhkan instalasi XAMPP, Apache, atau server database terpisah.
-- Pengaturan sederhana agar mudah digunakan operator sekolah.
-- Jadwal tersimpan secara lokal dan tetap tersedia setelah aplikasi ditutup atau komputer dimulai ulang.
+## Keputusan teknis PoC
 
-## Rancangan fitur
+- Runtime uji: PHP Desktop Chrome 130.1 + PHP 8.3.
+- Database lokal: SQLite.
+- Lokasi database pengguna berada di AppData, terpisah dari folder runtime.
+- Hasil uji awal persistensi SQLite, audio MP3 panjang/WAV, konfigurasi/backup dasar, dan paket jadwal dilaporkan PASS untuk skenario yang sudah dicoba. Hasil tersebut tidak otomatis membuktikan fitur produksi lain telah lulus.
 
-- Paket jadwal seperti **Normal**, **Ujian**, **Ramadan**, dan kegiatan khusus lainnya.
-- Satu paket jadwal aktif secara global; paket aktif tetap digunakan sampai operator menggantinya.
-- Jadwal Senin–Minggu pada setiap paket.
-- Pola hari **Normal** atau **Khusus**.
-- Hari khusus berdasarkan **pasaran Jawa** atau **minggu kalender dalam bulan**.
-- Daftar kegiatan bel yang dapat diubah nama, waktunya, file audionya, dan status aktifnya.
-- Pemutar audio internal aplikasi.
-- Dashboard status jadwal dan pemutaran.
-- Log pemutaran, kegagalan, dan kejadian terlewat.
-- Aplikasi dapat diminimalkan ke system tray bila pendekatan desktop yang dipilih mendukungnya.
-- Pengaturan serta data disimpan secara lokal.
+## Arah desain UI
 
-## Prinsip teknis
+Acuan visual: [RoyalUI Free Bootstrap Admin Template](https://github.com/BootstrapDash/RoyalUI-Free-Bootstrap-Admin-Template). Template digunakan sebagai referensi layout, dashboard, navigasi, kartu, form, dan tabel. Aplikasi harus tetap dapat digunakan secara offline; aset yang dibutuhkan saat runtime harus tersedia lokal dan lisensinya ditinjau.
 
-PHP adalah bahasa utama aplikasi. Karena targetnya desktop Windows mandiri, bukan aplikasi web yang memerlukan XAMPP, mekanisme runtime desktop, distribusi PHP, dan mesin audio internal akan ditetapkan dan diuji pada tahap fondasi teknis sebelum fitur besar dibangun.
+Dokumen desain: [docs/05-UI-UX-MATERIAL-DESIGN.md](docs/05-UI-UX-MATERIAL-DESIGN.md).
 
-SQLite menjadi kandidat basis data lokal karena tidak membutuhkan server database terpisah. Pemilihan teknologi final harus mempertimbangkan ukuran paket, konsumsi RAM/CPU, kompatibilitas Windows, dukungan audio, serta kemudahan pembaruan.
+## Roadmap pengembangan baru
 
-## Rencana pengerjaan
+1. Audit baseline kode, halaman, database, navigasi, dan fungsi yang sudah ada.
+2. Tetapkan spesifikasi produk dan kontrak data.
+3. Rancang app shell serta sistem UI yang konsisten.
+4. Implementasikan dan uji modul satu per satu: dashboard, paket jadwal, editor, konfigurasi, backup/restore, diagnostik, public dashboard.
+5. Implementasikan resolver kalender dan prioritas jadwal.
+6. Implementasikan scheduler dan pemutaran audio otomatis.
+7. Uji backup/restore, stabilitas, kinerja, dan distribusi Windows.
+8. Jalankan uji penerimaan dan dokumentasikan keterbatasan.
 
-1. Menetapkan kebutuhan dan keputusan arsitektur.
-2. Membuat fondasi aplikasi desktop Windows.
-3. Menyiapkan database lokal, konfigurasi, dan backup.
-4. Membuat pengelolaan paket jadwal dan penetapan satu paket aktif.
-5. Membuat editor jadwal Senin–Minggu dan pola hari khusus.
-6. Membuat resolver kalender, pasaran Jawa, serta prioritas jadwal khusus.
-7. Mengintegrasikan mesin penjadwalan otomatis dan pencegahan pemutaran ganda.
-8. Melengkapi dashboard operator, status audio, log, dan kebutuhan system tray.
-9. Menyiapkan paket aplikasi mandiri untuk Windows.
-10. Melakukan pengujian, perbaikan, dan optimasi.
+**Penting:** Tahap 1–4 sebelumnya merupakan eksperimen kelayakan teknologi/fondasi. Roadmap produk disusun ulang agar pekerjaan tidak tumpang tindih. Data dan fondasi yang sudah berjalan tidak boleh dihapus atau direset hanya demi memulai urutan kerja baru.
 
-Rincian acuan kebutuhan, aturan kalender, arsitektur, tahapan, dan pengujian ada di folder [docs](docs/).
+## Dokumen acuan
 
-## Pola kerja pengembangan
+- [Ikhtisar proyek](docs/00-PROJECT-OVERVIEW.md)
+- [Roadmap pengerjaan baru](docs/03-IMPLEMENTATION-PLAN.md)
+- [Rencana pengujian](docs/04-TEST-PLAN.md)
+- [Acuan UI/UX](docs/05-UI-UX-MATERIAL-DESIGN.md)
 
-Pengembangan dilakukan bertahap melalui repository GitHub. Setiap tahap harus memiliki perubahan yang jelas, cara menjalankan, dan kriteria pengujian. Setelah perubahan tersedia di repository, pengembang lokal melakukan pull, menjalankan aplikasi, dan melaporkan hasil pengujian sebelum pekerjaan dilanjutkan.
+## Pola kolaborasi
 
-## Status
-
-Belum dianggap siap digunakan di lingkungan sekolah sampai fungsi inti, perilaku saat Windows aktif/tidur, pemutaran audio, dan paket distribusi Windows diuji secara langsung.
+Setiap batch harus fokus, memiliki commit terpisah, dan dilengkapi langkah uji. Label IMPLEMENTED berarti kode tersedia; LOCAL TEST PASS hanya diberikan setelah aplikasi dijalankan pada PHP Desktop di Windows dan hasilnya dilaporkan. Jangan menyatakan rilis siap digunakan di sekolah sebelum fitur inti, sleep/wake, audio, data, dan distribusi diuji langsung.
 
 ## Lisensi
 
-Belum ditentukan.
+Lisensi proyek belum ditentukan.
