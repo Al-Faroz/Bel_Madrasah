@@ -75,16 +75,26 @@ Belum menjadi kebutuhan awal: sinkronisasi cloud, kontrol jarak jauh internet, a
 Audit awal kode dan risiko pengembangan dicatat di [06-BASELINE-AUDIT.md](06-BASELINE-AUDIT.md). Fase audit masih terbuka sampai pemeriksaan method database, form/action, CSS, navigasi, dan kontrak data diselesaikan.
 
 
-## Keputusan arsitektur UI yang dikunci
+## Keputusan arsitektur produk yang dikunci
 
-1. **Public area adalah halaman awal aplikasi.** Ketika aplikasi dibuka, operator melihat tampilan publik yang sederhana dan informatif.
-2. **Dashboard admin diakses dari public area.** Sediakan tautan/tombol yang jelas seperti “Dashboard Admin”.
-3. **Tidak menggunakan login/Auth.** Dashboard admin dapat diakses langsung; jangan menambahkan halaman login atau sistem akun pada ruang lingkup saat ini.
-4. **PHP native memakai partial views.** Gunakan layout dan partial yang dipanggil dengan `require` untuk navigasi, header, breadcrumb, pesan status, footer, dan komponen berulang.
-5. **Pisahkan layout admin dan public.** Public harus sesederhana mungkin dan tidak memuat navigasi admin yang tidak dibutuhkan.
-6. **Aset public terpisah.** Gunakan CSS dan JavaScript khusus public bila diperlukan agar aset/interaksi admin tidak membebani public.
-7. **Folder aset operator.** Sediakan satu lokasi mudah ditemukan untuk logo dan audio. Nama folder, subfolder, ekstensi yang didukung, cara penamaan, dan langkah mengganti file harus dijelaskan tertulis di dalam aplikasi.
-8. **Data aman.** Lokasi database AppData dan data pengguna tidak dihapus atau dipindahkan hanya demi redesign.
+1. Public area adalah halaman awal aplikasi; pemeriksaan teknis bukan beranda.
+2. Dashboard admin diakses dari public area melalui tautan/tombol yang jelas.
+3. Tidak menggunakan login/Auth; admin dapat diakses langsung.
+4. Gunakan layout dan partial PHP native melalui require dengan path include yang ditentukan aplikasi.
+5. Pisahkan layout public dan admin. Public ringkas dan tidak memuat navigasi pengelolaan.
+6. CSS/JS public dipisahkan bila bermanfaat.
+7. Sediakan folder aset operator persisten dengan subfolder audio dan logo, terpisah dari folder program.
+8. Nama file bebas, tanpa pola penamaan wajib.
+9. Database menyimpan referensi aset yang dipilih; file yang hilang harus terdeteksi dan dapat dipilih ulang.
+10. Database AppData, data pengguna, dan hasil PoC tidak dihapus atau dipindahkan demi redesign.
+
+## Kontrak pengelolaan aset
+
+- Operator membuka folder aset dari aplikasi, copy-paste file ke subfolder audio/logo, lalu memilih aset yang digunakan.
+- Audit konfigurasi PHP Desktop sebelum memutuskan apakah path asli dapat diperoleh melalui native bridge. HTML file picker biasa tidak memberikan path lokal penuh yang dapat dipercaya.
+- Jika tidak ada bridge native, UI menampilkan daftar file valid yang ditemukan di folder aset untuk dipilih.
+- Path audio lama harus tetap didukung selama transisi; jangan memindahkan atau menghapus file lama tanpa backup dan migrasi yang tervalidasi.
+- Ekstensi yang ditampilkan sebagai didukung harus diverifikasi terhadap validasi dan kemampuan runtime.
 
 ## Prinsip produk tambahan
 
