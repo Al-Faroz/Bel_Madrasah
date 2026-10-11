@@ -106,3 +106,33 @@ Selesaikan dan uji satu modul sebelum memperluas redesign ke modul berikutnya. H
 ## 10. Status implementasi
 
 Dokumen ini menetapkan **arah baru**. Kode UI yang ada perlu diaudit; jangan menganggap implementasi sebelumnya sebagai final. Label “IMPLEMENTED” hanya berarti kode tersedia. Label “LOCAL TEST PASS” hanya digunakan setelah hasil runtime dilaporkan.
+
+
+## 11. Public-first dan partial views (keputusan terbaru)
+
+### Public area
+- Menjadi halaman awal aplikasi.
+- Fokus pada informasi jadwal dan status yang benar-benar diketahui.
+- Menyediakan satu tombol/tautan yang jelas menuju Dashboard Admin.
+- Tidak memuat navigasi admin, formulir pengaturan, atau dekorasi berlebihan.
+- CSS/JS public boleh dipisah agar ringan dan mudah dipelihara.
+
+### Admin area
+- Tidak menggunakan login/Auth pada ruang lingkup saat ini.
+- Diakses langsung dari tautan pada public area.
+- Semua halaman admin menggunakan layout dan partial views PHP native yang sama.
+
+### Pola PHP native
+Target struktur, menyesuaikan hasil audit:
+- `layouts/public.php` dan `layouts/admin.php`
+- `partials/admin-sidebar.php`, `partials/admin-header.php`, `partials/flash-message.php`, `partials/footer.php`
+- `views/<modul>/<halaman>.php`
+- `assets/css/public.css`, `assets/js/public.js`, dan aset admin yang terorganisasi
+- `lib/Database.php` serta logika bisnis terpisah dari view
+
+Gunakan path `require` yang ditentukan internal aplikasi, bukan input pengguna. Selesaikan aksi POST dan validasi sebelum merender view. Escape semua data yang ditampilkan ke HTML.
+
+### Folder aset operator
+Sediakan satu folder akar yang mudah ditemukan dengan subfolder audio dan logo. Nama/path final dipilih setelah audit path pemutar audio yang sekarang. Instruksi di dalam aplikasi harus menjelaskan cara copy-paste file, format yang didukung, penamaan, cara mengganti file yang sedang dirujuk jadwal, serta tindakan saat file tidak ditemukan. Aset harus disimpan di lokasi yang tidak terhapus saat aplikasi diperbarui.
+
+Jangan memindahkan referensi path lama tanpa migrasi aman dan jangan mengklaim format audio didukung sebelum diverifikasi.
