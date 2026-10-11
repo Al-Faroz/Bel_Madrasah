@@ -10,58 +10,68 @@
 
 ## Keputusan reset
 
-Tahap 1–4 sebelumnya adalah PoC/fondasi untuk membuktikan PHP Desktop Chrome 130.1 + PHP 8.3, SQLite, audio internal, konfigurasi/backup dasar, dan paket jadwal bisa berjalan. Hasil itu dipertahankan sebagai bukti teknis. Roadmap produk di bawah dimulai kembali dari **Fase A**, tanpa mengulang eksperimen yang sudah terbukti dan tanpa menganggap seluruh UI/fitur lama sudah benar.
+Tahap 1–4 sebelumnya adalah PoC/fondasi untuk membuktikan PHP Desktop Chrome 130.1 + PHP 8.3, SQLite, audio internal, konfigurasi/backup dasar, dan paket jadwal bisa berjalan. Hasil itu dipertahankan sebagai bukti teknis. Roadmap produk dimulai kembali dari Fase A, tanpa mengulang eksperimen yang sudah terbukti dan tanpa menganggap seluruh UI/fitur lama sudah benar.
 
-**Strategi:** audit → kontrak kebutuhan/data → design system dan app shell → halaman per modul → aturan kalender → scheduler/audio → backup/restore dan hardening → distribusi.
+## Keputusan arsitektur UI (sudah disepakati)
+
+- Public area adalah halaman pertama saat aplikasi dibuka.
+- Dashboard admin dibuka melalui tautan/tombol dari public area.
+- Tidak ada login/Auth; dashboard admin langsung dapat diakses.
+- Gunakan PHP native terstruktur dengan layout dan partial views memakai `require`.
+- Pisahkan layout admin dan public.
+- Public mempunyai CSS/JS sendiri bila diperlukan; jangan membebani public dengan aset atau interaksi admin.
+- Sediakan folder aset operator untuk logo dan audio serta petunjuk pemakaian di dalam aplikasi.
+- Nama dan struktur folder aset final harus ditentukan setelah memeriksa bagaimana pemutar audio dan pemilih file saat ini menangani path.
+- Tidak boleh mereset database atau memindahkan data AppData demi merapikan UI.
 
 ## Fase A — Audit baseline dan inventarisasi
 
-**Status: NEXT**
+**Status: IN PROGRESS**
 
 - Inventarisasi semua halaman PHP, class Database, skema/migrasi SQLite, fungsi POST/GET, file audio, navigasi, CSS, dan JavaScript.
 - Tandai tiap bagian: reuse, perbaiki, pindahkan, atau buang setelah konfirmasi.
 - Cocokkan nama field/method yang benar-benar tersedia dengan pemanggilnya.
+- Audit bagaimana path audio disimpan dan bagaimana file dipilih/diputar sebelum menetapkan folder aset.
 - Catat bug yang tampak dari pengujian pengguna; jangan memperbaiki hanya dari dugaan.
 - Pertahankan data AppData dan buat salinan backup sebelum perubahan yang menyentuh skema.
 
-**Kriteria selesai:** laporan audit dan daftar pekerjaan yang tidak tumpang tindih; tidak ada penghapusan data atau reset database otomatis.
+**Kriteria selesai:** laporan audit dan daftar pekerjaan yang tidak tumpang tindih; kontrak path aset dan entry point disepakati; tidak ada penghapusan data atau reset database otomatis.
 
 ## Fase B — Spesifikasi produk dan kontrak data
 
 - Tetapkan entitas, relasi, validasi, status aktif/nonaktif, serta perilaku migrasi.
-- Tetapkan alur operator dari membuka aplikasi sampai mengatur paket, hari, kegiatan, audio, backup, dan pemeriksaan status.
+- Tetapkan alur operator dari membuka public area sampai mengatur paket, hari, kegiatan, audio, backup, dan pemeriksaan status.
 - Definisikan perilaku jadwal Normal/Khusus, pasaran Jawa, minggu kalender, prioritas, konflik, dan jadwal terlewat sebelum membuat resolver.
 - Definisikan makna status yang boleh ditampilkan. Jadwal tersimpan bukan bukti audio sedang diputar.
+- Definisikan kontrak aset: lokasi folder, subfolder audio/logo, ekstensi yang didukung, perilaku file hilang, dan instruksi operator.
 - Susun kriteria penerimaan tiap modul.
 
 **Kriteria selesai:** aturan bisnis dan kontrak data terdokumentasi; semua ketidakpastian diberi keputusan atau ditandai untuk ditanyakan.
 
-## Fase C — UI/UX dan app shell (menggunakan RoyalUI sebagai referensi)
+## Fase C — Arsitektur view dan design system
 
-- Audit screenshot dan struktur halaman yang sekarang; jangan menganggap tampilan sekarang sebagai acuan final.
-- Tetapkan layout admin, navigasi, header, lebar konten, grid, typography, warna, spacing, form, tabel, dialog, notifikasi, dan empty/error state.
-- Buat satu app shell dan komponen CSS bersama sebelum redesign per halaman.
-- Buat konsep dashboard admin yang berorientasi operasional, bukan halaman diagnostik.
-- Buat public dashboard terpisah, minim kontrol admin, dengan informasi yang bisa dibaca dari kejauhan.
-- Hindari ketergantungan CDN saat runtime; aset yang diperlukan untuk offline harus tersedia lokal.
-- Pastikan lisensi template/aset ditinjau sebelum disalin.
+1. Tentukan struktur direktori PHP native untuk `layouts/`, `partials/`, `views/`, `assets/`, dan `lib/`, disesuaikan dengan file aktual.
+2. Buat mekanisme render view yang memvalidasi path view yang diizinkan; hindari memakai input pengguna langsung sebagai path `require`.
+3. Bangun layout public yang minimal dengan CSS/JS terpisah.
+4. Bangun layout admin dengan navigasi konsisten, header, breadcrumb opsional, flash message, footer, dan slot konten.
+5. Audit CSS lama dan rencanakan penggantian yang terkontrol; jangan menumpuk override kosmetik di akhir stylesheet.
+6. Gunakan RoyalUI sebagai referensi dashboard, bukan dependensi remote runtime; tinjau lisensi dan siapkan aset lokal bila digunakan.
+7. Tambahkan instruksi folder aset operator di antarmuka.
 
-**Kriteria selesai:** satu bahasa visual konsisten dan mockup/struktur halaman disetujui sebelum seluruh halaman ditata ulang.
+**Kriteria selesai:** struktur view dan app shell disetujui, public tetap ringan, dan komponen bersama punya kontrak yang jelas.
 
-## Fase D — Implementasi UI modul secara terurut
+## Fase D — Implementasi per modul
 
-Urutan ini sengaja satu jalur agar tidak tumpang tindih:
-
-1. **D1 App shell + Dashboard Admin**
-2. **D2 Paket Jadwal**
-3. **D3 Editor Jadwal** — termasuk salin jadwal, preview, konfirmasi, dan validasi
-4. **D4 Konfigurasi**
-5. **D5 Backup dan Restore** — restore baru boleh dilakukan setelah validasi file dan konfirmasi
-6. **D6 Pemeriksaan/diagnostik** — tetap tersedia sebagai alat bantu, bukan beranda utama
-7. **D7 Public Dashboard**
+1. **D1 Public Area** — halaman awal, informasi penting, tautan ke Dashboard Admin, instruksi singkat aset operator bila sesuai.
+2. **D2 Admin App Shell + Dashboard** — partial views, navigasi bersama, ringkasan operasional.
+3. **D3 Paket Jadwal**
+4. **D4 Editor Jadwal** — termasuk salin jadwal, preview, konfirmasi, validasi.
+5. **D5 Konfigurasi**
+6. **D6 Backup dan Restore** — restore dengan validasi file, backup pra-pemulihan, dan konfirmasi.
+7. **D7 Pemeriksaan/diagnostik** — alat bantu, bukan halaman awal.
 8. **D8 Polish dan regresi UI**
 
-Setiap modul: audit kode → implementasi satu modul → pemeriksaan statis → pengguna menguji → perbaiki temuan → tandai status. Jangan mengerjakan banyak halaman sekaligus tanpa hasil uji di antaranya.
+Setiap modul: audit kode → implementasi satu modul → pemeriksaan statis → pengguna menguji di PHP Desktop → perbaiki temuan → tandai status. Jangan mengerjakan banyak halaman sekaligus tanpa hasil uji di antaranya.
 
 **Kriteria selesai:** alur UI konsisten, setiap kontrol menjalankan aksi nyata, data lama tetap utuh, dan pengguna melaporkan skenario uji lulus.
 
@@ -79,34 +89,23 @@ Setiap modul: audit kode → implementasi satu modul → pemeriksaan statis → 
 - Hubungkan resolver dengan jam sistem dan pemutar audio internal.
 - Cegah pemutaran ganda untuk satu kejadian jadwal.
 - Tentukan kebijakan aplikasi dibuka terlambat, Windows sleep/wake, perubahan jam, dan aplikasi ditutup.
-- Catat status aktual: menunggu, memulai, diputar, selesai, gagal, atau terlewat.
-- Pastikan status dashboard bersumber dari status runtime, bukan prediksi tampilan.
+- Catat status aktual: menunggu, memulai, diputar, selesai, gagal; status harus berasal dari mesin runtime.
+- Uji file audio hilang, format tidak didukung, dan jalur folder aset.
 
-**Kriteria selesai:** uji nyata dengan speaker/output target, beberapa jadwal berurutan, audio panjang, restart, sleep/wake, dan tidak ada pemutaran ganda.
+## Fase G — Backup/restore dan hardening
 
-## Fase G — Backup, restore, stabilitas, dan distribusi
+- Backup konsisten untuk SQLite; validasi hasil dan laporkan lokasi file.
+- Restore memvalidasi database, membuat backup pra-restore, lalu meminta konfirmasi.
+- Periksa validasi input, escaping output, CSRF yang relevan, transaksi, dan error handling.
+- Pastikan pembaruan aplikasi tidak menghapus database dan aset pengguna.
 
-- Verifikasi integritas backup dengan membuka/memeriksa salinan database.
-- Implementasikan restore dengan validasi, konfirmasi, dan perlindungan salinan sebelum pemulihan.
-- Uji database terkunci, disk penuh, folder tidak dapat ditulis, file audio hilang/rusak, serta shutdown paksa.
-- Audit CPU/RAM idle dan selama audio.
-- Dokumentasikan distribusi PHP Desktop, lokasi data, pembaruan aplikasi, dan prosedur pemulihan.
+## Fase H — Distribusi dan uji penerimaan
 
-**Kriteria selesai:** backup dapat diverifikasi, restore dapat dipulihkan, data pengguna aman, dan paket dapat diuji di Windows tanpa XAMPP.
+- Uji di PHP Desktop Chrome 130.1 + PHP 8.3 pada Windows.
+- Uji resolusi layar, restart aplikasi, file audio/logo, backup/restore, jadwal kalender, sleep/wake, dan kegagalan audio.
+- Dokumentasikan cara memasang aplikasi, menaruh aset, mengganti logo/audio, serta memulihkan backup.
+- Jangan tandai siap produksi sampai skenario penerimaan inti lulus.
 
-## Fase H — Uji penerimaan dan rilis
+## Prinsip pengerjaan
 
-- Jalankan checklist end-to-end sesuai [04-TEST-PLAN.md](04-TEST-PLAN.md).
-- Catat versi runtime, Windows, perangkat audio, dan hasil.
-- Perbaiki temuan kritis sebelum rilis.
-- Dokumentasikan keterbatasan yang masih tersisa.
-
-**Kriteria selesai:** semua fungsi inti memiliki bukti uji lokal; status yang belum diuji tetap terbuka.
-
-## Aturan implementasi
-
-- Jangan merombak fondasi runtime/SQLite yang telah terbukti tanpa alasan dan tes regresi.
-- Jangan melakukan migrasi destruktif atau menghapus data.
-- Jangan menambahkan tombol yang hanya dekoratif.
-- Jangan menyebut halaman “beres” sebelum pengguna memeriksa tampilannya di runtime.
-- Commit kecil, fokus, dan terpisah; dokumen diperbarui bila urutan atau keputusan berubah.
+Satu batch harus punya tujuan tunggal, commit tersendiri, dan checklist uji. Jangan mengklaim lulus runtime dari pemeriksaan kode statis.
