@@ -1,75 +1,60 @@
-# 00 — Ikhtisar Proyek
+# 00 — Ikhtisar Proyek Bel Madrasah
 
-## 1. Identitas
+## 1. Identitas dan tujuan
 
-- **Nama repository:** Bel_Madrasah
-- **Nama aplikasi kerja:** Bel Madrasah
-- **Platform sasaran:** Windows desktop, prioritas Windows 10/11
-- **Bahasa utama:** PHP
-- **Basis data lokal kandidat:** SQLite
-- **Status:** perencanaan dan fondasi teknis belum divalidasi
+- **Repository:** `Al-Faroz/Bel_Madrasah`
+- **Aplikasi:** Bel Madrasah
+- **Target:** aplikasi desktop Windows 10/11
+- **Runtime PoC yang telah dicoba:** `phpdesktop-chrome-130.1-php-8.3`
+- **Bahasa:** PHP
+- **Database:** SQLite lokal
+- **Status:** fondasi runtime/database telah dibuktikan berjalan oleh pengguna; pengembangan produk dimulai kembali dengan roadmap yang bersih.
 
-## 2. Masalah yang ingin diselesaikan
+Bel Madrasah membantu operator mengelola paket jadwal sekolah dan audio bel, lalu pada tahap berikutnya menjalankan audio secara otomatis sesuai jadwal tanpa XAMPP, Apache/MySQL terpisah, atau pemutar audio eksternal.
 
-Sekolah memerlukan aplikasi bel yang berjalan otomatis sesuai waktu kegiatan. Operator tidak seharusnya perlu membuka pemutar musik terpisah atau menekan tombol Play setiap kali bel berbunyi. Aplikasi harus sederhana, ringan ketika idle, dan bisa digunakan tanpa internet untuk fungsi inti.
+## 2. Keputusan penting setelah PoC
+
+Tahap 1–4 sebelumnya diperlakukan sebagai **eksperimen kelayakan teknologi dan fondasi**, bukan sebagai urutan implementasi produk yang harus terus ditumpuk. Pengguna melaporkan PHP Desktop berjalan baik, SQLite menyimpan data lintas restart, audio uji berjalan, konfigurasi/backup dasar, serta paket jadwal telah dicoba.
+
+Karena itu, roadmap disusun ulang dari awal untuk menghindari pekerjaan saling tumpang tindih. Ini **bukan** berarti membuang bukti PoC atau menghapus database pengguna. Implementasi yang sudah ada menjadi bahan audit/reuse, bukan otomatis dianggap sebagai rancangan final.
 
 ## 3. Prinsip produk
 
-1. **Otomatis:** waktu jadwal memicu audio tanpa tindakan manual.
-2. **Mandiri:** tidak membutuhkan XAMPP, Apache, MySQL, atau pemutar musik eksternal yang harus dibuka operator.
-3. **Ringan:** menghindari proses berat saat menunggu jadwal.
-4. **Lokal-first:** jadwal, pengaturan, log, dan audio dapat dikelola secara lokal.
-5. **Mudah dioperasikan:** operator mengubah paket, hari, waktu, nama kegiatan, dan file audio melalui antarmuka aplikasi.
-6. **Dapat diprediksi:** aturan prioritas jadwal khusus dan penanganan benturan harus jelas.
-7. **Teruji:** setiap tahap mempunyai kriteria uji yang dapat dijalankan di komputer lokal.
+1. Offline-first untuk fungsi inti.
+2. Ringan dan stabil saat menunggu jadwal.
+3. Data pengguna tetap aman ketika aplikasi diperbarui.
+4. UI admin dan tampilan publik dirancang sebagai satu produk yang konsisten.
+5. Tiap fitur punya sumber data, aturan, alur, dan kriteria uji yang jelas.
+6. Jangan membangun scheduler sebelum kontrak data dan resolver jadwal disepakati.
+7. Jangan menyatakan fitur lulus hanya karena kode tersedia di GitHub.
 
-## 4. Batasan ruang lingkup awal
+## 4. Batas ruang lingkup
 
-Termasuk:
-- Paket jadwal yang bisa dibuat dan diubah.
-- Paket aktif global.
-- Jadwal per hari dan pola hari.
-- Pencocokan pasaran Jawa dan minggu kalender.
-- Pemutaran audio lokal otomatis.
-- Status pemutaran dan log.
-- Pengemasan untuk Windows.
+Termasuk: pengaturan aplikasi, paket jadwal, aturan hari Normal/Khusus, pasaran Jawa dan minggu kalender, kegiatan serta audio lokal, resolver tanggal, scheduler otomatis, status/log, backup dan restore, dan distribusi Windows.
 
-Belum menjadi kebutuhan awal:
-- Sinkronisasi cloud atau server pusat.
-- Kontrol jarak jauh melalui internet.
-- Notifikasi popup Windows sebagai fitur wajib.
-- Akun multi-operator atau sistem hak akses kompleks.
-- Pemutaran audio melalui layanan streaming.
+Belum menjadi kebutuhan awal: sinkronisasi cloud, kontrol jarak jauh internet, akun multi-operator kompleks, dan streaming audio.
 
-## 5. Definisi berhasil
+## 5. Prinsip desain antarmuka
 
-Aplikasi dinyatakan memenuhi tujuan inti ketika:
-- Dapat dijalankan pada komputer Windows yang tidak memasang XAMPP.
-- Jadwal tersimpan setelah aplikasi ditutup dan dibuka kembali.
-- Paket aktif tetap sama sampai operator menggantinya.
-- Jadwal yang cocok untuk tanggal/hari berjalan dipilih sesuai aturan.
-- Audio lokal mulai diputar sesuai jadwal dan dapat selesai tanpa dipotong oleh aplikasi.
-- Pemutaran tidak berganda untuk satu kejadian jadwal.
-- Kegagalan audio atau jadwal terlewat dapat ditelusuri melalui status/log.
-- Konsumsi sumber daya saat menunggu jadwal terukur dan dianggap layak pada komputer target.
+- Gunakan **RoyalUI Free Bootstrap Admin Template** sebagai referensi visual/layout: https://github.com/BootstrapDash/RoyalUI-Free-Bootstrap-Admin-Template
+- Referensi adalah inspirasi struktur dashboard, sidebar/navigation, card, tabel, form, dan tipografi; bukan alasan untuk menyalin seluruh template secara membabi buta.
+- Sesuaikan implementasi dengan PHP Desktop, penggunaan offline, serta lisensi aset yang dipakai.
+- Admin dashboard berorientasi kerja operator; public dashboard berorientasi informasi jadwal/status yang mudah dibaca.
+- Hindari dekorasi kartu berlebihan, teks metadata terlalu kecil, ruang kosong tak terarah, dan tombol dengan gaya berbeda-beda.
+- Detail aturan visual berada di [05-UI-UX-MATERIAL-DESIGN.md](05-UI-UX-MATERIAL-DESIGN.md).
 
-## 6. Status UI/UX terbaru
+## 6. Status yang benar
 
-- Standar Material Design telah ditetapkan di [05-UI-UX-MATERIAL-DESIGN.md](05-UI-UX-MATERIAL-DESIGN.md).
-- Design tokens dan komponen dasar awal sudah ditambahkan ke `prototype/phpdesktop/www/assets/app.css`.
-- Dashboard Admin awal tersedia di `prototype/phpdesktop/www/dashboard.php`; halaman diagnostik tetap tersedia terpisah melalui menu Pemeriksaan. Tampilan baca-saja publik tersedia di `prototype/phpdesktop/www/public.php`.
-- UI-3 Paket Jadwal, UI-4 Editor Jadwal, UI-5 Konfigurasi/Backup, dan UI-6 Public Dashboard sudah memiliki implementasi kode awal serta link navigasi bersama; UI-7 polish/regresi masih tersisa.
-- Tampilan belum dinyatakan lulus karena belum diuji pada runtime Windows lokal.
+- **PoC runtime PHP Desktop:** dilaporkan berjalan baik oleh pengguna.
+- **Persistensi SQLite dan uji audio awal:** dilaporkan PASS untuk skenario yang sudah dicoba.
+- **Fitur paket/editor/UI yang saat ini ada:** belum boleh dianggap desain final atau lulus regresi; harus diaudit terhadap roadmap baru.
+- **Scheduler otomatis, resolver kalender final, restore, dan paket distribusi:** belum boleh dianggap selesai tanpa implementasi dan pengujian khusus.
 
-## 7. Acuan UI/UX
+## 7. Aturan kolaborasi
 
-Seluruh halaman Admin Dashboard dan Public Dashboard/status mengikuti [Standar UI/UX Material Design](05-UI-UX-MATERIAL-DESIGN.md). Roadmap di [03-IMPLEMENTATION-PLAN.md](03-IMPLEMENTATION-PLAN.md) menempatkan standarisasi visual setelah editor jadwal dan sebelum implementasi resolver kalender/scheduler berikutnya. Redesign wajib menjaga aturan bisnis dan diuji di runtime Windows lokal.
-
-## 8. Pola kolaborasi
-
-1. Perubahan dikerjakan secara bertahap di repository.
-2. Setiap commit memiliki pesan yang menjelaskan perubahan.
-3. Tahap yang dapat diuji diserahkan dengan instruksi uji.
-4. Pengguna melakukan pull dan menguji di komputer lokal.
-5. Masalah diperbaiki berdasarkan hasil nyata, termasuk screenshot, log, atau pesan error.
-6. Tahap berikutnya tidak dianggap selesai hanya karena kode berhasil ditulis; hasil perlu diuji sesuai kemampuan lingkungan.
+1. Dokumentasi kebutuhan dan roadmap diperbarui lebih dahulu.
+2. Audit kode yang ada sebelum menambah/mengubah implementasi.
+3. Satu batch fokus pada satu hasil yang jelas.
+4. Tiap perubahan mempunyai commit dan checklist uji.
+5. Pengguna melakukan pull dan pengujian runtime Windows; screenshot/error digunakan untuk perbaikan.
+6. Kode baru tidak boleh merusak penyimpanan AppData, SQLite, audio internal, atau data lama.
