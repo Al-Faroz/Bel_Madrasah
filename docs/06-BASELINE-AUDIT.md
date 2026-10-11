@@ -45,16 +45,28 @@
 - Satu halaman/modul dikerjakan dalam satu batch dan diuji sebelum lanjut.
 - Jangan memperbaiki tampilan dengan menambahkan lapisan CSS tanpa menghapus/merapikan aturan lama yang berkonflik.
 
-## 4. Audit lanjutan yang wajib
+## 4. Temuan audit: audio dan aset
 
-- [ ] Baca seluruh method publik di `Database.php` dan cocokkan dengan pemanggil di halaman.
-- [ ] Audit seluruh POST action di `packages.php` dan `schedule-editor.php`; verifikasi ID, validasi, transaksi, dan pesan error.
-- [ ] Audit metode backup SQLite dan skenario database terkunci/backup gagal.
-- [ ] Inventarisasi semua CSS selector dan media query; tandai duplikat/override yang perlu disatukan.
-- [ ] Audit JS dan seluruh tautan navigasi.
-- [ ] Tentukan default route/entry point yang benar untuk produk.
-- [ ] Siapkan screenshot baseline per halaman dan catatan bug.
-- [ ] Konfirmasi spesifikasi perilaku Normal/Khusus, pasaran Jawa, minggu kalender, scheduler dan status audio sebelum implementasi resolver.
+- `bell_events.audio_path` menyimpan path absolut.
+- `Database::getAudioStorageDirectory()` membuat `%APPDATA%/BelMadrasah/audio` dengan fallback ke LocalAppData.
+- `Database::storeUploadedAudio()` memakai unggahan HTML, membatasi ukuran 50 MB dan ekstensi MP3/WAV/OGG/M4A/AAC, lalu mengganti nama file menjadi token acak. Jadi alur sekarang adalah unggah/salin ke folder internal, bukan memilih referensi file yang sudah disalin operator.
+- `schedule-editor.php` mengandalkan `$_FILES['audio_file']`. Jika simpan jadwal gagal sesudah unggahan, file baru yang tidak terpakai dihapus.
+- Salin jadwal menyalin referensi `audio_path`, tidak menggandakan file.
+- Belum ditemukan workflow atau setting logo pada halaman yang diperiksa.
+
+### Kontrak target aset
+- Target: folder persisten `BelMadrasah/assets/audio` dan `BelMadrasah/assets/logo`, dengan copy-paste dan nama file bebas.
+- Sebelum implementasi, periksa konfigurasi PHP Desktop dan native bridge. HTML file picker standar tidak mengungkap path lokal penuh; jangan menyimpan fakepath.
+- Bila tidak ada bridge native, pilih file dari daftar file yang ditemukan di folder aset.
+- Pertahankan referensi audio lama. Migrasi path harus aditif dan tidak menghapus file sumber atau mengubah data massal tanpa backup.
+
+### Audit lanjutan
+- [ ] Periksa konfigurasi runtime untuk URL awal dan kemungkinan native file dialog/bridge.
+- [ ] Audit seluruh POST action untuk CSRF, validasi ID, escaping, transaksi, dan error handling.
+- [ ] Inventarisasi CSS selector duplikat dan navigasi.
+- [ ] Audit backup dan rancang restore dengan backup pra-pemulihan.
+- [ ] Tetapkan spesifikasi resolver kalender, pasaran Jawa, minggu kalender, scheduler, dan status audio.
+- [ ] Siapkan matriks uji runtime Windows dan screenshot baseline.
 
 ## 5. Status fase
 
