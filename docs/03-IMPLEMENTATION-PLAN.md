@@ -109,3 +109,24 @@ Setiap modul: audit kode → implementasi satu modul → pemeriksaan statis → 
 ## Prinsip pengerjaan
 
 Satu batch harus punya tujuan tunggal, commit tersendiri, dan checklist uji. Jangan mengklaim lulus runtime dari pemeriksaan kode statis.
+
+## Keputusan arsitektur UI yang disepakati
+
+- Public area menjadi halaman awal saat aplikasi dibuka.
+- Dashboard admin dibuka melalui tautan/tombol dari public area.
+- Tidak ada login/Auth pada ruang lingkup ini.
+- Gunakan PHP native terstruktur dengan layout dan partial views yang dipanggil menggunakan `require`.
+- Pisahkan layout admin dan public.
+- Public memakai CSS/JS sendiri bila diperlukan agar tetap ringan.
+- Sediakan folder aset operator untuk logo dan audio beserta petunjuk tertulis di dalam aplikasi.
+- Nama dan struktur folder aset final ditentukan setelah memeriksa bagaimana pemutar audio dan pemilih file menangani path saat ini.
+- Jangan mereset database atau memindahkan data AppData demi merapikan UI.
+
+## Penyesuaian urutan fase
+
+1. Audit kode dan kontrak path audio/logo.
+2. Tetapkan struktur partial views serta design system.
+3. Bangun public area minimal sebagai entry point.
+4. Bangun admin app shell dengan partial views.
+5. Terapkan pada Dashboard Admin, lalu modul lain satu per satu.
+6. Lanjutkan resolver kalender, scheduler/audio, backup/restore, hardening, dan distribusi.
