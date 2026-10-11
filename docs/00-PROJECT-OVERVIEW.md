@@ -26,8 +26,8 @@ Roadmap produk disusun ulang untuk menghindari pekerjaan saling tumpang tindih. 
 4. **PHP native memakai partial views.** Gunakan layout dan partial yang di-`require` untuk sidebar/navigasi, header, breadcrumb, pesan status, footer, dan komponen berulang.
 5. **Pisahkan layout admin dan public.** Keduanya boleh berbagi helper atau komponen dasar, tetapi public harus sesederhana mungkin dan tidak memuat navigasi admin yang tidak dibutuhkan.
 6. **Aset public terpisah.** Gunakan CSS dan JavaScript khusus public bila kebutuhan dan ukurannya berbeda dari dashboard admin.
-7. **Folder aset operator.** Sediakan satu lokasi yang mudah ditemukan untuk file logo dan audio. Nama folder, subfolder, ekstensi yang didukung, cara penamaan, dan langkah mengganti file harus dijelaskan secara tertulis di dalam aplikasi.
-8. **Data aman.** Lokasi database AppData dan data pengguna tidak dihapus atau dipindahkan hanya demi redesign.
+7. **Folder aset operator.** Sediakan satu lokasi persisten dengan subfolder audio dan logo. Operator tetap copy-paste aset ke folder tersebut, lalu memilih file melalui File Explorer di aplikasi. Nama file bebas; tidak ada pola penamaan wajib. Aplikasi menyimpan referensi file yang dipilih (path/lokasi dan nama file) ke SQLite.
+8. **Data aman.*** Lokasi database AppData dan data pengguna tidak dihapus atau dipindahkan hanya demi redesign.
 
 ## 4. Prinsip produk
 
