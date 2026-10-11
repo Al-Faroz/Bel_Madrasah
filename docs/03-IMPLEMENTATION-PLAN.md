@@ -1,249 +1,112 @@
-# 03 — Rencana Pengerjaan Bertahap
+# 03 — Roadmap Pengerjaan Baru
 
-## Cara membaca status
+## Aturan status
 
-Semua tahap di bawah berstatus **BELUM DIMULAI** sampai benar-benar dikerjakan dan diuji. Menulis kode saja tidak otomatis berarti tahap lulus.
+- **DOC READY:** kebutuhan dan urutan kerja terdokumentasi.
+- **AUDIT:** kode dan dependensi diperiksa, belum berarti benar.
+- **IMPLEMENTED:** kode tersedia di repository.
+- **LOCAL TEST PASS:** pengguna telah menjalankan skenario pada PHP Desktop dan melaporkan hasilnya.
+- PoC yang pernah PASS hanya membuktikan skenario PoC terkait; tidak otomatis meluluskan fitur produksi.
 
-## Tahap 0 — Acuan proyek
-**Pekerjaan**
-- README dan dokumen acuan.
-- Menetapkan kebutuhan dan alur kerja kolaborasi.
+## Keputusan reset
 
-**Kriteria selesai**
-- Kebutuhan utama, aturan jadwal, dan rencana tahap terdokumentasi.
-- Tidak ada fitur inti yang diasumsikan selesai sebelum diuji.
+Tahap 1–4 sebelumnya adalah PoC/fondasi untuk membuktikan PHP Desktop Chrome 130.1 + PHP 8.3, SQLite, audio internal, konfigurasi/backup dasar, dan paket jadwal bisa berjalan. Hasil itu dipertahankan sebagai bukti teknis. Roadmap produk di bawah dimulai kembali dari **Fase A**, tanpa mengulang eksperimen yang sudah terbukti dan tanpa menganggap seluruh UI/fitur lama sudah benar.
 
-## Tahap 1 — Pemeriksaan dan PoC desktop Windows
-**Status saat ini: SEDANG BERJALAN — PoC awal menggunakan PHP Desktop Chrome 130.1 sebagai kandidat, belum final.**
+**Strategi:** audit → kontrak kebutuhan/data → design system dan app shell → halaman per modul → aturan kalender → scheduler/audio → backup/restore dan hardening → distribusi.
 
-**Pekerjaan**
-- Bandingkan pilihan runtime/pembungkus desktop yang cocok untuk PHP.
-- Buat prototipe terkecil untuk membuka antarmuka desktop.
-- Buktikan PHP berjalan tanpa XAMPP.
-- Ukur ukuran paket dan penggunaan sumber daya awal.
+## Fase A — Audit baseline dan inventarisasi
 
-**Kriteria selesai**
-- Prototipe bisa dijalankan di Windows sasaran tanpa XAMPP.
-- Keputusan runtime ditulis beserta alasan dan keterbatasannya.
+**Status: NEXT**
 
-## Tahap 1A — Validasi persistensi SQLite
-**Status: PASS — diuji pengguna pada Windows 11 64-bit.**
+- Inventarisasi semua halaman PHP, class Database, skema/migrasi SQLite, fungsi POST/GET, file audio, navigasi, CSS, dan JavaScript.
+- Tandai tiap bagian: reuse, perbaiki, pindahkan, atau buang setelah konfirmasi.
+- Cocokkan nama field/method yang benar-benar tersedia dengan pemanggilnya.
+- Catat bug yang tampak dari pengujian pengguna; jangan memperbaiki hanya dari dugaan.
+- Pertahankan data AppData dan buat salinan backup sebelum perubahan yang menyentuh skema.
 
-**Hasil aktual yang dilaporkan**
-- Status database: siap.
-- Simpan data uji: berhasil.
-- Setelah aplikasi ditutup dan dibuka kembali: marker dan waktu simpan sama.
-- Pesan error: tidak ada.
+**Kriteria selesai:** laporan audit dan daftar pekerjaan yang tidak tumpang tindih; tidak ada penghapusan data atau reset database otomatis.
 
-Catatan: status PASS berlaku untuk tes persistensi diagnostik yang dilaporkan pengguna. Ini belum membuktikan database jadwal produksi, ketahanan terhadap pemadaman paksa, atau keamanan backup.
+## Fase B — Spesifikasi produk dan kontrak data
 
-**Pekerjaan**
-- Tambahkan tes diagnostik yang membuat database SQLite di AppData pengguna Windows.
-- Tulis marker uji dan tampilkan kembali marker/waktu simpan.
-- Sediakan langkah uji setelah aplikasi ditutup dan dibuka kembali.
-- Tampilkan error yang dapat dilaporkan jika direktori atau PDO SQLite gagal.
+- Tetapkan entitas, relasi, validasi, status aktif/nonaktif, serta perilaku migrasi.
+- Tetapkan alur operator dari membuka aplikasi sampai mengatur paket, hari, kegiatan, audio, backup, dan pemeriksaan status.
+- Definisikan perilaku jadwal Normal/Khusus, pasaran Jawa, minggu kalender, prioritas, konflik, dan jadwal terlewat sebelum membuat resolver.
+- Definisikan makna status yang boleh ditampilkan. Jadwal tersimpan bukan bukti audio sedang diputar.
+- Susun kriteria penerimaan tiap modul.
 
-**Kriteria selesai**
-- Marker yang disimpan sebelum aplikasi ditutup terbaca identik setelah aplikasi dibuka kembali.
-- Lokasi database bukan di dalam folder program/runtime.
-- Hasil uji aktual dicatat sebelum status tahap dinyatakan lulus.
+**Kriteria selesai:** aturan bisnis dan kontrak data terdokumentasi; semua ketidakpastian diberi keputusan atau ditandai untuk ditanyakan.
 
-## Tahap 2 — PoC SQLite dan audio internal
-**Status: PASS — diuji pengguna pada Windows 11 64-bit berdasarkan laporan Tahap 2.**
+## Fase C — UI/UX dan app shell (menggunakan RoyalUI sebagai referensi)
 
-**Sudah dibuat di repository**
-- Database aplikasi utama terpisah dari database diagnostik Tahap 1A, disimpan di `%APPDATA%\\BelMadrasah\\data\\bel-madrasah.sqlite` (fallback `%LOCALAPPDATA%`).
-- Inisialisasi skema versi 1: metadata, pengaturan, paket jadwal, aturan hari, kegiatan bel, dan log pemutaran.
-- Relasi foreign key, validasi nilai dasar, serta unique partial index untuk mencegah lebih dari satu paket aktif di tingkat database.
-- Uji tulis/baca sementara memakai TEMP table dan rollback agar tidak meninggalkan data uji permanen.
-- Panel status menampilkan lokasi database, versi skema, dan tabel yang terdeteksi.
-- Panel audio menampilkan durasi metadata dan tetap menggunakan elemen audio internal.
+- Audit screenshot dan struktur halaman yang sekarang; jangan menganggap tampilan sekarang sebagai acuan final.
+- Tetapkan layout admin, navigasi, header, lebar konten, grid, typography, warna, spacing, form, tabel, dialog, notifikasi, dan empty/error state.
+- Buat satu app shell dan komponen CSS bersama sebelum redesign per halaman.
+- Buat konsep dashboard admin yang berorientasi operasional, bukan halaman diagnostik.
+- Buat public dashboard terpisah, minim kontrol admin, dengan informasi yang bisa dibaca dari kejauhan.
+- Hindari ketergantungan CDN saat runtime; aset yang diperlukan untuk offline harus tersedia lokal.
+- Pastikan lisensi template/aset ditinjau sebelum disalin.
 
-**Hasil uji lokal yang dilaporkan:** database aplikasi PASS; setelah restart tetap PASS; MP3 panjang PASS; WAV PASS; tidak ada catatan/error.
+**Kriteria selesai:** satu bahasa visual konsisten dan mockup/struktur halaman disetujui sebelum seluruh halaman ditata ulang.
 
-**Batas cakupan:** hasil ini berlaku untuk skenario yang dilaporkan. Durasi/ukuran file yang tepat, format WAV spesifik, kegagalan file hilang/rusak, ketahanan pemadaman paksa, dan perilaku perangkat audio yang terputus belum dikonfirmasi.
+## Fase D — Implementasi UI modul secara terurut
 
-**Pekerjaan**
-- Buat/baca/tulis database SQLite.
-- Putar audio lokal melalui komponen internal.
-- Uji MP3/WAV dan file audio panjang.
-- Uji kesalahan file hilang dan perangkat audio tidak tersedia.
+Urutan ini sengaja satu jalur agar tidak tumpang tindih:
 
-**Kriteria selesai**
-- Database dan audio bekerja tanpa server terpisah atau pemutar eksternal.
-- Audio panjang tidak dipotong oleh implementasi.
-- Keputusan teknologi audio dicatat.
+1. **D1 App shell + Dashboard Admin**
+2. **D2 Paket Jadwal**
+3. **D3 Editor Jadwal** — termasuk salin jadwal, preview, konfirmasi, dan validasi
+4. **D4 Konfigurasi**
+5. **D5 Backup dan Restore** — restore baru boleh dilakukan setelah validasi file dan konfirmasi
+6. **D6 Pemeriksaan/diagnostik** — tetap tersedia sebagai alat bantu, bukan beranda utama
+7. **D7 Public Dashboard**
+8. **D8 Polish dan regresi UI**
 
-## Tahap 3 — Kerangka aplikasi dan konfigurasi
-**Status: PASS — diuji pengguna berdasarkan laporan pengujian Tahap 3.**
+Setiap modul: audit kode → implementasi satu modul → pemeriksaan statis → pengguna menguji → perbaiki temuan → tandai status. Jangan mengerjakan banyak halaman sekaligus tanpa hasil uji di antaranya.
 
-**Hasil uji lokal yang dilaporkan:** navigasi PASS; simpan konfigurasi PASS; persistensi setelah restart PASS; backup pertama PASS; backup kedua PASS; tidak ada error. Tidak ada perbaikan kode yang diindikasikan oleh laporan ini.
+**Kriteria selesai:** alur UI konsisten, setiap kontrol menjalankan aksi nyata, data lama tetap utuh, dan pengguna melaporkan skenario uji lulus.
 
-**Batas cakupan:** pemeriksaan integritas file backup secara independen, proses restore, backup ketika database sedang sibuk, serta pemulihan setelah kerusakan/pemadaman paksa belum dikonfirmasi.
+## Fase E — Resolver kalender dan prioritas
 
-**Implementasi yang tersedia**
-- Navigasi dasar Dashboard diagnostik, Konfigurasi, dan Backup data.
-- Halaman konfigurasi menyimpan nama madrasah, nama operator, dan preferensi volume 0–100 ke tabel app_settings.
-- Validasi panjang nama dan rentang volume; pesan berhasil/gagal ditampilkan.
-- Halaman backup membuat salinan database SQLite melalui VACUUM INTO di folder %APPDATA%\\BelMadrasah\\backups (fallback %LOCALAPPDATA%), tanpa memindahkan atau menghapus database aktif.
-- Backup diberi nama unik dan diperiksa keberadaan/ukuran filenya.
+- Implementasikan perhitungan hari, pasaran Jawa, minggu kalender, dan minggu terakhir.
+- Terapkan aturan prioritas Khusus terhadap Normal sesuai spesifikasi.
+- Deteksi konflik; untuk satu tanggal dan paket aktif harus terpilih paling banyak satu aturan.
+- Sediakan pratinjau “jadwal yang berlaku pada tanggal ini” untuk operator.
 
-**Batasan:** preferensi volume baru disimpan, belum mengatur volume pemutar. Restore belum dibuat. Backup belum diuji di runtime lokal, jadi kompatibilitas VACUUM INTO dan validitas hasil file harus diverifikasi.
+**Kriteria selesai:** pengujian unit/fixture untuk pergantian bulan/tahun, awal/akhir bulan, pasaran, minggu ke-1–5/minggu terakhir, fallback Normal, dan konflik.
 
-**Pekerjaan**
-- Struktur aplikasi dan navigasi dasar.
-- Pengaturan lokal dan lokasi data pengguna.
-- Inisialisasi database yang aman.
-- Backup awal/ekspor database jika diperlukan.
+## Fase F — Scheduler dan pemutaran audio otomatis
 
-**Kriteria selesai**
-- Aplikasi dapat dibuka berulang kali dan konfigurasi tersimpan.
-- Memperbarui aplikasi tidak menghapus data pengguna.
+- Hubungkan resolver dengan jam sistem dan pemutar audio internal.
+- Cegah pemutaran ganda untuk satu kejadian jadwal.
+- Tentukan kebijakan aplikasi dibuka terlambat, Windows sleep/wake, perubahan jam, dan aplikasi ditutup.
+- Catat status aktual: menunggu, memulai, diputar, selesai, gagal, atau terlewat.
+- Pastikan status dashboard bersumber dari status runtime, bukan prediksi tampilan.
 
-## Tahap 4 — Pengelolaan paket jadwal
-**Status: PASS — berdasarkan laporan pengujian pengguna.**
+**Kriteria selesai:** uji nyata dengan speaker/output target, beberapa jadwal berurutan, audio panjang, restart, sleep/wake, dan tidak ada pemutaran ganda.
 
-**Implementasi awal:** halaman `packages.php`; daftar dan edit paket; buat paket baru; paket Normal dibuat otomatis hanya jika daftar masih kosong; aktivasi paket dilakukan atomik dalam transaksi; indeks unik database tetap menjadi pengaman agar tidak ada dua paket aktif; paket baru nonaktif; belum ada fitur hapus agar data jadwal berikutnya tidak hilang.
+## Fase G — Backup, restore, stabilitas, dan distribusi
 
-**Batasan:** isi jadwal per hari dan kegiatan bel belum diedit pada tahap ini. Status aktif baru menentukan paket global tersimpan; mesin scheduler belum membaca paket untuk memutar audio.
+- Verifikasi integritas backup dengan membuka/memeriksa salinan database.
+- Implementasikan restore dengan validasi, konfirmasi, dan perlindungan salinan sebelum pemulihan.
+- Uji database terkunci, disk penuh, folder tidak dapat ditulis, file audio hilang/rusak, serta shutdown paksa.
+- Audit CPU/RAM idle dan selama audio.
+- Dokumentasikan distribusi PHP Desktop, lokasi data, pembaruan aplikasi, dan prosedur pemulihan.
 
-**Pekerjaan**
-- Membuat, melihat, dan mengubah paket jadwal; penghapusan ditunda agar data terkait tidak hilang.
-- Contoh paket: Normal, Ujian, Ramadan.
-- Penetapan satu paket aktif secara global.
-- Persistensi paket aktif setelah restart.
+**Kriteria selesai:** backup dapat diverifikasi, restore dapat dipulihkan, data pengguna aman, dan paket dapat diuji di Windows tanpa XAMPP.
 
-**Kriteria selesai**
-- Hanya satu paket aktif.
-- Mengganti paket memengaruhi semua hari tanpa menghapus paket lainnya.
+## Fase H — Uji penerimaan dan rilis
 
-## Tahap 5 — Editor jadwal harian
-**Status: IMPLEMENTASI TERSEDIA — menunggu uji lokal pengguna.**
+- Jalankan checklist end-to-end sesuai [04-TEST-PLAN.md](04-TEST-PLAN.md).
+- Catat versi runtime, Windows, perangkat audio, dan hasil.
+- Perbaiki temuan kritis sebelum rilis.
+- Dokumentasikan keterbatasan yang masih tersisa.
 
-**Implementasi awal:** halaman `schedule-editor.php` dengan pemilihan paket, aturan hari Normal/Khusus, jenis atribut pasaran Jawa atau minggu kalender Model A, kegiatan bel per aturan, waktu tervalidasi, status aktif/nonaktif, urutan, dan unggah file audio lokal. Database dinaikkan ke schema version 2 tanpa mengganti file database; aturan/kegiatan baru memakai operasi terparameterisasi dan validasi server-side. Audio disimpan di `%APPDATA%\\BelMadrasah\\audio` (fallback `%LOCALAPPDATA%`).
+**Kriteria selesai:** semua fungsi inti memiliki bukti uji lokal; status yang belum diuji tetap terbuka.
 
-**Batasan:** aturan khusus yang berpotensi bertumpang tindih menampilkan peringatan; resolusi tanggal dan prioritas aktual dikerjakan pada Tahap 6. Mesin scheduler/pemutaran otomatis belum diaktifkan. Batas unggah 50 MB di aplikasi juga bergantung pada konfigurasi `upload_max_filesize` dan `post_max_size` runtime PHP Desktop.
+## Aturan implementasi
 
-**Pekerjaan**
-- Jadwal Senin–Minggu per paket.
-- Pola Normal dan Khusus.
-- Jenis kekhususan: pasaran Jawa atau minggu kalender.
-- Input waktu, nama kegiatan, file audio, status aktif, dan urutan.
-- Validasi data dan penanganan konflik.
-
-**Kriteria selesai**
-- Normal tidak menampilkan atribut khusus.
-- Khusus meminta tepat satu atribut.
-- Konflik yang berpotensi membuat dua jadwal berlaku pada tanggal sama terdeteksi dan dijelaskan kepada operator.
-
-## Tahap 5A — Standarisasi UI/UX Material Design
-**Status: IN PROGRESS — Batch UI-1 dan UI-2 sudah masuk repository. Batch UI-3 (Paket Jadwal) juga sudah diimplementasikan di kode dan menunggu uji runtime lokal. Batch UI-4, UI-5, dan UI-6 sudah diimplementasikan pada kode awal; UI-7 serta uji runtime lokal masih menunggu.**
-
-Acuan wajib: [05-UI-UX-MATERIAL-DESIGN.md](05-UI-UX-MATERIAL-DESIGN.md).
-
-**Alasan perubahan urutan:** editor jadwal dan paket kini sudah memiliki fungsi penting, tetapi sistem visual belum distandarkan untuk semua halaman. Sebelum menambah resolver kalender dan scheduler, rapikan pengalaman admin/public sebagai satu sistem tanpa mengubah aturan bisnis.
-
-**Urutan batch implementasi**
-1. **Batch UI-0 — Audit baseline:** audit awal menemukan halaman utama sebelumnya adalah halaman diagnostik, navigasi mengarah ke sana sebagai dashboard, dan belum ada dashboard operasional terpisah. Pemeriksaan teknis dipertahankan sebagai menu Pemeriksaan.
-2. **Batch UI-1 — Design tokens & app shell:** token warna, tipografi, spacing, radius, elevation, tombol, form, status, navigasi, dan layout responsif.
-3. **Batch UI-2 — Admin Dashboard:** versi awal tersedia di `dashboard.php`; menampilkan ringkasan paket, jam sistem, kegiatan berikutnya, dan peringatan bahwa scheduler/resolver belum tersedia. Runtime lokal belum diuji.
-4. **Batch UI-3 — Paket Jadwal:** IMPLEMENTED di `packages.php` dan `assets/app.css`: tampilan daftar/form diselaraskan dengan Material Design, status paket dan hari libur lebih mudah dipindai, label form dihubungkan ke input, dan aktivasi paket meminta konfirmasi. Runtime lokal belum diuji.
-5. **Batch UI-4 — Editor Jadwal:** IMPLEMENTED awal di `schedule-editor.php` dan `assets/app.css`: hierarki panel, pemilihan paket, aturan Normal/Khusus, tabel kegiatan/audio, form kegiatan baru, empty state, serta pratinjau Salin Jadwal mendapat styling bersama. Logika jadwal dipertahankan; runtime belum diuji.
-6. **Batch UI-5 — Konfigurasi & Backup:** IMPLEMENTED awal di `settings.php`, `backup.php`, dan `assets/app.css`: label form aksesibel, navigasi aktif, informasi lokasi database/backup lebih terbaca, dan gaya tombol/panel konsisten. Runtime belum diuji.
-7. **Batch UI-6 — Public Dashboard/status:** IMPLEMENTED awal di `public.php` dan `assets/app.css`, dengan link dari Admin Dashboard. Halaman baca-saja menampilkan tanggal/jam, paket aktif, kegiatan tersimpan, dan peringatan bahwa jadwal khusus/resolver serta pemutaran audio real-time belum dapat dipastikan. Runtime belum diuji.
-8. **Batch UI-7 — Polish/regression:** ukuran jendela, empty/error/success states, keyboard/focus, dan regresi fungsi.
-
-**Kriteria selesai**
-- Semua halaman menggunakan token/komponen yang sama dan mengikuti acuan Material Design.
-- Admin dan public/status memiliki tujuan serta hirarki informasi yang jelas.
-- Layout diuji pada 1366 px, 1024 px, dan 390 px.
-- Paket jadwal, pilihan hari libur, editor, file audio, dan Salin Jadwal tetap berfungsi.
-- Perubahan kode diperiksa; pengujian akhir tetap menunggu runtime Windows lokal dan laporan pengguna.
-
-**Ketergantungan dan perlindungan**
-- Jangan merombak skema database, scheduler, audio, path penyimpanan, atau aturan bisnis hanya demi visual.
-- Jangan menghapus fungsi diagnostik sebelum pengganti operasional tersedia.
-- Setiap batch kecil, commit terpisah, dan sertakan langkah uji lokal.
-
-## Tahap 6 — Resolver kalender dan prioritas
-**Pekerjaan**
-- Hitung hari dalam minggu.
-- Hitung pasaran Jawa.
-- Terapkan Model A minggu kalender.
-- Pilih jadwal khusus atau fallback Normal.
-- Tampilkan jadwal yang akan berlaku untuk tanggal terpilih agar dapat diperiksa.
-
-**Kriteria selesai**
-- Pengujian mencakup tanggal di awal/akhir bulan, pergantian tahun, bulan dengan empat/lima minggu kalender, dan konflik pasaran/minggu.
-- Hanya satu pola hari dipilih untuk satu tanggal dalam satu paket aktif.
-
-## Tahap 7 — Mesin penjadwalan otomatis
-**Pekerjaan**
-- Pantau jam sistem dengan cara yang hemat sumber daya.
-- Memicu audio pada waktu jadwal.
-- Cegah pemutaran ganda.
-- Catat status berhasil, gagal, dan terlewat.
-- Tetapkan perilaku ketika aplikasi dibuka terlambat atau Windows bangun dari sleep.
-
-**Kriteria selesai**
-- Pemicu jadwal tidak berulang.
-- Audio dimulai sesuai waktu dalam batas toleransi yang disepakati saat uji.
-- Kejadian terlewat tidak diputar massal secara otomatis.
-- Benturan waktu ditangani sesuai kebijakan yang terdokumentasi.
-
-## Tahap 8 — Dashboard dan operasi harian
-**Pekerjaan**
-- Tampilkan paket aktif, jam, kegiatan berikutnya, status audio, dan log.
-- Uji audio manual.
-- Pengaturan volume bila didukung.
-- Minimalkan ke system tray jika layak.
-- Berikan pesan error yang dapat dipahami operator.
-
-**Kriteria selesai**
-- Operator dapat memahami status aplikasi tanpa membaca log teknis.
-- Menutup/minimalkan jendela memiliki perilaku yang jelas dan tidak menghentikan scheduler secara tak sengaja.
-
-## Tahap 9 — Pengemasan Windows
-**Pekerjaan**
-- Buat paket portable atau installer berdasarkan hasil PoC.
-- Sertakan runtime dan dependensi yang dibutuhkan.
-- Pastikan data pengguna tetap terpisah dari file program.
-- Buat panduan instalasi, menjalankan, backup, dan pembaruan.
-
-**Kriteria selesai**
-- Paket dapat dipasang/dijalankan pada komputer uji tanpa XAMPP.
-- Penghapusan atau pembaruan program tidak menghapus jadwal dan audio pengguna secara diam-diam.
-
-## Tahap 10 — Uji penerimaan dan optimasi
-**Pekerjaan**
-- Uji jadwal harian dan pola khusus.
-- Uji audio pendek dan panjang.
-- Uji restart aplikasi/Windows.
-- Uji perubahan paket aktif.
-- Uji kinerja idle dan saat audio berjalan.
-- Perbaiki temuan dan perbarui dokumentasi.
-
-**Kriteria selesai**
-- Seluruh skenario prioritas lulus atau memiliki batasan yang disetujui.
-- Versi dan catatan rilis terdokumentasi.
-
-## Siklus kerja setiap tahap
-
-1. Implementasi kecil dan terfokus.
-2. Commit dengan pesan jelas.
-3. Instruksi menjalankan dan menguji.
-4. Pengguna melakukan pull dan pengujian lokal.
-5. Catat hasil PASS/FAIL dan bukti bila gagal.
-6. Perbaiki temuan.
-7. Baru lanjut ke tahap berikutnya.
-
-## Format laporan uji
-
-- **Tahap/versi:**
-- **Lingkungan Windows:**
-- **Langkah pengujian:**
-- **Hasil yang diharapkan:**
-- **Hasil aktual:**
-- **Status:** PASS / FAIL / BLOCKED
-- **Bukti/log:**
-- **Tindak lanjut:**
+- Jangan merombak fondasi runtime/SQLite yang telah terbukti tanpa alasan dan tes regresi.
+- Jangan melakukan migrasi destruktif atau menghapus data.
+- Jangan menambahkan tombol yang hanya dekoratif.
+- Jangan menyebut halaman “beres” sebelum pengguna memeriksa tampilannya di runtime.
+- Commit kecil, fokus, dan terpisah; dokumen diperbarui bila urutan atau keputusan berubah.
