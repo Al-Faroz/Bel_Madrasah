@@ -87,7 +87,7 @@ $offDayLabel = $activePackage === null ? '—' : ($offDayLabels[(string) ($activ
         <a href="settings.php">Konfigurasi</a>
         <a href="backup.php">Backup data</a>
         <a href="public.php">Tampilan publik</a>
-        <a href="index.php">Pemeriksaan</a>
+        <a href="diagnostics.php">Pemeriksaan</a>
     </nav>
 
     <main>
