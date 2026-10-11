@@ -18,16 +18,22 @@ Tahap 1–4 sebelumnya diperlakukan sebagai eksperimen kelayakan teknologi dan f
 
 Roadmap produk disusun ulang untuk menghindari pekerjaan saling tumpang tindih. Ini bukan berarti membuang bukti PoC atau menghapus database pengguna. Implementasi yang ada menjadi bahan audit/reuse, bukan otomatis dianggap sebagai rancangan final.
 
-## 3. Keputusan arsitektur UI yang dikunci
+## 3. Keputusan arsitektur produk yang dikunci
 
-1. **Public area adalah halaman awal aplikasi.** Ketika aplikasi dibuka, operator melihat tampilan publik yang sederhana dan informatif.
-2. **Dashboard admin diakses dari public area.** Sediakan tautan/tombol yang jelas seperti “Dashboard Admin” atau “Pengaturan Operator”.
-3. **Tidak menggunakan login/Auth.** Dashboard admin dapat diakses langsung dari public area; jangan menambahkan halaman login atau sistem akun pada ruang lingkup saat ini.
-4. **PHP native memakai partial views.** Gunakan layout dan partial yang di-`require` untuk sidebar/navigasi, header, breadcrumb, pesan status, footer, dan komponen berulang.
-5. **Pisahkan layout admin dan public.** Keduanya boleh berbagi helper atau komponen dasar, tetapi public harus sesederhana mungkin dan tidak memuat navigasi admin yang tidak dibutuhkan.
-6. **Aset public terpisah.** Gunakan CSS dan JavaScript khusus public bila kebutuhan dan ukurannya berbeda dari dashboard admin.
-7. **Folder aset operator.** Sediakan satu lokasi persisten dengan subfolder audio dan logo. Operator tetap copy-paste aset ke folder tersebut, lalu memilih file melalui File Explorer di aplikasi. Nama file bebas; tidak ada pola penamaan wajib. Aplikasi menyimpan referensi file yang dipilih (path/lokasi dan nama file) ke SQLite.
-8. **Data aman.*** Lokasi database AppData dan data pengguna tidak dihapus atau dipindahkan hanya demi redesign.
+1. **Public area menjadi halaman awal aplikasi.** Pemeriksaan teknis bukan beranda produk.
+2. **Dashboard Admin diakses dari Public.** Tombol “Dashboard Admin” terlihat jelas.
+3. **Tanpa login/Auth.** Admin dapat diakses langsung.
+4. **PHP native memakai layout dan partial views.** Include menggunakan path internal yang ditentukan kode aplikasi.
+5. **Layout Public dan Admin dipisah.** Public ringkas; admin memiliki navigasi dan komponen kerja yang konsisten.
+6. **CSS/JS Public dipisahkan** jika berguna untuk menjaga halaman awal tetap ringan.
+7. **Folder aset persisten** memiliki subfolder audio dan logo; operator dapat membukanya dari aplikasi lalu copy-paste file ke sana.
+8. **Nama file bebas.** Tidak ada pola penamaan wajib.
+9. **Database menyimpan referensi aset yang dipilih.** UI harus mendeteksi file hilang dan menyediakan pemilihan ulang.
+10. **Data aman.** Database AppData, data pengguna, dan hasil PoC tidak dihapus atau dipindahkan demi redesign.
+
+### Kontrak teknis pemilihan aset
+
+HTML file picker standar tidak memberikan path lokal penuh yang dapat dipercaya. Audit konfigurasi/bridge PHP Desktop sebelum menggunakan pemilih native Windows. Jika bridge tidak tersedia, operator copy-paste file ke folder aset lalu memilih dari daftar file yang ditemukan aplikasi. Jangan menyimpan nilai fakepath sebagai referensi. Path audio lama harus tetap didukung sampai ada migrasi aditif yang aman.
 
 ## 4. Prinsip produk
 
