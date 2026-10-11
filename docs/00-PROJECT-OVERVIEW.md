@@ -73,3 +73,22 @@ Belum menjadi kebutuhan awal: sinkronisasi cloud, kontrol jarak jauh internet, a
 ## Dokumen audit baseline
 
 Audit awal kode dan risiko pengembangan dicatat di [06-BASELINE-AUDIT.md](06-BASELINE-AUDIT.md). Fase audit masih terbuka sampai pemeriksaan method database, form/action, CSS, navigasi, dan kontrak data diselesaikan.
+
+
+## Keputusan arsitektur UI yang dikunci
+
+1. **Public area adalah halaman awal aplikasi.** Ketika aplikasi dibuka, operator melihat tampilan publik yang sederhana dan informatif.
+2. **Dashboard admin diakses dari public area.** Sediakan tautan/tombol yang jelas seperti “Dashboard Admin”.
+3. **Tidak menggunakan login/Auth.** Dashboard admin dapat diakses langsung; jangan menambahkan halaman login atau sistem akun pada ruang lingkup saat ini.
+4. **PHP native memakai partial views.** Gunakan layout dan partial yang dipanggil dengan `require` untuk navigasi, header, breadcrumb, pesan status, footer, dan komponen berulang.
+5. **Pisahkan layout admin dan public.** Public harus sesederhana mungkin dan tidak memuat navigasi admin yang tidak dibutuhkan.
+6. **Aset public terpisah.** Gunakan CSS dan JavaScript khusus public bila diperlukan agar aset/interaksi admin tidak membebani public.
+7. **Folder aset operator.** Sediakan satu lokasi mudah ditemukan untuk logo dan audio. Nama folder, subfolder, ekstensi yang didukung, cara penamaan, dan langkah mengganti file harus dijelaskan tertulis di dalam aplikasi.
+8. **Data aman.** Lokasi database AppData dan data pengguna tidak dihapus atau dipindahkan hanya demi redesign.
+
+## Prinsip produk tambahan
+
+- Public-first: halaman publik adalah layar awal; dashboard admin merupakan area kerja yang dibuka melalui tautan.
+- Offline-first tetap menjadi prinsip utama.
+- Pengalaman operator harus mencakup panduan jelas untuk menaruh dan mengganti file audio/logo.
+- Detail arsitektur view dan tampilan berada di [05-UI-UX-MATERIAL-DESIGN.md](05-UI-UX-MATERIAL-DESIGN.md).
