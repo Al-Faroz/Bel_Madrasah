@@ -133,6 +133,8 @@ Target struktur, menyesuaikan hasil audit:
 Gunakan path `require` yang ditentukan internal aplikasi, bukan input pengguna. Selesaikan aksi POST dan validasi sebelum merender view. Escape semua data yang ditampilkan ke HTML.
 
 ### Folder aset operator
-Sediakan satu folder akar yang mudah ditemukan dengan subfolder audio dan logo. Nama/path final dipilih setelah audit path pemutar audio yang sekarang. Instruksi di dalam aplikasi harus menjelaskan cara copy-paste file, format yang didukung, penamaan, cara mengganti file yang sedang dirujuk jadwal, serta tindakan saat file tidak ditemukan. Aset harus disimpan di lokasi yang tidak terhapus saat aplikasi diperbarui.
+Sediakan satu folder akar persisten dengan subfolder audio dan logo. Operator menyalin file ke subfolder yang sesuai, lalu membuka menu Audio/Logo dan memilih file yang digunakan melalui Windows File Explorer. Aplikasi menyimpan referensi file terpilih (path/lokasi dan nama file) ke database SQLite.
 
-Jangan memindahkan referensi path lama tanpa migrasi aman dan jangan mengklaim format audio didukung sebelum diverifikasi.
+Nama file bebas; **tidak ada aturan penamaan wajib**. Folder adalah tempat menyimpan aset, sedangkan referensi di database menentukan file mana yang sedang dipakai. Instruksi di dalam aplikasi harus menjelaskan lokasi folder, cara copy-paste, cara memilih/mengganti file, format yang didukung, dan tindakan saat file tidak ditemukan. Aset harus disimpan di lokasi yang tidak terhapus saat aplikasi diperbarui.
+
+Nama/path final dipilih setelah audit path pemutar audio yang sekarang. Jangan memindahkan referensi path lama tanpa migrasi aman dan jangan mengklaim format audio didukung sebelum diverifikasi.
