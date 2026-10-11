@@ -108,33 +108,43 @@ Selesaikan dan uji satu modul sebelum memperluas redesign ke modul berikutnya. H
 Dokumen ini menetapkan **arah baru**. Kode UI yang ada perlu diaudit; jangan menganggap implementasi sebelumnya sebagai final. Label “IMPLEMENTED” hanya berarti kode tersedia. Label “LOCAL TEST PASS” hanya digunakan setelah hasil runtime dilaporkan.
 
 
-## 11. Public-first dan partial views (keputusan terbaru)
+## 11. Public-first dan partial views
 
 ### Public area
-- Menjadi halaman awal aplikasi.
-- Fokus pada informasi jadwal dan status yang benar-benar diketahui.
-- Menyediakan satu tombol/tautan yang jelas menuju Dashboard Admin.
-- Tidak memuat navigasi admin, formulir pengaturan, atau dekorasi berlebihan.
-- CSS/JS public boleh dipisah agar ringan dan mudah dipelihara.
+- Halaman awal aplikasi dengan nama sekolah, tanggal/jam, jadwal yang relevan, kegiatan berikutnya, dan tombol Dashboard Admin.
+- Tidak memuat navigasi/form admin.
+- CSS/JS public terpisah bila dibutuhkan.
 
 ### Admin area
-- Tidak menggunakan login/Auth pada ruang lingkup saat ini.
-- Diakses langsung dari tautan pada public area.
-- Semua halaman admin menggunakan layout dan partial views PHP native yang sama.
+- Tidak menggunakan login/Auth.
+- Halaman admin menggunakan layout dan partial PHP native yang konsisten.
+- Pemeriksaan runtime menjadi halaman diagnostik, bukan beranda.
 
-### Pola PHP native
-Target struktur, menyesuaikan hasil audit:
-- `layouts/public.php` dan `layouts/admin.php`
-- `partials/admin-sidebar.php`, `partials/admin-header.php`, `partials/flash-message.php`, `partials/footer.php`
-- `views/<modul>/<halaman>.php`
-- `assets/css/public.css`, `assets/js/public.js`, dan aset admin yang terorganisasi
-- `lib/Database.php` serta logika bisnis terpisah dari view
-
-Gunakan path `require` yang ditentukan internal aplikasi, bukan input pengguna. Selesaikan aksi POST dan validasi sebelum merender view. Escape semua data yang ditampilkan ke HTML.
+### Struktur target bertahap
+```text
+www/
+  index.php                 # entry point ke public area
+  public.php                # halaman publik
+  diagnostics.php           # pemeriksaan runtime
+  layouts/                  # layout public/admin
+  partials/                 # navigasi, header, pesan, footer
+  views/                    # view per modul
+  assets/css/               # public.css dan admin.css
+  assets/js/                # public.js dan admin.js
+  lib/Database.php
+```
+Ini target migrasi, bukan perintah memindahkan semua halaman sekaligus. Pertahankan URL lama sampai tiap tahap teruji.
 
 ### Folder aset operator
-Sediakan satu folder akar persisten dengan subfolder audio dan logo. Operator menyalin file ke subfolder yang sesuai, lalu membuka menu Audio/Logo dan memilih file yang digunakan melalui Windows File Explorer. Aplikasi menyimpan referensi file terpilih (path/lokasi dan nama file) ke database SQLite.
+- Target folder persisten: `BelMadrasah/assets/audio` dan `BelMadrasah/assets/logo` di area data pengguna Windows, bukan folder program.
+- Sediakan tombol Buka Folder Aset dan instruksi copy-paste.
+- Nama file bebas dan dipertahankan.
+- Database menyimpan path kanonis aset yang dipilih; UI menampilkan nama dan status ditemukan/hilang.
+- HTML file picker standar menyembunyikan path lokal penuh. Audit bridge PHP Desktop terlebih dahulu; jika tidak tersedia, pilih file dari daftar yang dipindai dalam folder aset.
+- Audio lama saat ini berada di `%APPDATA%/BelMadrasah/audio` dan direferensikan lewat `bell_events.audio_path`. Jangan ubah skema atau memindahkan file secara massal sebelum ada migrasi aditif yang aman.
+- Format audio/gambar hanya dinyatakan didukung setelah diverifikasi pada runtime.
 
-Nama file bebas; **tidak ada aturan penamaan wajib**. Folder adalah tempat menyimpan aset, sedangkan referensi di database menentukan file mana yang sedang dipakai. Instruksi di dalam aplikasi harus menjelaskan lokasi folder, cara copy-paste, cara memilih/mengganti file, format yang didukung, dan tindakan saat file tidak ditemukan. Aset harus disimpan di lokasi yang tidak terhapus saat aplikasi diperbarui.
-
-Nama/path final dipilih setelah audit path pemutar audio yang sekarang. Jangan memindahkan referensi path lama tanpa migrasi aman dan jangan mengklaim format audio didukung sebelum diverifikasi.
+### Perlindungan data
+- Database utama tetap di `%APPDATA%/BelMadrasah/data/bel-madrasah.sqlite` dengan fallback `%LOCALAPPDATA%`.
+- Jangan menghapus data/file lama saat redesign.
+- Uji restart, file hilang, nama file dengan spasi/Unicode, path lama, dan update aplikasi.
