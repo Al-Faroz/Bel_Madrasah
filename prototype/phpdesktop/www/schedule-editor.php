@@ -225,7 +225,7 @@ try {
     </header>
     <nav class="main-nav" aria-label="Navigasi utama">
         <a href="dashboard.php">Dashboard</a>
-        <a href="index.php">Pemeriksaan</a>
+        <a href="diagnostics.php">Pemeriksaan</a>
         <a href="packages.php">Paket jadwal</a>
         <a href="schedule-editor.php" class="active" aria-current="page">Editor jadwal</a>
         <a href="settings.php">Konfigurasi</a>
