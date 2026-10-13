@@ -28,11 +28,13 @@ $editingRuleId = 0;
 $ruleForm = ['weekday' => '1', 'rule_mode' => 'normal', 'special_type' => 'pasaran', 'special_value' => 'Legi', 'is_enabled' => '1'];
 $eventFormErrors = [];
 $copyPreview = null;
+$audioAssets = [];
 
 try {
     $db = new Database();
     $db->ensureDefaultSchedulePackage();
     $packages = $db->getSchedulePackages();
+    $audioAssets = $db->listAudioAssets();
     if ($selectedPackageId === 0 && $packages !== []) {
         foreach ($packages as $package) {
             if ((int) $package['is_active'] === 1) {
@@ -131,8 +133,8 @@ try {
                 throw new InvalidArgumentException('Urutan harus antara 0 dan 9999.');
             }
 
-            // Never trust a hidden form field for the stored path. Keep the path
-            // from the database and verify that the event belongs to this rule.
+            // Keep the existing audio reference unless the operator selects a managed
+            // asset or explicitly clears the reference. Old absolute paths remain valid.
             $audioPath = '';
             if ($eventId > 0) {
                 $existingEvent = $db->getBellEvent($eventId);
@@ -142,28 +144,22 @@ try {
                 $audioPath = (string) $existingEvent['audio_path'];
             }
 
-            $uploadedAudioPath = null;
-            try {
-                if (isset($_FILES['audio_file']) && (int) ($_FILES['audio_file']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
-                    $uploadedAudioPath = $db->storeUploadedAudio($_FILES['audio_file']);
-                    $audioPath = $uploadedAudioPath;
-                }
-                $db->saveBellEvent(
-                    $eventId > 0 ? $eventId : null,
-                    $ruleId,
-                    $eventName,
-                    $eventTime,
-                    $audioPath,
-                    isset($_POST['event_enabled']),
-                    $sortOrder
-                );
-            } catch (Throwable $saveException) {
-                // If persistence fails after upload, remove only the new orphan.
-                if ($uploadedAudioPath !== null && is_file($uploadedAudioPath)) {
-                    @unlink($uploadedAudioPath);
-                }
-                throw $saveException;
+            $selectedAudioAsset = trim((string) ($_POST['audio_asset'] ?? ''));
+            if ($selectedAudioAsset === '__clear__') {
+                $audioPath = '';
+            } elseif ($selectedAudioAsset !== '') {
+                $audioPath = $db->resolveAudioAsset($selectedAudioAsset);
             }
+
+            $db->saveBellEvent(
+                $eventId > 0 ? $eventId : null,
+                $ruleId,
+                $eventName,
+                $eventTime,
+                $audioPath,
+                isset($_POST['event_enabled']),
+                $sortOrder
+            );
             $message = $eventId > 0 ? 'Kegiatan bel berhasil diperbarui.' : 'Kegiatan bel berhasil ditambahkan.';
         } elseif ($action === 'delete_event') {
             $ruleId = (int) ($_POST['rule_id'] ?? 0);
@@ -198,6 +194,7 @@ try {
         ? $exception->getMessage()
         : 'Editor jadwal gagal memproses data: ' . $exception->getMessage();
     $packages = $packages ?? [];
+    $audioAssets = $audioAssets ?? [];
     $selectedPackage = isset($db, $selectedPackageId) && $db instanceof Database ? $db->getSchedulePackage($selectedPackageId) : null;
     $rules = isset($db, $selectedPackageId) && $db instanceof Database ? $db->getDayRules($selectedPackageId) : [];
     $eventsByRule = [];
