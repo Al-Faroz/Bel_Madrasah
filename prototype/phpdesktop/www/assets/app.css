@@ -909,3 +909,100 @@ footer { color: #68786d; font-size: 11px; }
 
 /* Ensure hidden state remains respected by themed components */
 [hidden]{display:none!important}
+
+/* D8 — first-pass styling for managed assets and restore workflow.
+   These selectors were absent from the existing stylesheet during the selector audit. */
+.asset-path-panel {
+    display: grid;
+    gap: 18px;
+    padding: 24px;
+}
+.asset-path-panel > p {
+    margin: 0;
+    color: var(--muted);
+}
+.asset-path-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+.asset-path-item {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+    min-width: 0;
+    padding: 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md, 12px);
+    background: var(--surface);
+}
+.asset-path-item > label {
+    color: var(--ink);
+    font-size: 12px;
+    font-weight: 700;
+}
+.asset-path-item code {
+    display: block;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: #f3f6f3;
+    overflow-wrap: anywhere;
+    white-space: normal;
+    font-size: 11px;
+    line-height: 1.6;
+}
+.asset-path-item .form-actions {
+    margin: 0;
+}
+.asset-path-item small {
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.6;
+}
+.backup-list-panel,
+.restore-preview-panel {
+    display: grid;
+    gap: 18px;
+    padding: 24px;
+}
+.backup-list-panel .section-heading,
+.restore-preview-panel .section-heading {
+    margin-bottom: 0;
+}
+.backup-list-panel .copy-preview-table-wrap {
+    margin: 0;
+}
+.backup-list-panel td form {
+    margin: 0;
+}
+.restore-preview-panel .dashboard-meta-grid {
+    margin: 0;
+}
+.restore-confirm-form {
+    display: grid;
+    gap: 16px;
+}
+.restore-confirm-form .form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.brand-mark img,
+.public-brand-mark img {
+    max-width: 100%;
+    max-height: 100%;
+}
+@media (max-width: 760px) {
+    .asset-path-list {
+        grid-template-columns: 1fr;
+    }
+    .asset-path-panel,
+    .backup-list-panel,
+    .restore-preview-panel {
+        padding: 18px;
+    }
+    .backup-list-panel .copy-preview-table-wrap {
+        overflow-x: auto;
+    }
+}
+
