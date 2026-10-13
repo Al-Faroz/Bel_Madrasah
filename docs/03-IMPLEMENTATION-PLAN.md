@@ -78,3 +78,14 @@ Resolver kalender Normal/Khusus → scheduler/audio dan log status → restore a
 - Status: **IMPLEMENTED**, belum **LOCAL TEST PASS**. Pengguna meminta pengerjaan dilanjutkan tanpa menunggu uji dashboard; karena itu pekerjaan berlanjut, tetapi pengujian pada PHP Desktop Windows tetap tercatat sebagai belum dilakukan.
 - **Batch berikutnya:** D4 — migrasi Editor Jadwal ke layout Admin bersama, dengan pemeriksaan khusus agar seluruh alur edit/penyimpanan tetap utuh.
 
+## Checkpoint D4 — Editor Jadwal memakai layout bersama (2026-10-13)
+
+- Controller `schedule-editor.php` sekarang memproses data dan aksi lalu memanggil `layouts/admin.php`.
+- Markup halaman dipisahkan ke `views/admin/schedule-editor.php`; header, navigasi, dan footer berasal dari partial Admin bersama.
+- Commit view: [`b148b44`](https://github.com/Al-Faroz/Bel_Madrasah/commit/b148b446830ddebcf8449968f836406f6e643147).
+- Commit controller/layout: [`fda7c51`](https://github.com/Al-Faroz/Bel_Madrasah/commit/fda7c51a7d46a19c569c81f26e113888dc3c9d6e).
+- Pemeriksaan struktur statis memastikan controller Editor Jadwal tidak lagi merender dokumen HTML sendiri dan view tidak lagi membawa header/nav/footer duplikat.
+- Status **IMPLEMENTED**, belum **LOCAL TEST PASS**. Belum ada pengujian PHP Desktop Windows atau verifikasi interaksi formulir setelah refaktor.
+- **Catatan pekerjaan berikutnya:** Editor Jadwal masih memiliki input upload audio lama. Itu belum diubah dalam refaktor ini; harus diselaraskan dengan keputusan aset persisten (operator copy-paste file ke folder aset lalu memilih file dari daftar, nama file bebas) pada batch Konfigurasi/Aset. Jangan menganggap alur audio baru sudah selesai.
+- **Batch berikutnya:** D5 — audit/migrasi Konfigurasi dan Aset, termasuk kontrak folder persisten dan cara memilih audio/logo tanpa menghapus atau mengganti referensi path lama.
+
