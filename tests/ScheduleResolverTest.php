@@ -56,6 +56,9 @@ try {
     unset($db);
     echo "PASS: ScheduleResolver calendar fixtures\n";
 } finally {
+    if (isset($db)) {
+        unset($db);
+    }
     $iterator = new RecursiveIteratorIterator(
         new RecursiveDirectoryIterator($temporaryRoot, FilesystemIterator::SKIP_DOTS),
         RecursiveIteratorIterator::CHILD_FIRST
