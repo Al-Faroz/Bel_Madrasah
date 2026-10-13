@@ -187,5 +187,6 @@ Minta pengujian pada paket PHP Desktop Chrome 130.1 + PHP 8.3 yang sebenarnya: b
 - Asset path: folder Audio/Logo berada di AppData, daftar audio dipakai oleh Editor Jadwal, referensi logo disimpan di `app_settings` dan ditampilkan pada header Admin/Publik. Referensi audio lama tidak dihapus.
 - Backup/Restore: restore memvalidasi `PRAGMA integrity_check`, tabel wajib, dan versi skema; membuat backup pra-pemulihan; lalu mengganti file database dan mencoba rollback jika gagal.
 - Seluruh perubahan di atas masih berstatus **IMPLEMENTED**. Audit ini tidak menjalankan PHP Desktop, tidak membuka database SQLite milik pengguna, dan tidak membuktikan bahwa operasi restore/copy, clipboard, pemilihan audio, atau logo berhasil pada Windows.
-- Risiko prioritas untuk batch berikutnya: uji pemulihan dengan file valid/rusak, pemeriksaan koneksi SQLite setelah restore, regresi data jadwal/audio, konsistensi navigasi window PHP Desktop, dan audit keamanan POST/CSRF.
+- CSS statis diaudit: 65.279 karakter / 912 baris, 683 blok aturan sederhana, 450 selector unik, 155 selector berulang. Gaya responsif tambahan hanya menyasar komponen baru; konsolidasi selector lama ditahan sampai ada screenshot regresi karena sebagian pengulangan berasal dari media query/override.
+- Risiko prioritas: uji pemulihan dengan file valid/rusak, pemeriksaan koneksi SQLite setelah restore, regresi data jadwal/audio, konsistensi navigasi window PHP Desktop, audit keamanan POST/CSRF, dan konsolidasi CSS berdasarkan konteks media query.
 
