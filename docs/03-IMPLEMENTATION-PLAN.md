@@ -100,3 +100,13 @@ Resolver kalender Normal/Khusus → scheduler/audio dan log status → restore a
 - Folder dibuka dengan menyalin path dari Konfigurasi ke bilah alamat File Explorer; tombol pembuka Explorer langsung belum dibuat karena bridge/native shell PHP Desktop yang terpasang belum terverifikasi.
 - **Batch berikutnya:** D6 — audit dan migrasi Backup/Restore. Sebelum restore diimplementasikan, rancang validasi integritas SQLite dan backup pra-pemulihan; jangan menimpa database aktif tanpa pratinjau/konfirmasi.
 
+## Checkpoint D6 — Backup dan Restore (2026-10-13)
+
+- Halaman Backup kini memakai layout Admin bersama dan menampilkan database aktif, lokasi backup, daftar file SQLite, ukuran, serta waktu modifikasi.
+- Restore menggunakan dua langkah: **Periksa & pratinjau** (validasi integritas `PRAGMA integrity_check`, tabel wajib, dan versi skema), lalu konfirmasi eksplisit sebelum pemulihan.
+- Sebelum mengganti database aktif, `Database::restoreFromBackup()` membuat backup pra-pemulihan. Jika penggantian atau inisialisasi gagal, metode mencoba mengembalikan file pra-pemulihan dan membuka ulang koneksi.
+- Daftar restore hanya memuat file `.sqlite` yang berada langsung di folder backup aplikasi. File dari luar dapat disalin ke folder tersebut; file yang bukan database Bel Madrasah akan ditolak pada pemeriksaan.
+- Commit: [`10877bc`](https://github.com/Al-Faroz/Bel_Madrasah/commit/10877bc772ef9d2117055f4851a396798662fdf5), [`2be0719`](https://github.com/Al-Faroz/Bel_Madrasah/commit/2be07196c7c4ac99237b09092f9958396e0f815d), [`296f776`](https://github.com/Al-Faroz/Bel_Madrasah/commit/296f7766fd2f75dd90f4b5f5e6057b5cc09ead70), [`4c98edf`](https://github.com/Al-Faroz/Bel_Madrasah/commit/4c98edf2bdec3367872f0c8d271077715762bc6e).
+- Status **IMPLEMENTED**, belum **LOCAL TEST PASS**. Pemulihan database adalah operasi berisiko dan belum diuji dengan SQLite asli di PHP Desktop Windows. Sebelum penggunaan produksi, uji backup valid, file rusak, skema tidak cocok, kegagalan copy, dan pemulihan dari backup pra-pemulihan.
+- **Batch berikutnya:** D7 — migrasi Diagnostik ke layout bersama, mempertahankan seluruh pengujian teknis yang sudah ada.
+
