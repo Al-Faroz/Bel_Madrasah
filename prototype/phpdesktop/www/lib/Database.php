@@ -1,6 +1,9 @@
 <?php
 declare(strict_types=1);
 
+// Keep calendar resolution and scheduled times aligned with the school's local timezone.
+date_default_timezone_set('Asia/Jakarta');
+
 /**
  * Tahap 2: database aplikasi utama.
  * Semua data permanen berada di AppData/LocalAppData, bukan di folder runtime.
