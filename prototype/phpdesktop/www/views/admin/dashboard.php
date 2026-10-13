@@ -29,7 +29,7 @@
                 <span class="stat-icon" aria-hidden="true">◷</span>
                 <span class="stat-label">Kegiatan aktif hari ini</span>
                 <strong><?= $enabledEventsCount ?></strong>
-                <small><?= $todayRuleCount > 0 ? 'Berdasarkan aturan Normal yang aktif' : 'Belum ada aturan Normal aktif untuk hari ini' ?></small>
+                <small><?= $todayRuleCount > 0 ? 'Berdasarkan aturan kalender yang berlaku' : 'Belum ada aturan aktif untuk hari ini' ?></small>
             </article>
             <article class="dashboard-stat panel">
                 <span class="stat-icon" aria-hidden="true">♫</span>
@@ -53,6 +53,8 @@
                     <div class="dashboard-meta-grid">
                         <div><span>Hari libur mingguan</span><strong><?= h($offDayLabel) ?></strong></div>
                         <div><span>Hari ini</span><strong><?= h($dayNames[$weekday]) ?></strong></div>
+                        <div><span>Pasaran Jawa</span><strong><?= h($pasaranToday) ?></strong></div>
+                        <div><span>Pola kalender</span><strong><?= h($monthWeekLabel) ?></strong></div>
                     </div>
                 <?php else: ?>
                     <p class="dashboard-description">Buat atau aktifkan satu paket jadwal terlebih dahulu. Paket yang aktif akan menjadi sumber konfigurasi jadwal.</p>
@@ -70,11 +72,13 @@
                 </div>
                 <?php if ($nextEvent !== null): ?>
                     <p class="next-event-name"><?= h((string) $nextEvent['name']) ?></p>
-                    <p class="dashboard-description">Waktu berikutnya dari jadwal Normal yang aktif. Ini adalah informasi konfigurasi, bukan bukti bahwa audio otomatis sedang berjalan.</p>
-                <?php elseif ($specialRuleCount > 0): ?>
-                    <p class="dashboard-description">Hari ini memiliki aturan khusus. Pemilihan aturan berdasarkan kalender akan ditangani oleh resolver pada tahap berikutnya, jadi dashboard belum menyimpulkan kegiatan berikutnya.</p>
+                    <p class="dashboard-description">Waktu berikutnya dari pola kalender yang berlaku hari ini. Ini adalah informasi konfigurasi, bukan bukti bahwa audio otomatis sedang berjalan.</p>
+                <?php elseif ($resolverConflict): ?>
+                    <p class="dashboard-description">Lebih dari satu aturan Khusus cocok. Untuk mencegah jadwal ambigu, dashboard memakai pola Normal sebagai fallback. Periksa Editor Jadwal.</p>
+                <?php elseif ($resolvedMode === 'special'): ?>
+                    <p class="dashboard-description">Aturan Khusus berlaku hari ini, tetapi tidak ada kegiatan aktif setelah waktu sekarang pada aturan tersebut.</p>
                 <?php else: ?>
-                    <p class="dashboard-description">Tidak ada kegiatan Normal aktif setelah waktu sekarang. Periksa Editor Jadwal jika ini tidak sesuai dengan jadwal sekolah.</p>
+                    <p class="dashboard-description">Tidak ada kegiatan aktif setelah waktu sekarang pada pola yang berlaku. Periksa Editor Jadwal jika ini tidak sesuai dengan jadwal sekolah.</p>
                 <?php endif; ?>
                 <div class="dashboard-action-row"><a class="md-button md-button-outlined" href="schedule-editor.php">Buka editor jadwal</a><a class="md-button md-button-tonal" href="public.php" target="_self">Lihat tampilan publik</a></div>
             </article>
@@ -84,7 +88,7 @@
             <span class="dashboard-note-icon" aria-hidden="true">i</span>
             <div>
                 <strong>Status pengembangan</strong>
-                <p>Dashboard ini merangkum data yang tersimpan. Mesin penjadwalan otomatis, resolver kalender, dan status pemutaran real-time belum tersedia; jangan gunakan ringkasan ini sebagai bukti bel akan berbunyi otomatis.</p>
+                <p>Dashboard ini merangkum data yang tersimpan. Resolver kalender kini memilih pola Normal/Khusus untuk tanggal ini. Mesin penjadwalan dan pemutaran audio otomatis belum aktif; ringkasan ini bukan bukti bahwa bel akan berbunyi otomatis.</p>
             </div>
         </section>
 
