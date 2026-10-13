@@ -110,3 +110,11 @@ Resolver kalender Normal/Khusus → scheduler/audio dan log status → restore a
 - Status **IMPLEMENTED**, belum **LOCAL TEST PASS**. Pemulihan database adalah operasi berisiko dan belum diuji dengan SQLite asli di PHP Desktop Windows. Sebelum penggunaan produksi, uji backup valid, file rusak, skema tidak cocok, kegagalan copy, dan pemulihan dari backup pra-pemulihan.
 - **Batch berikutnya:** D7 — migrasi Diagnostik ke layout bersama, mempertahankan seluruh pengujian teknis yang sudah ada.
 
+## Checkpoint D7 — Diagnostik memakai layout bersama (2026-10-13)
+
+- Controller `diagnostics.php` tetap menjalankan pemeriksaan runtime, SQLite/persistensi, dan uji audio yang sudah ada; dokumen HTML dan navigasi dipindahkan ke `layouts/admin.php` serta `views/admin/diagnostics.php`.
+- Layout memakai koneksi `$appDatabase` yang sudah dibuat halaman diagnostik bila tersedia, agar tidak membuka koneksi aplikasi kedua hanya untuk membaca logo.
+- Commit: [`611fb9e`](https://github.com/Al-Faroz/Bel_Madrasah/commit/611fb9e9229feacd6051be38858c2623556b298c), [`b6037bd`](https://github.com/Al-Faroz/Bel_Madrasah/commit/b6037bd08b108492eac880d163801763581a533d), [`cdd8612`](https://github.com/Al-Faroz/Bel_Madrasah/commit/cdd8612b59dd57d6af552c252e52148c52540e42).
+- Status **IMPLEMENTED**, belum **LOCAL TEST PASS**. Uji diagnostik dan pemutaran audio harus dijalankan kembali pada PHP Desktop Windows setelah salinan `www/` diperbarui.
+- **Batch berikutnya:** D8 — audit CSS yang sudah ada dan perapian responsivitas terukur; hindari menambah override tanpa menghapus/menyatukan aturan yang bertumpuk.
+
