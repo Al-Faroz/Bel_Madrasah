@@ -194,7 +194,7 @@ final class Database
 
     public function saveSettings(array $settings): void
     {
-        $allowed = ['school_name', 'operator_name', 'default_volume'];
+        $allowed = ['school_name', 'operator_name', 'default_volume', 'school_logo_path'];
         $now = date('Y-m-d H:i:s');
         $statement = $this->pdo->prepare(
             'INSERT INTO app_settings (setting_key, setting_value, updated_at)
@@ -807,6 +807,21 @@ final class Database
     public function listLogoAssets(): array
     {
         return $this->listAssetFiles($this->getLogoAssetsDirectory(), ['png', 'jpg', 'jpeg', 'webp', 'gif', 'svg']);
+    }
+
+    public function resolveLogoAsset(string $filename): string
+    {
+        $filename = trim($filename);
+        if ($filename === '' || basename($filename) !== $filename
+            || str_contains($filename, '/') || str_contains($filename, "\\\\")) {
+            throw new InvalidArgumentException('Pilihan file logo tidak valid.');
+        }
+        foreach ($this->listLogoAssets() as $asset) {
+            if ($asset['name'] === $filename) {
+                return $asset['path'];
+            }
+        }
+        throw new InvalidArgumentException('File logo tidak ditemukan di folder aset. Salin file ke folder Logo lalu muat ulang halaman.');
     }
 
     /**
