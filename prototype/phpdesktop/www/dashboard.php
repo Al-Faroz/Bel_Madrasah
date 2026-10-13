@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/lib/Database.php';
+require_once __DIR__ . '/lib/ScheduleResolver.php';
 
 function h(string $value): string
 {
@@ -28,27 +29,20 @@ $todayEvents = [];
 $nextEvent = null;
 $todayRuleCount = 0;
 $specialRuleCount = 0;
+$resolverConflict = false;
+$resolvedMode = 'none';
+$pasaranToday = ScheduleResolver::getPasaran($now);
+$monthWeekLabel = '';
 if ($activePackage !== null) {
-    $rules = $db->getDayRules((int) $activePackage['id'], $weekday);
-    foreach ($rules as $rule) {
-        if ((int) $rule['is_enabled'] !== 1) {
-            continue;
-        }
-        if ((string) $rule['rule_mode'] === 'special') {
-            $specialRuleCount++;
-            continue;
-        }
-        $todayRuleCount++;
-        foreach ($db->getBellEvents((int) $rule['id']) as $event) {
-            if ((int) $event['is_enabled'] !== 1) {
-                continue;
-            }
-            $event['rule_mode'] = $rule['rule_mode'];
-            $todayEvents[] = $event;
-        }
-    }
+    $resolution = ScheduleResolver::resolve($db, (int) $activePackage['id'], $now);
+    $resolvedMode = (string) $resolution['mode'];
+    $resolverConflict = (bool) $resolution['conflict'];
+    $specialRuleCount = count($resolution['matching_special_rules']);
+    $pasaranToday = (string) $resolution['pasaran'];
+    $monthWeekLabel = (string) $resolution['month_week_label'];
+    $todayRuleCount = count($resolution['rules']);
+    $todayEvents = ScheduleResolver::getEnabledEvents($db, $resolution);
 }
-usort($todayEvents, static fn(array $a, array $b): int => strcmp((string) $a['event_time'], (string) $b['event_time']));
 foreach ($todayEvents as $event) {
     if ((string) $event['event_time'] >= $now->format('H:i')) {
         $nextEvent = $event;
