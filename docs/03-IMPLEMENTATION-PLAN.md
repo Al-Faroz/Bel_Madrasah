@@ -59,3 +59,12 @@ Resolver kalender Normal/Khusus → scheduler/audio dan log status → restore a
 - Pengguna menguji runtime PHP Desktop pada Windows; hasilnya dicatat sebagai LOCAL TEST PASS hanya setelah dilaporkan.
 - Jangan mereset database, memindahkan AppData, atau menghapus data/file lama demi merapikan struktur.
 
+
+
+## Status checkpoint — 2026-10-13
+
+- **Fase A / audit statis:** diperluas dan dicatat di `docs/06-BASELINE-AUDIT.md`. Konfigurasi runtime PHP Desktop yang benar-benar terpasang, pengujian Windows, resolver kalender, dan desain restore masih terbuka.
+- **Fase B / D1 Admin shell:** kode layout dan partial bersama sudah diimplementasikan pada commit [`448a0d2`](https://github.com/Al-Faroz/Bel_Madrasah/commit/448a0d275084f57805fefba2024db2b01329c77a).
+- **Fase D / Dashboard Admin pilot:** markup dashboard dipisah menjadi view dan menggunakan layout baru. Statusnya **IMPLEMENTED**, belum **LOCAL TEST PASS**.
+- Pemeriksaan PHP CLI dan smoke test memakai data simulasi lulus pada lingkungan kerja, tetapi tidak menggantikan pengujian PHP Desktop Windows dengan database SQLite asli.
+- **Checkpoint wajib:** uji dashboard pada runtime target terlebih dahulu. Setelah hasil dicatat, lanjutkan migrasi satu modul per batch; modul lain belum dianggap menggunakan layout baru.

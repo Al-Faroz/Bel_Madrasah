@@ -1,6 +1,6 @@
 # Fase A — Audit Baseline
 
-**Status:** audit statis kode utama, navigasi, formulir POST, skema database, dan CSS telah diperluas. Batch Public-first tetap belum diuji di runtime Windows. Konfigurasi paket PHP Desktop yang benar-benar terpasang tidak disertakan dalam repository, sehingga pemeriksaan native bridge dan pembatasan fungsi runtime belum dapat dituntaskan.  
+**Status:** audit statis kode utama, navigasi, formulir POST, skema database, dan CSS telah diperluas. Entry point Public-first serta Admin shell/dashboard pilot sudah diimplementasikan di repository, tetapi belum diuji di runtime Windows. Konfigurasi paket PHP Desktop yang benar-benar terpasang tidak disertakan dalam repository, sehingga pemeriksaan pembatasan fungsi runtime belum dapat dituntaskan.  
 **Tanggal:** 2026-10-13  
 **Metode:** pembacaan file pada default branch repository. Tidak menjalankan PHP Desktop/Windows dari lingkungan ini.
 
@@ -149,3 +149,33 @@
 - [ ] Melakukan uji runtime Windows dan merekam screenshot pada ukuran jendela yang disepakati.
 
 **Kesimpulan:** audit statis sudah cukup untuk memulai shell Admin secara terisolasi, tetapi Fase A tidak boleh diberi status selesai penuh sampai konfigurasi runtime aktual diperiksa dan kebutuhan resolver/restore ditetapkan. Tidak ada pengujian Windows yang dilakukan dalam audit ini.
+
+
+## 8. Checkpoint batch D1 — shell Admin dan dashboard pilot
+
+**Commit implementasi:** [`448a0d2`](https://github.com/Al-Faroz/Bel_Madrasah/commit/448a0d275084f57805fefba2024db2b01329c77a) — `refactor: introduce shared admin shell and dashboard view`.
+
+### File yang berubah
+
+- Ditambahkan `prototype/phpdesktop/www/layouts/admin.php` sebagai pemilik dokumen HTML, stylesheet lokal, shell, area main, dan urutan include.
+- Ditambahkan `partials/admin-header.php`, `partials/admin-nav.php`, dan `partials/admin-footer.php` untuk komponen bersama. Navigasi memiliki satu daftar tautan dan penanda halaman aktif.
+- Ditambahkan `views/admin/dashboard.php`; isi dashboard operasional dipindahkan dari markup halaman lama tanpa mengubah perhitungan paket/kegiatan atau pesan batasan scheduler.
+- `dashboard.php` kini bertindak sebagai controller tipis: menghitung data seperti sebelumnya, mengatur metadata halaman, lalu memanggil layout dengan view internal.
+- Layout memeriksa bahwa view hasil `realpath()` berada di bawah `views/admin/`; path view tidak diambil dari request pengguna.
+
+### Batas batch
+
+- Tidak mengubah schema SQLite, lokasi AppData, path audio, alur paket/editor, backup, public dashboard, atau diagnostik.
+- Tidak mengubah `assets/app.css`; shell menggunakan selector yang sudah ada. Konsolidasi CSS tetap menjadi batch terpisah, bukan ditambal di sini.
+- Halaman `packages.php`, `schedule-editor.php`, `settings.php`, `backup.php`, dan `diagnostics.php` belum dimigrasikan ke layout bersama. Migrasikan satu per satu setelah checkpoint ini.
+
+### Pemeriksaan yang dilakukan
+
+- `php -l` pada keenam file PHP yang diubah/ditambahkan: lulus dengan PHP CLI 8.4.24 pada lingkungan kerja ini.
+- Smoke test layout memeriksa title, navigasi aktif, pemanggilan view, footer, dan stylesheet: lulus.
+- Smoke test dashboard dengan adapter Database palsu memeriksa bahwa controller, layout, dan view terhubung serta merender data contoh: lulus.
+- Pemeriksaan di atas **bukan** pengujian runtime PHP Desktop Windows, bukan uji database SQLite asli, dan bukan bukti kompatibilitas visual pada ukuran jendela target.
+
+### Checkpoint berikutnya
+
+Minta pengujian pada paket PHP Desktop Chrome 130.1 + PHP 8.3 yang sebenarnya: buka aplikasi melalui `index.php`, masuk ke Dashboard Admin, periksa tautan navigasi dan jam, lalu pastikan tidak ada halaman kosong/error. Jangan migrasikan modul berikutnya sebelum hasil checkpoint ini dicatat.
