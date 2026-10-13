@@ -126,3 +126,13 @@ Resolver kalender Normal/Khusus → scheduler/audio dan log status → restore a
 - Status **IMPLEMENTED — POLISH AWAL**; D8 belum tuntas. Konsolidasi CSS lama dan verifikasi visual masih menunggu screenshot/runtime test agar aturan responsif yang valid tidak terhapus.
 - Setelah baseline screenshot tersedia, lanjutkan audit selector per konteks media query, hilangkan override yang benar-benar redundan, lalu lanjut ke Fase E: resolver kalender → scheduler/audio → hardening dan paket distribusi.
 
+## Checkpoint E1 — Resolver kalender Normal/Khusus (2026-10-13)
+
+- Ditambahkan `lib/ScheduleResolver.php` sebagai resolver bersama untuk tanggal lokal: menghitung pasaran Jawa dari anchor Jumat Legi 17 Agustus 1945, menentukan ordinal kemunculan hari dalam bulan, memilih aturan Normal/Khusus, dan menyusun kegiatan aktif berdasarkan waktu.
+- Aturan Khusus menggantikan Normal jika tepat satu aturan cocok. Jika lebih dari satu aturan Khusus cocok pada tanggal yang sama, resolver memilih Normal sebagai fallback dan menandai konflik agar UI dapat memperingatkan operator; resolver tidak menggabungkan dua jadwal khusus secara diam-diam.
+- Dashboard Admin dan Tampilan Publik kini menggunakan resolver yang sama serta menampilkan pasaran/pola kalender. Ini baru pemilihan jadwal untuk informasi layar; belum ada scheduler atau pemutaran audio otomatis.
+- Anchor pasaran diverifikasi pada kalender daring: 17 Agustus 1945 = Jumat Legi. <Cite refs={["turn323493search0","turn323493search2"]} />
+- Commit: [`6216207`](https://github.com/Al-Faroz/Bel_Madrasah/commit/62162075ef0c62068c2c268693a31f85410b0ef8), [`6a271c6`](https://github.com/Al-Faroz/Bel_Madrasah/commit/6a271c63b58d6cd0b2f4c33c2f5fe6429a6f2b7a), [`0703c4e`](https://github.com/Al-Faroz/Bel_Madrasah/commit/0703c4e23ca3ed2e68f773f2188ea050bdf8ef8f), [`067278d`](https://github.com/Al-Faroz/Bel_Madrasah/commit/067278d512b82613be32ae1daf3eb6bebd46ef3f), [`a418914`](https://github.com/Al-Faroz/Bel_Madrasah/commit/a41891435a7038d7473e5be7901674628f5254be), [`e78c021`](https://github.com/Al-Faroz/Bel_Madrasah/commit/e78c021ebd35106f9cee8ce76666abd8d1f68210).
+- Status **IMPLEMENTED**, belum **LOCAL TEST PASS**. Perhitungan tanggal dan konflik harus diuji dengan fixture SQLite pada PHP CLI/PHP Desktop sebelum scheduler memakai hasil resolver.
+- **Batch berikutnya:** E2 — scheduler/audio otomatis dan status operasional, dengan penanganan audio yang hilang, keterlambatan tick, dan pemulihan setelah aplikasi minimisasi/restart.
+
