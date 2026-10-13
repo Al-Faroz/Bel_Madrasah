@@ -1,7 +1,7 @@
 # Fase A — Audit Baseline
 
-**Status:** audit statis awal selesai; batch entry point pertama sudah diterapkan; audit runtime dan seluruh dependency masih terbuka.  
-**Tanggal:** 2026-10-11  
+**Status:** audit statis kode utama, navigasi, formulir POST, skema database, dan CSS telah diperluas. Batch Public-first tetap belum diuji di runtime Windows. Konfigurasi paket PHP Desktop yang benar-benar terpasang tidak disertakan dalam repository, sehingga pemeriksaan native bridge dan pembatasan fungsi runtime belum dapat dituntaskan.  
+**Tanggal:** 2026-10-13  
 **Metode:** pembacaan file pada default branch repository. Tidak menjalankan PHP Desktop/Windows dari lingkungan ini.
 
 ## 1. Hasil audit awal
@@ -71,3 +71,81 @@
 ## 5. Status fase
 
 **Fase A belum dinyatakan selesai sepenuhnya.** Audit awal menemukan area risiko di atas, tetapi pemeriksaan penuh semua method, selector, alur error, dan uji runtime masih harus dilakukan. Langkah berikutnya adalah menuntaskan audit kontrak database dan form/action, lalu mengunci keputusan spesifikasi sebelum membuat ulang app shell.
+
+
+## 6. Snapshot audit repository — 2026-10-13
+
+### Revisi yang diperiksa
+
+- Branch: `main`
+- HEAD saat audit: `6d8f9dc1faf3a9a78f0a715f37a04b9d197163c4` — `docs: update audit status after public-first entry implementation`
+- Pohon repository yang diperiksa berisi 25 entri; tidak ditemukan `settings.json`, `php.ini`, executable PHP Desktop, maupun konfigurasi runtime lain. README PoC menjelaskan bahwa paket runtime diunduh terpisah dan isi `www/` disalin ke paket itu.
+- File sumber di bawah dibaca dari branch `main`; SHA blob dicatat sebagai baseline untuk perubahan berikutnya.
+
+| File | SHA saat audit |
+|---|---|
+| `docs/00-PROJECT-OVERVIEW.md` | `751bb769328a050bf52514d1576d7b2332030b25` |
+| `docs/03-IMPLEMENTATION-PLAN.md` | `6350d60337212041bf186d50e33b3669c01477b9` |
+| `docs/05-UI-UX-MATERIAL-DESIGN.md` | `48d1580c33603f3e2d04224362b161bc587b7159` |
+| `prototype/phpdesktop/README.md` | `7aaee54d31d7fdbe53d661516b5942cabdffad6a` |
+| `prototype/phpdesktop/www/index.php` | `18ccfb4a081a0384ab2cb5f0d8e7622e352efc0d` |
+| `prototype/phpdesktop/www/public.php` | `64d53bf46bddb7a74ae5d7b1c0bcc015913eb984` |
+| `prototype/phpdesktop/www/diagnostics.php` | `f10ee6bc0ed25751f6ac383a220e53a68215017d` |
+| `prototype/phpdesktop/www/dashboard.php` | `c5ee0d252a32fbdba87327a5c372e33935650ffe` |
+| `prototype/phpdesktop/www/packages.php` | `1b435b7b766f90a34b6890ad5b22d77e9d62c1c8` |
+| `prototype/phpdesktop/www/schedule-editor.php` | `fdc95bb11a3c5765dcd2b10c9e041ad550673ea0` |
+| `prototype/phpdesktop/www/settings.php` | `3d716063fa95b2219736d92fa26399d1e02100bd` |
+| `prototype/phpdesktop/www/backup.php` | `bd71d8d4736472ddcd3872c2ec97edfcbbba8f78` |
+| `prototype/phpdesktop/www/lib/Database.php` | `1635ba81dadf33458a4ff0b73d3c9092827c669c` |
+| `prototype/phpdesktop/www/assets/app.css` | `c0c07c10655b5fdc3258838514504114f1d6cf7d` |
+
+### Entry point dan runtime
+
+- `index.php` berisi redirect HTTP 302 relatif ke `public.php`; ini menghindari URL absolut dan sesuai prinsip offline, tetapi tetap perlu diuji di paket PHP Desktop yang dipakai.
+- `public.php` menggunakan `Database.php` dan `assets/app.css`; data publik saat ini mengumpulkan aturan Normal untuk hari ini dan memberi peringatan bila ada aturan Khusus. Ini belum resolver kalender final.
+- `dashboard.php` juga membaca aturan Normal untuk ringkasan kegiatan berikutnya; ia dengan benar memberi keterangan bahwa data tersebut bukan bukti audio sedang diputar.
+- Semua halaman masih memakai satu stylesheet. Public dan Admin belum dipisahkan secara fisik dari sisi CSS/JS.
+
+### PHP Desktop dan pemilihan file
+
+- Dokumentasi resmi PHP Desktop: [Settings](https://github.com/cztomczak/phpdesktop/wiki/Settings), [Chrome settings](https://github.com/cztomczak/phpdesktop/wiki/Chrome-settings), dan [Javascript API](https://github.com/cztomczak/phpdesktop/wiki/Javascript-API).
+- API JavaScript yang didokumentasikan mencakup `GetVersion()`, `ToggleFullscreen()`, dan `IsFullscreen()`; tidak ada API yang didokumentasikan untuk mengembalikan path penuh hasil pemilihan file. Dialog file browser dan nilai `C:\\fakepath\\...` tidak memenuhi kontrak referensi path.
+- Karena konfigurasi runtime yang benar-benar dipakai tidak ada di repo, status `disable_functions`, izin menjalankan Explorer, dan konfigurasi awal `www_directory/index_files` belum dapat diverifikasi.
+- Keputusan aman untuk implementasi awal: file aset disalin operator ke folder aset persisten lalu dipilih dari daftar hasil pemindaian direktori. Jangan mengandalkan `$_FILES` untuk mendapatkan path sumber asli, dan jangan menyimpan fakepath. Mekanisme membuka folder Explorer perlu menguji kemampuan runtime sebelum dipakai sebagai fitur wajib.
+
+### Database dan kompatibilitas
+
+- `Database::SCHEMA_VERSION` saat ini bernilai 2. Migrasi kolom `schedule_packages.off_days` dilakukan secara aditif; foreign key SQLite diaktifkan dan query data utama memakai prepared statements.
+- Lokasi database tetap `%APPDATA%/BelMadrasah/data/bel-madrasah.sqlite` dengan fallback ke LocalAppData. Lokasi ini tidak boleh diubah dalam batch layout.
+- `bell_events.audio_path` adalah path absolut. `getAudioStorageDirectory()` menunjuk `%APPDATA%/BelMadrasah/audio`; `storeUploadedAudio()` menyalin unggahan dengan nama token acak, batas 50 MB, dan ekstensi MP3/WAV/OGG/M4A/AAC.
+- Ini belum sama dengan workflow aset baru `BelMadrasah/assets/audio` dan `BelMadrasah/assets/logo`. Logo belum memiliki workflow di halaman yang diperiksa. Migrasi aset harus aditif dan mempertahankan semua path lama; jangan memindahkan atau menghapus file audio yang sudah ada.
+- Perlu ditinjau pada batch Paket Jadwal: `ensureDefaultSchedulePackage()` tidak mengisi `off_days` secara eksplisit sehingga paket pertama mengikuti default skema `6,7` (Sabtu–Minggu), sedangkan pilihan default form paket baru adalah `7` (Minggu). Perbaikan nantinya harus mengubah default untuk paket baru tanpa mengubah data paket yang sudah tersimpan.
+- Form Edit Paket menyajikan `off_days` sebagai hidden/read-only di UI, tetapi backend `saveSchedulePackage()` tetap menerima nilai yang diposting. Validasi server perlu menjaga keputusan produk bahwa pengeditan nama/keterangan tidak diam-diam mengubah hari libur paket.
+
+### Form POST, validasi, dan backup
+
+- Handler POST yang diperiksa: `diagnostics.php` (tes persistensi), `settings.php` (konfigurasi), `packages.php` (simpan/aktifkan paket), `schedule-editor.php` (aturan, kegiatan, preview/konfirmasi salin), dan `backup.php` (buat backup).
+- Form POST yang diperiksa belum menggunakan token CSRF. Tidak adanya login memang keputusan produk, tetapi tidak otomatis menghilangkan risiko request lintas situs terhadap server localhost; perlindungan request perlu dirancang sebagai hardening terpisah.
+- `schedule-editor.php` dan method terkait di `Database.php` memvalidasi kepemilikan paket/aturan/kegiatan untuk sebagian besar aksi dan salin jadwal menggunakan transaksi. Tetap lakukan uji regresi sumber/tujuan dan kasus ID salah sebelum menganggap aman.
+- Output dinamis pada halaman yang diperiksa umumnya di-escape dengan `htmlspecialchars` melalui helper `h()`. Beberapa halaman menampilkan pesan exception mentah yang sudah di-escape; pesan ini dapat mengungkap detail path/driver dan perlu dinilai saat hardening.
+- `createBackup()` menggunakan `VACUUM INTO`, menolak tujuan yang sudah ada, lalu hanya memeriksa file ada dan tidak kosong. Belum ada pemeriksaan `PRAGMA integrity_check`, alur restore, maupun backup pra-restore. Jangan menambahkan restore sebelum rancangan pemulihan aman tersedia.
+
+### Audit CSS dan struktur Admin
+
+- `assets/app.css` memiliki 912 baris dan sekitar 65 KB. Pemindaian statis menemukan selector berulang dalam blok tahap lama dan blok UI baru; contoh paling sering adalah `.package-card`, `.app-shell`, `.main-nav a`, `.package-switch-form`, `.event-form-grid`, dan `.copy-schedule-route`. Sebagian pengulangan berada di media query, tetapi urutan override tetap perlu diuji.
+- Header, navigasi, dan footer masih ditulis ulang di beberapa halaman. Urutan tautan navigasi tidak konsisten di semua halaman. Public tidak memakai shell Admin, sebagaimana diinginkan.
+- Batch berikut yang aman adalah membuat shell Admin dan partial PHP native secara terpisah, lalu memigrasikan `dashboard.php` sebagai halaman pilot. Halaman paket/editor/settings/backup/diagnostik tetap menggunakan markup lama sampai masing-masing dipindahkan dan diregresi satu per satu.
+
+## 7. Status checklist Fase A
+
+- [x] Membaca dokumen acuan terkini dan memverifikasi HEAD branch `main`.
+- [x] Memeriksa entry point, Public, diagnostik, dashboard, paket, editor, konfigurasi, backup, Database, dan stylesheet.
+- [x] Memeriksa apakah konfigurasi runtime PHP Desktop ada di repository; tidak ditemukan.
+- [x] Meninjau schema/migrasi, penyimpanan path audio, validasi ID, handler POST, backup, dan struktur navigasi.
+- [x] Menginventarisasi selector CSS yang berulang.
+- [ ] Memeriksa `settings.json` dan `php.ini` dari paket PHP Desktop yang benar-benar terpasang pada Windows.
+- [ ] Menyelesaikan spesifikasi resolver kalender, pasaran Jawa, minggu kalender, scheduler, dan status pemutaran aktual.
+- [ ] Menetapkan desain restore aman beserta backup pra-restore dan pemeriksaan integritas.
+- [ ] Melakukan uji runtime Windows dan merekam screenshot pada ukuran jendela yang disepakati.
+
+**Kesimpulan:** audit statis sudah cukup untuk memulai shell Admin secara terisolasi, tetapi Fase A tidak boleh diberi status selesai penuh sampai konfigurasi runtime aktual diperiksa dan kebutuhan resolver/restore ditetapkan. Tidak ada pengujian Windows yang dilakukan dalam audit ini.
