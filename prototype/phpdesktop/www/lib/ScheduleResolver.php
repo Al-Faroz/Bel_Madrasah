@@ -68,7 +68,10 @@ final class ScheduleResolver
             $type = (string) ($rule['special_type'] ?? '');
             $value = (string) ($rule['special_value'] ?? '');
             $matches = ($type === 'pasaran' && $value === $pasaran)
-                || ($type === 'month_week' && $value === $monthWeek['value']);
+                || ($type === 'month_week' && (
+                    $value === (string) $monthWeek['ordinal']
+                    || ($value === 'last' && $monthWeek['is_last'])
+                ));
 
             if ($matches) {
                 $matchingSpecialRules[] = $rule;
