@@ -12,6 +12,6 @@ $adminNavigation = [
 <nav class="main-nav" aria-label="Navigasi utama">
     <?php foreach ($adminNavigation as $item): ?>
         <?php $isActive = ($activePage ?? '') === $item['key']; ?>
-        <a href="<?= $item['href'] ?>" target="_self"<?= $isActive ? ' class="active" aria-current="page"' : '' ?>><?= htmlspecialchars($item['label'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></a>
+        <a href="<?= $item['href'] ?>" target="_self" onclick="window.location.assign(this.href); return false;"<?= $isActive ? ' class="active" aria-current="page"' : '' ?>><?= htmlspecialchars($item['label'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></a>
     <?php endforeach; ?>
 </nav>
