@@ -723,6 +723,111 @@ final class Database
         }
     }
 
+    /**
+     * Persistent asset root for files copied by the operator.
+     * Existing audio files in the legacy /audio directory are intentionally untouched.
+     */
+    public function getAssetsRootDirectory(): string
+    {
+        $root = getenv('APPDATA');
+        if ($root === false || trim($root) === '') {
+            $root = getenv('LOCALAPPDATA');
+        }
+        if ($root === false || trim($root) === '') {
+            throw new RuntimeException('Folder AppData/LocalAppData Windows tidak ditemukan.');
+        }
+
+        $directory = rtrim($root, "\\\\/") . DIRECTORY_SEPARATOR . 'BelMadrasah' . DIRECTORY_SEPARATOR . 'assets';
+        if (!is_dir($directory) && !mkdir($directory, 0770, true) && !is_dir($directory)) {
+            throw new RuntimeException('Folder aset aplikasi tidak dapat dibuat.');
+        }
+        return $directory;
+    }
+
+    private function ensureAssetSubdirectory(string $name): string
+    {
+        if (!in_array($name, ['audio', 'logo'], true)) {
+            throw new InvalidArgumentException('Jenis folder aset tidak valid.');
+        }
+        $directory = $this->getAssetsRootDirectory() . DIRECTORY_SEPARATOR . $name;
+        if (!is_dir($directory) && !mkdir($directory, 0770, true) && !is_dir($directory)) {
+            throw new RuntimeException('Folder aset ' . $name . ' tidak dapat dibuat.');
+        }
+        return $directory;
+    }
+
+    public function getAudioAssetsDirectory(): string
+    {
+        return $this->ensureAssetSubdirectory('audio');
+    }
+
+    public function getLogoAssetsDirectory(): string
+    {
+        return $this->ensureAssetSubdirectory('logo');
+    }
+
+    /** @return array<int, array{name:string,path:string,extension:string,size:int}> */
+    private function listAssetFiles(string $directory, array $allowedExtensions): array
+    {
+        $files = [];
+        $realDirectory = realpath($directory);
+        if ($realDirectory === false) {
+            return [];
+        }
+        foreach (scandir($realDirectory) ?: [] as $name) {
+            if ($name === '.' || $name === '..') {
+                continue;
+            }
+            $extension = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+            if (!in_array($extension, $allowedExtensions, true)) {
+                continue;
+            }
+            $candidate = $realDirectory . DIRECTORY_SEPARATOR . $name;
+            $realFile = realpath($candidate);
+            if ($realFile === false || !is_file($realFile)
+                || !str_starts_with($realFile, $realDirectory . DIRECTORY_SEPARATOR)) {
+                continue;
+            }
+            $files[] = [
+                'name' => $name,
+                'path' => $realFile,
+                'extension' => $extension,
+                'size' => (int) (filesize($realFile) ?: 0),
+            ];
+        }
+        usort($files, static fn (array $a, array $b): int => strnatcasecmp($a['name'], $b['name']));
+        return $files;
+    }
+
+    public function listAudioAssets(): array
+    {
+        return $this->listAssetFiles($this->getAudioAssetsDirectory(), ['mp3', 'wav', 'ogg', 'm4a', 'aac']);
+    }
+
+    public function listLogoAssets(): array
+    {
+        return $this->listAssetFiles($this->getLogoAssetsDirectory(), ['png', 'jpg', 'jpeg', 'webp', 'gif', 'svg']);
+    }
+
+    /**
+     * Resolve an operator-selected filename strictly inside the managed audio assets folder.
+     * The database continues to store an absolute path, matching the existing schema.
+     */
+    public function resolveAudioAsset(string $filename): string
+    {
+        $filename = trim($filename);
+        if ($filename === '' || basename($filename) !== $filename
+            || str_contains($filename, '/') || str_contains($filename, "\\\\")) {
+            throw new InvalidArgumentException('Pilihan file audio tidak valid.');
+        }
+        foreach ($this->listAudioAssets() as $asset) {
+            if ($asset['name'] === $filename) {
+                return $asset['path'];
+            }
+        }
+        throw new InvalidArgumentException('File audio tidak ditemukan di folder aset. Salin file ke folder aset Audio lalu muat ulang halaman.');
+    }
+
     public function getAudioStorageDirectory(): string
     {
         $root = getenv('APPDATA');
