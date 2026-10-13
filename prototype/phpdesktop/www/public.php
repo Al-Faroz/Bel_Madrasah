@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/lib/Database.php';
 require_once __DIR__ . '/lib/AssetHelpers.php';
+require_once __DIR__ . '/lib/ScheduleResolver.php';
 
 function h(mixed $value): string
 {
@@ -22,7 +23,10 @@ $schoolLogoPath = '';
 $activePackage = null;
 $events = [];
 $nextEvent = null;
-$specialRulesExist = false;
+$resolvedMode = 'none';
+$resolverConflict = false;
+$pasaranLabel = ScheduleResolver::getPasaran($now);
+$monthWeekLabel = '';
 $error = '';
 
 try {
@@ -36,23 +40,13 @@ try {
         }
     }
     if ($activePackage !== null) {
-        foreach ($db->getDayRules((int) $activePackage['id'], $weekday) as $rule) {
-            if ((int) $rule['is_enabled'] !== 1) {
-                continue;
-            }
-            if ((string) $rule['rule_mode'] === 'special') {
-                $specialRulesExist = true;
-                continue;
-            }
-            foreach ($db->getBellEvents((int) $rule['id']) as $event) {
-                if ((int) $event['is_enabled'] !== 1) {
-                    continue;
-                }
-                $events[] = $event;
-            }
-        }
+        $resolution = ScheduleResolver::resolve($db, (int) $activePackage['id'], $now);
+        $resolvedMode = (string) $resolution['mode'];
+        $resolverConflict = (bool) $resolution['conflict'];
+        $pasaranLabel = (string) $resolution['pasaran'];
+        $monthWeekLabel = (string) $resolution['month_week_label'];
+        $events = ScheduleResolver::getEnabledEvents($db, $resolution);
     }
-    usort($events, static fn(array $a, array $b): int => strcmp((string) $a['event_time'], (string) $b['event_time']));
     foreach ($events as $event) {
         if ((string) $event['event_time'] >= $now->format('H:i')) {
             $nextEvent = $event;
@@ -91,7 +85,7 @@ $schoolLogoDataUri = getLocalImageDataUri($schoolLogoPath);
             <div class="public-date-block">
                 <p class="public-kicker">HARI INI</p>
                 <h2><?= h($dateLabel) ?></h2>
-                <p>Jadwal dan informasi operasional</p>
+                <p>Pasaran Jawa: <?= h($pasaranLabel) ?><?= $monthWeekLabel !== '' ? ' · ' . h($monthWeekLabel) : '' ?></p>
             </div>
             <div class="public-clock-block">
                 <span>Waktu komputer</span>
@@ -114,20 +108,25 @@ $schoolLogoDataUri = getLocalImageDataUri($schoolLogoPath);
                     <span class="public-card-icon" aria-hidden="true">◷</span>
                     <span class="public-card-label">Kegiatan berikutnya</span>
                     <strong id="public-next-time"><?= $nextEvent !== null ? h(substr((string) $nextEvent['event_time'], 0, 5)) : '—' ?></strong>
-                    <small id="public-next-name"><?= $nextEvent !== null ? h((string) $nextEvent['name']) : 'Tidak ada kegiatan Normal tersimpan berikutnya' ?></small>
+                    <small id="public-next-name"><?= $nextEvent !== null ? h((string) $nextEvent['name']) : 'Tidak ada kegiatan aktif tersimpan berikutnya' ?></small>
                 </article>
                 <article class="public-overview-card">
                     <span class="public-card-icon" aria-hidden="true">♫</span>
                     <span class="public-card-label">Kegiatan hari ini</span>
                     <strong><?= count($events) ?></strong>
-                    <small>Kegiatan Normal aktif yang tersimpan</small>
+                    <small>Kegiatan aktif sesuai aturan kalender yang berlaku</small>
                 </article>
             </section>
 
-            <?php if ($specialRulesExist): ?>
+            <?php if ($resolverConflict): ?>
                 <section class="public-alert is-warning">
-                    <strong>Perhatian jadwal khusus</strong>
-                    <p>Paket ini memiliki aturan Khusus untuk hari ini. Pemilihan jadwal final menurut kalender belum tersedia pada versi ini, sehingga daftar di bawah hanya menampilkan pola Normal yang tersimpan.</p>
+                    <strong>Konflik aturan khusus</strong>
+                    <p>Lebih dari satu aturan Khusus cocok untuk tanggal ini. Untuk mencegah jadwal ambigu, aplikasi memakai pola Normal sebagai fallback. Periksa aturan hari ini pada Editor Jadwal.</p>
+                </section>
+            <?php elseif ($resolvedMode === 'special'): ?>
+                <section class="public-alert">
+                    <strong>Jadwal khusus berlaku</strong>
+                    <p>Aturan Khusus yang cocok dengan kalender menggantikan pola Normal untuk hari ini.</p>
                 </section>
             <?php endif; ?>
 
@@ -139,7 +138,7 @@ $schoolLogoDataUri = getLocalImageDataUri($schoolLogoPath);
                 <?php if ($activePackage === null): ?>
                     <div class="public-empty-state"><strong>Belum ada paket aktif</strong><p>Silakan hubungi operator madrasah untuk mengaktifkan paket jadwal.</p></div>
                 <?php elseif ($events === []): ?>
-                    <div class="public-empty-state"><strong>Belum ada kegiatan yang ditampilkan</strong><p>Belum ada kegiatan Normal aktif yang tersimpan untuk hari ini.</p></div>
+                    <div class="public-empty-state"><strong>Belum ada kegiatan yang ditampilkan</strong><p>Belum ada kegiatan aktif pada aturan yang berlaku untuk hari ini.</p></div>
                 <?php else: ?>
                     <div class="public-timeline">
                         <?php foreach ($events as $event): $isNext = $nextEvent !== null && (int) $nextEvent['id'] === (int) $event['id']; ?>
