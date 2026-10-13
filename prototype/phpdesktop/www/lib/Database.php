@@ -253,10 +253,7 @@ final class Database
             }
             $path = $directory . DIRECTORY_SEPARATOR . $name;
             $realPath = realpath($path);
-            if ($realPath === false || !is_file($realPath)
-                || dirname($realPath) !== $directory
-                || !str_starts_with(strtolower($name), 'bel-madrasah-')
-                    && !str_starts_with(strtolower($name), 'pre-restore-')) {
+            if ($realPath === false || !is_file($realPath) || dirname($realPath) !== $directory) {
                 continue;
             }
             $backups[] = [
