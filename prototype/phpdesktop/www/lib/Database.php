@@ -223,6 +223,155 @@ final class Database
         }
     }
 
+    public function getBackupDirectory(): string
+    {
+        $root = getenv('APPDATA');
+        if ($root === false || trim($root) === '') {
+            $root = getenv('LOCALAPPDATA');
+        }
+        if ($root === false || trim($root) === '') {
+            throw new RuntimeException('Folder AppData/LocalAppData Windows tidak ditemukan.');
+        }
+        $directory = rtrim($root, "\\\\/") . DIRECTORY_SEPARATOR . 'BelMadrasah' . DIRECTORY_SEPARATOR . 'backups';
+        if (!is_dir($directory) && !mkdir($directory, 0770, true) && !is_dir($directory)) {
+            throw new RuntimeException('Folder backup tidak dapat dibuat.');
+        }
+        return $directory;
+    }
+
+    /** @return array<int, array{name:string,path:string,size:int,modified:int}> */
+    public function listBackups(): array
+    {
+        $directory = realpath($this->getBackupDirectory());
+        if ($directory === false) {
+            return [];
+        }
+        $backups = [];
+        foreach (scandir($directory) ?: [] as $name) {
+            if ($name === '.' || $name === '..' || strtolower(pathinfo($name, PATHINFO_EXTENSION)) !== 'sqlite') {
+                continue;
+            }
+            $path = $directory . DIRECTORY_SEPARATOR . $name;
+            $realPath = realpath($path);
+            if ($realPath === false || !is_file($realPath)
+                || dirname($realPath) !== $directory
+                || !str_starts_with(strtolower($name), 'bel-madrasah-')
+                    && !str_starts_with(strtolower($name), 'pre-restore-')) {
+                continue;
+            }
+            $backups[] = [
+                'name' => $name,
+                'path' => $realPath,
+                'size' => (int) (filesize($realPath) ?: 0),
+                'modified' => (int) (filemtime($realPath) ?: 0),
+            ];
+        }
+        usort($backups, static fn (array $a, array $b): int => $b['modified'] <=> $a['modified']);
+        return $backups;
+    }
+
+    private function resolveManagedBackupPath(string $source): string
+    {
+        $directory = realpath($this->getBackupDirectory());
+        $realPath = realpath($source);
+        if ($directory === false || $realPath === false || !is_file($realPath)
+            || dirname($realPath) !== $directory
+            || strtolower(pathinfo($realPath, PATHINFO_EXTENSION)) !== 'sqlite') {
+            throw new InvalidArgumentException('File backup tidak valid atau berada di luar folder backup aplikasi.');
+        }
+        return $realPath;
+    }
+
+    /** Validate SQLite integrity and the minimum application tables before restore. */
+    private function validateBackupDatabase(string $path): array
+    {
+        if (!is_file($path) || filesize($path) === false || filesize($path) <= 0) {
+            throw new InvalidArgumentException('File backup kosong atau tidak tersedia.');
+        }
+        $candidate = new PDO('sqlite:' . $path);
+        $candidate->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $integrity = (string) $candidate->query('PRAGMA integrity_check')->fetchColumn();
+        if (strtolower($integrity) !== 'ok') {
+            throw new RuntimeException('Pemeriksaan integritas SQLite gagal: ' . $integrity);
+        }
+        $tables = $candidate->query(
+            "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'"
+        )->fetchAll(PDO::FETCH_COLUMN);
+        $requiredTables = ['app_meta', 'app_settings', 'schedule_packages', 'day_rules', 'bell_events'];
+        foreach ($requiredTables as $requiredTable) {
+            if (!in_array($requiredTable, $tables, true)) {
+                throw new InvalidArgumentException('File backup bukan database Bel Madrasah yang lengkap. Tabel hilang: ' . $requiredTable);
+            }
+        }
+        $version = $candidate->query(
+            "SELECT meta_value FROM app_meta WHERE meta_key = 'schema_version'"
+        )->fetchColumn();
+        if ($version === false || !is_numeric($version) || (int) $version > self::SCHEMA_VERSION) {
+            throw new InvalidArgumentException('Versi skema backup tidak dikenal atau lebih baru daripada aplikasi ini.');
+        }
+        return ['integrity' => $integrity, 'schema_version' => (int) $version, 'table_count' => count($tables)];
+    }
+
+    public function inspectBackup(string $source): array
+    {
+        $path = $this->resolveManagedBackupPath($source);
+        return $this->validateBackupDatabase($path);
+    }
+
+    /**
+     * Restore a verified backup only after creating a separate pre-restore backup.
+     * If replacement/reinitialization fails, attempt to put the pre-restore copy back.
+     */
+    public function restoreFromBackup(string $source, string $preRestoreDestination): string
+    {
+        $sourcePath = $this->resolveManagedBackupPath($source);
+        $this->validateBackupDatabase($sourcePath);
+
+        $backupDirectory = realpath($this->getBackupDirectory());
+        $destinationDirectory = realpath(dirname($preRestoreDestination));
+        if ($backupDirectory === false || $destinationDirectory !== $backupDirectory
+            || strtolower(pathinfo($preRestoreDestination, PATHINFO_EXTENSION)) !== 'sqlite') {
+            throw new InvalidArgumentException('Lokasi backup pra-pemulihan tidak valid.');
+        }
+
+        $preRestorePath = $this->createBackup($preRestoreDestination);
+        unset($this->pdo);
+
+        try {
+            if (!copy($sourcePath, $this->path)) {
+                throw new RuntimeException('Windows tidak dapat mengganti database aktif dari file backup.');
+            }
+            $this->pdo = new PDO('sqlite:' . $this->path);
+            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+            $this->pdo->exec('PRAGMA foreign_keys = ON');
+            $this->pdo->exec('PRAGMA busy_timeout = 5000');
+            $this->initializeSchema();
+            return $preRestorePath;
+        } catch (Throwable $exception) {
+            unset($this->pdo);
+            $rolledBack = is_file($preRestorePath) && @copy($preRestorePath, $this->path);
+            $this->pdo = new PDO('sqlite:' . $this->path);
+            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+            $this->pdo->exec('PRAGMA foreign_keys = ON');
+            $this->pdo->exec('PRAGMA busy_timeout = 5000');
+            if ($rolledBack) {
+                $this->initializeSchema();
+                throw new RuntimeException(
+                    'Restore gagal. Database aktif sudah dikembalikan dari backup pra-pemulihan. Detail: ' . $exception->getMessage(),
+                    0,
+                    $exception
+                );
+            }
+            throw new RuntimeException(
+                'Restore gagal dan pemulihan otomatis juga gagal. Jangan tutup aplikasi; backup pra-pemulihan berada di: ' . $preRestorePath,
+                0,
+                $exception
+            );
+        }
+    }
+
     /**
      * Create a consistent SQLite backup using VACUUM INTO.
      * The caller must provide a new destination path that does not exist yet.
