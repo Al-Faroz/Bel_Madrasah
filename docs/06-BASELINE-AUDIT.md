@@ -183,7 +183,7 @@ Minta pengujian pada paket PHP Desktop Chrome 130.1 + PHP 8.3 yang sebenarnya: b
 
 ## 7. Status implementasi lanjutan — 2026-10-13
 
-- Admin shell, Dashboard, Paket Jadwal, Editor Jadwal, Konfigurasi/Aset, dan Backup/Restore kini memakai layout bersama pada halaman yang sudah dimigrasikan.
+- Admin shell, Dashboard, Paket Jadwal, Editor Jadwal, Konfigurasi/Aset, Backup/Restore, dan Diagnostik kini memakai layout bersama pada halaman yang sudah dimigrasikan.
 - Asset path: folder Audio/Logo berada di AppData, daftar audio dipakai oleh Editor Jadwal, referensi logo disimpan di `app_settings` dan ditampilkan pada header Admin/Publik. Referensi audio lama tidak dihapus.
 - Backup/Restore: restore memvalidasi `PRAGMA integrity_check`, tabel wajib, dan versi skema; membuat backup pra-pemulihan; lalu mengganti file database dan mencoba rollback jika gagal.
 - Seluruh perubahan di atas masih berstatus **IMPLEMENTED**. Audit ini tidak menjalankan PHP Desktop, tidak membuka database SQLite milik pengguna, dan tidak membuktikan bahwa operasi restore/copy, clipboard, pemilihan audio, atau logo berhasil pada Windows.
