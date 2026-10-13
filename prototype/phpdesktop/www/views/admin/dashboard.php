@@ -76,7 +76,7 @@
                 <?php else: ?>
                     <p class="dashboard-description">Tidak ada kegiatan Normal aktif setelah waktu sekarang. Periksa Editor Jadwal jika ini tidak sesuai dengan jadwal sekolah.</p>
                 <?php endif; ?>
-                <div class="dashboard-action-row"><a class="md-button md-button-outlined" href="schedule-editor.php">Buka editor jadwal</a><a class="md-button md-button-tonal" href="public.php" target="_blank" rel="noopener">Lihat tampilan publik</a></div>
+                <div class="dashboard-action-row"><a class="md-button md-button-outlined" href="schedule-editor.php">Buka editor jadwal</a><a class="md-button md-button-tonal" href="public.php" target="_self">Lihat tampilan publik</a></div>
             </article>
         </section>
 
