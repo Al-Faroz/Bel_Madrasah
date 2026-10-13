@@ -30,7 +30,7 @@
 3. **Navigasi tidak seragam.** Urutan item menu berbeda antara beberapa halaman (contoh settings/backup menempatkan Pemeriksaan lebih awal daripada dashboard/packages). Perlu satu partial/template navigasi bersama atau strategi render bersama.
 4. **Aturan kalender belum menjadi sumber jadwal final.** `dashboard.php` dan `public.php` membaca aturan Normal hari ini secara langsung dan melewatkan aturan Khusus. Public dashboard sudah memberi peringatan, tetapi informasi berikutnya belum mencerminkan resolver kalender final.
 5. **Status scheduler/audio belum nyata.** Label yang menjelaskan jadwal tersimpan bukan status pemutaran aktual harus dipertahankan sampai mesin scheduler mengirim status runtime.
-6. **Backup belum sama dengan backup-and-restore.** Halaman saat ini membuat file backup; restore harus menjadi fase terpisah dengan validasi, backup pra-pemulihan, dan konfirmasi.
+6. **Backup/Restore sudah diimplementasikan, tetapi belum diuji runtime.** Halaman menyediakan pratinjau file backup, pemeriksaan integritas SQLite dan struktur tabel, konfirmasi eksplisit, serta backup pra-pemulihan. Mekanisme copy/rollback tetap berisiko sampai diuji pada PHP Desktop Windows dengan database uji.
 7. **Aktivasi paket dan edit paket memerlukan regresi data.** Pastikan constraint satu paket aktif dan perilaku hari awal tetap sesuai, tanpa perubahan data diam-diam.
 8. **Salin jadwal berisiko overwrite.** Alur preview/konfirmasi ada, namun harus diuji dengan data dummy untuk memastikan source/target benar, tidak ada perubahan sebelum konfirmasi, dan audio/path dipertahankan.
 9. **Validasi keamanan/ketahanan belum diaudit penuh.** Periksa CSRF untuk form POST, otorisasi lokal yang relevan untuk aplikasi desktop, validasi ID milik paket yang dipilih, penanganan error, dan escaping output pada seluruh halaman.
@@ -180,3 +180,12 @@
 ### Checkpoint berikutnya
 
 Minta pengujian pada paket PHP Desktop Chrome 130.1 + PHP 8.3 yang sebenarnya: buka aplikasi melalui `index.php`, masuk ke Dashboard Admin, periksa tautan navigasi dan jam, lalu pastikan tidak ada halaman kosong/error. Jangan migrasikan modul berikutnya sebelum hasil checkpoint ini dicatat.
+
+## 7. Status implementasi lanjutan — 2026-10-13
+
+- Admin shell, Dashboard, Paket Jadwal, Editor Jadwal, Konfigurasi/Aset, dan Backup/Restore kini memakai layout bersama pada halaman yang sudah dimigrasikan.
+- Asset path: folder Audio/Logo berada di AppData, daftar audio dipakai oleh Editor Jadwal, referensi logo disimpan di `app_settings` dan ditampilkan pada header Admin/Publik. Referensi audio lama tidak dihapus.
+- Backup/Restore: restore memvalidasi `PRAGMA integrity_check`, tabel wajib, dan versi skema; membuat backup pra-pemulihan; lalu mengganti file database dan mencoba rollback jika gagal.
+- Seluruh perubahan di atas masih berstatus **IMPLEMENTED**. Audit ini tidak menjalankan PHP Desktop, tidak membuka database SQLite milik pengguna, dan tidak membuktikan bahwa operasi restore/copy, clipboard, pemilihan audio, atau logo berhasil pada Windows.
+- Risiko prioritas untuk batch berikutnya: uji pemulihan dengan file valid/rusak, pemeriksaan koneksi SQLite setelah restore, regresi data jadwal/audio, konsistensi navigasi window PHP Desktop, dan audit keamanan POST/CSRF.
+
