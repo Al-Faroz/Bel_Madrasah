@@ -68,3 +68,13 @@ Resolver kalender Normal/Khusus → scheduler/audio dan log status → restore a
 - **Fase D / Dashboard Admin pilot:** markup dashboard dipisah menjadi view dan menggunakan layout baru. Statusnya **IMPLEMENTED**, belum **LOCAL TEST PASS**.
 - Pemeriksaan PHP CLI dan smoke test memakai data simulasi lulus pada lingkungan kerja, tetapi tidak menggantikan pengujian PHP Desktop Windows dengan database SQLite asli.
 - **Checkpoint wajib:** uji dashboard pada runtime target terlebih dahulu. Setelah hasil dicatat, lanjutkan migrasi satu modul per batch; modul lain belum dianggap menggunakan layout baru.
+
+## Checkpoint lanjutan — 2026-10-13
+
+- **Navigasi Admin → Publik:** ditemukan satu tautan dashboard yang masih memakai `target="_blank"`; atribut tersebut diubah menjadi `target="_self"` pada commit [`d14c614`](https://github.com/Al-Faroz/Bel_Madrasah/commit/d14c614e10fed10e74ffd52156257e0f3a65d98e). Pemeriksaan pencarian kode tidak menemukan lagi `target="_blank"` pada branch utama. Perilaku runtime PHP Desktop tetap perlu diverifikasi.
+- **D3 Paket Jadwal:** controller `packages.php` kini menyiapkan data dan operasi lalu menggunakan layout bersama. Markup dipindahkan ke `views/admin/packages.php`; navigasi dan footer berasal dari partial/layout Admin.
+- Perubahan D3 hanya refaktor struktur presentasi. Logika penyimpanan, aktivasi, pembuatan paket, pilihan hari libur, dan data SQLite dipertahankan. Tidak ada operasi penghapusan atau migrasi data.
+- Commit D3: [`03f0920`](https://github.com/Al-Faroz/Bel_Madrasah/commit/03f09206c8d98010cb0757927f991350eec49b29) menambahkan view; [`99203a6`](https://github.com/Al-Faroz/Bel_Madrasah/commit/99203a6708f3b8f2e6e0752716c2edde3a612696) memigrasikan controller.
+- Status: **IMPLEMENTED**, belum **LOCAL TEST PASS**. Pengguna meminta pengerjaan dilanjutkan tanpa menunggu uji dashboard; karena itu pekerjaan berlanjut, tetapi pengujian pada PHP Desktop Windows tetap tercatat sebagai belum dilakukan.
+- **Batch berikutnya:** D4 — migrasi Editor Jadwal ke layout Admin bersama, dengan pemeriksaan khusus agar seluruh alur edit/penyimpanan tetap utuh.
+
