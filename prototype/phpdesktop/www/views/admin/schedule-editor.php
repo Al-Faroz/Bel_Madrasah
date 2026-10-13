@@ -146,9 +146,20 @@
                                         <thead><tr><th>Jam</th><th>Keterangan bel</th><th>Audio</th><th>Status</th><th>Aksi</th></tr></thead>
                                         <tbody>
                                         <?php foreach ($ruleEvents as $event): ?>
+                                            <?php
+                                            $currentAudioPath = trim((string) $event['audio_path']);
+                                            $currentAudioRealPath = $currentAudioPath !== '' ? realpath($currentAudioPath) : false;
+                                            $currentAudioIsManaged = false;
+                                            foreach ($audioAssets as $audioAsset) {
+                                                if ($currentAudioRealPath !== false && $audioAsset['path'] === $currentAudioRealPath) {
+                                                    $currentAudioIsManaged = true;
+                                                    break;
+                                                }
+                                            }
+                                            ?>
                                             <tr>
                                                 <td class="bell-time-cell">
-                                                    <form id="event-form-<?= (int) $event['id'] ?>" class="bell-event-row-form" method="post" action="schedule-editor.php" enctype="multipart/form-data">
+                                                    <form id="event-form-<?= (int) $event['id'] ?>" class="bell-event-row-form" method="post" action="schedule-editor.php">
                                                         <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>"><input type="hidden" name="editor_action" value="save_event"><input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>"><input type="hidden" name="event_id" value="<?= (int) $event['id'] ?>">
                                                     </form>
                                                     <strong><?= h(substr((string) $event['event_time'], 0, 5)) ?></strong>
@@ -162,8 +173,15 @@
                                                         <input form="event-form-<?= (int) $event['id'] ?>" id="event-order-<?= (int) $event['id'] ?>" type="number" name="sort_order" min="0" max="9999" required value="<?= (int) $event['sort_order'] ?>" title="Urutan pemutaran">
                                                 </td>
                                                 <td>
-                                                        <label class="bell-audio-input">Pilih/ganti audio<input form="event-form-<?= (int) $event['id'] ?>" type="file" name="audio_file" accept=".mp3,.wav,.ogg,.m4a,.aac,audio/*"></label>
-                                                        <small class="bell-audio-status"><?= $event['audio_path'] !== '' ? 'Tersimpan: ' . h(basename((string) $event['audio_path'])) : 'Belum ada audio' ?></small>
+                                                        <label class="bell-audio-input" for="event-audio-<?= (int) $event['id'] ?>">Audio dari folder aset</label>
+                                                        <select form="event-form-<?= (int) $event['id'] ?>" id="event-audio-<?= (int) $event['id'] ?>" name="audio_asset">
+                                                            <option value="" <?= !$currentAudioIsManaged ? 'selected' : '' ?>><?= $currentAudioPath !== '' ? 'Pertahankan audio saat ini: ' . h(basename($currentAudioPath)) : 'Tanpa audio' ?></option>
+                                                            <option value="__clear__">Hapus referensi audio</option>
+                                                            <?php foreach ($audioAssets as $audioAsset): ?>
+                                                                <option value="<?= h((string) $audioAsset['name']) ?>" <?= $currentAudioRealPath !== false && $audioAsset['path'] === $currentAudioRealPath ? 'selected' : '' ?>><?= h((string) $audioAsset['name']) ?></option>
+                                                            <?php endforeach; ?>
+                                                        </select>
+                                                        <small class="bell-audio-status"><?php if ($currentAudioPath === ''): ?>Belum ada audio<?php elseif (is_file($currentAudioPath)): ?>Referensi saat ini: <?= h(basename($currentAudioPath)) ?><?php else: ?>File tidak ditemukan: <?= h(basename($currentAudioPath)) ?><?php endif; ?></small>
                                                 </td>
                                                 <td>
                                                         <label class="checkbox-line bell-enabled-toggle"><input form="event-form-<?= (int) $event['id'] ?>" type="checkbox" name="event_enabled" value="1" <?= (int) $event['is_enabled'] === 1 ? 'checked' : '' ?>> Aktif</label>
@@ -181,13 +199,21 @@
                                 <p class="empty-event">Belum ada kegiatan bel untuk aturan ini. Tambahkan kegiatan melalui formulir di bawah.</p>
                             <?php endif; ?>
                             <details class="add-event-details"><summary><span aria-hidden="true">＋</span> Tambah Kegiatan Bel</summary>
-                                <form class="event-edit-card" method="post" action="schedule-editor.php" enctype="multipart/form-data">
+                                <form class="event-edit-card" method="post" action="schedule-editor.php">
                                     <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>"><input type="hidden" name="editor_action" value="save_event"><input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>"><input type="hidden" name="event_id" value="0">
                                     <div class="event-form-grid">
                                         <label>Nama kegiatan<input name="event_name" maxlength="100" required placeholder="Contoh: Bel masuk"></label>
                                         <label>Waktu<input type="time" name="event_time" required value="07:00"></label>
                                         <label>Urutan<input type="number" name="sort_order" min="0" max="9999" required value="<?= count($ruleEvents) + 1 ?>"></label>
-                                        <label class="audio-upload-label">File audio (maks. 50 MB)<input type="file" name="audio_file" accept=".mp3,.wav,.ogg,.m4a,.aac,audio/*"><small>MP3, WAV, OGG, M4A, AAC. File disimpan di AppData lokal.</small></label>
+                                        <label class="audio-upload-label">Audio dari folder aset
+                                            <select name="audio_asset">
+                                                <option value="">Tanpa audio</option>
+                                                <?php foreach ($audioAssets as $audioAsset): ?>
+                                                    <option value="<?= h((string) $audioAsset['name']) ?>"><?= h((string) $audioAsset['name']) ?></option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                            <small><?= $audioAssets === [] ? 'Belum ada file audio. Salin file ke folder Audio melalui menu Konfigurasi, lalu muat ulang halaman.' : 'Pilih file yang sudah disalin ke folder Audio. Nama file tidak perlu diubah.' ?></small>
+                                        </label>
                                     </div>
                                     <label class="checkbox-line"><input type="checkbox" name="event_enabled" value="1" checked> Kegiatan aktif</label>
                                     <div class="form-actions"><button type="submit" class="button-compact">Tambah kegiatan</button></div>
@@ -206,7 +232,7 @@
             <li>Hari Normal adalah pola dasar. Aturan Khusus dimaksudkan untuk menggantikan pola Normal ketika atribut tanggalnya cocok; bukan memutar keduanya.</li>
             <li>Pasaran Jawa dan minggu kalender merupakan dua jenis atribut yang terpisah. Satu aturan Khusus hanya boleh memakai salah satunya.</li>
             <li>Jika Pasaran dan Minggu kalender berpotensi cocok pada tanggal yang sama, halaman memberi peringatan. Penentuan prioritas tanggal dan fallback Normal dibuat di Tahap 6.</li>
-            <li>File audio disalin ke penyimpanan lokal aplikasi, maksimal 50 MB per file. Tahap ini menyimpan konfigurasi; pemutaran otomatis belum aktif.</li>
+            <li>Audio dipilih dari folder aset lokal; aplikasi menyimpan referensi path tanpa mengunggah atau menggandakan file. Referensi audio lama tetap dipertahankan jika file belum dipindahkan.</li>
         </ul>
     </section>
 
