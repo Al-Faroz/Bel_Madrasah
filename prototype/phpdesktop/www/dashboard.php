@@ -28,7 +28,6 @@ foreach ($packages as $package) {
 $todayEvents = [];
 $nextEvent = null;
 $todayRuleCount = 0;
-$specialRuleCount = 0;
 $resolverConflict = false;
 $resolvedMode = 'none';
 $pasaranToday = ScheduleResolver::getPasaran($now);
@@ -37,7 +36,6 @@ if ($activePackage !== null) {
     $resolution = ScheduleResolver::resolve($db, (int) $activePackage['id'], $now);
     $resolvedMode = (string) $resolution['mode'];
     $resolverConflict = (bool) $resolution['conflict'];
-    $specialRuleCount = count($resolution['matching_special_rules']);
     $pasaranToday = (string) $resolution['pasaran'];
     $monthWeekLabel = (string) $resolution['month_week_label'];
     $todayRuleCount = count($resolution['rules']);
