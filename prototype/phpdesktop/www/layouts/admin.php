@@ -20,6 +20,18 @@ $viewPath = $requestedView;
 $documentTitle = isset($documentTitle) && is_string($documentTitle)
     ? $documentTitle
     : 'Bel Madrasah — Admin';
+
+require_once __DIR__ . '/../lib/Database.php';
+require_once __DIR__ . '/../lib/AssetHelpers.php';
+try {
+    $logoDatabase = isset($db) && $db instanceof Database ? $db : new Database();
+    if (!isset($schoolLogoPath) || !is_string($schoolLogoPath)) {
+        $schoolLogoPath = $logoDatabase->getSetting('school_logo_path', '');
+    }
+    $schoolLogoDataUri = getLocalImageDataUri($schoolLogoPath);
+} catch (Throwable $exception) {
+    $schoolLogoDataUri = '';
+}
 ?>
 <!doctype html>
 <html lang="id">
