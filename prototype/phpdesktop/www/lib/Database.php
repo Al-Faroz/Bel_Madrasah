@@ -817,7 +817,7 @@ final class Database
     {
         $filename = trim($filename);
         if ($filename === '' || basename($filename) !== $filename
-            || str_contains($filename, '/') || str_contains($filename, "\\\\")) {
+            || str_contains($filename, '/') || str_contains($filename, "\\")) {
             throw new InvalidArgumentException('Pilihan file audio tidak valid.');
         }
         foreach ($this->listAudioAssets() as $asset) {
