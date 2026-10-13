@@ -13,12 +13,14 @@ $error = '';
 $message = '';
 $schoolName = '';
 $operatorName = '';
+$schoolLogoPath = '';
 $volume = '80';
 
 try {
     $db = new Database();
     $schoolName = $db->getSetting('school_name', '');
     $operatorName = $db->getSetting('operator_name', '');
+    $schoolLogoPath = $db->getSetting('school_logo_path', '');
     $volume = $db->getSetting('default_volume', '80');
 
     if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
@@ -31,13 +33,25 @@ try {
         } elseif ($volumeInput === false || $volumeInput < 0 || $volumeInput > 100) {
             $error = 'Volume bawaan harus berupa angka 0 sampai 100.';
         } else {
-            $db->saveSettings([
-                'school_name' => $schoolName,
-                'operator_name' => $operatorName,
-                'default_volume' => (string) $volumeInput,
-            ]);
-            $volume = (string) $volumeInput;
-            $message = 'Konfigurasi berhasil disimpan di database lokal.';
+            try {
+                $selectedLogo = trim((string) ($_POST['school_logo_asset'] ?? ''));
+                if ($selectedLogo === '__clear__') {
+                    $schoolLogoPath = '';
+                } elseif ($selectedLogo !== '') {
+                    $schoolLogoPath = $db->resolveLogoAsset($selectedLogo);
+                }
+
+                $db->saveSettings([
+                    'school_name' => $schoolName,
+                    'operator_name' => $operatorName,
+                    'default_volume' => (string) $volumeInput,
+                    'school_logo_path' => $schoolLogoPath,
+                ]);
+                $volume = (string) $volumeInput;
+                $message = 'Konfigurasi berhasil disimpan di database lokal.';
+            } catch (InvalidArgumentException $exception) {
+                $error = $exception->getMessage();
+            }
         }
     }
 } catch (Throwable $exception) {
