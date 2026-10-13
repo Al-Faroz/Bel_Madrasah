@@ -48,17 +48,18 @@
 ## 4. Temuan audit: audio dan aset
 
 - `bell_events.audio_path` menyimpan path absolut.
-- `Database::getAudioStorageDirectory()` membuat `%APPDATA%/BelMadrasah/audio` dengan fallback ke LocalAppData.
-- `Database::storeUploadedAudio()` memakai unggahan HTML, membatasi ukuran 50 MB dan ekstensi MP3/WAV/OGG/M4A/AAC, lalu mengganti nama file menjadi token acak. Jadi alur sekarang adalah unggah/salin ke folder internal, bukan memilih referensi file yang sudah disalin operator.
-- `schedule-editor.php` mengandalkan `$_FILES['audio_file']`. Jika simpan jadwal gagal sesudah unggahan, file baru yang tidak terpakai dihapus.
-- Salin jadwal menyalin referensi `audio_path`, tidak menggandakan file.
-- Belum ditemukan workflow atau setting logo pada halaman yang diperiksa.
+- `Database::getAudioStorageDirectory()` dan `Database::storeUploadedAudio()` masih ada sebagai helper lama, tetapi Editor Jadwal tidak lagi menggunakan input upload HTML.
+- Folder aset baru dibuat di `%APPDATA%/BelMadrasah/assets/audio` dan `%APPDATA%/BelMadrasah/assets/logo`, dengan fallback ke LocalAppData. Daftar audio dibatasi ke MP3/WAV/OGG/M4A/AAC; logo menerima PNG/JPG/JPEG/WEBP/GIF/SVG.
+- Editor Jadwal menyimpan path absolut hasil resolusi nama file yang dipilih dari daftar aset. Resolusi menolak path traversal dan hanya mengembalikan file yang ditemukan di folder audio aset. Referensi lama tetap dipertahankan jika operator tidak menggantinya; opsi hapus hanya mengosongkan referensi DB dan tidak menghapus file.
+- Salin jadwal tetap menyalin referensi `audio_path`, tidak menggandakan file.
+- Konfigurasi menyimpan referensi logo pada key `school_logo_path`; header Admin dan Publik membaca gambar lokal melalui `lib/AssetHelpers.php` sebagai data URI. Ini belum diuji pada PHP Desktop Windows.
 
-### Kontrak target aset
-- Target: folder persisten `BelMadrasah/assets/audio` dan `BelMadrasah/assets/logo`, dengan copy-paste dan nama file bebas.
-- Sebelum implementasi, periksa konfigurasi PHP Desktop dan native bridge. HTML file picker standar tidak mengungkap path lokal penuh; jangan menyimpan fakepath.
-- Bila tidak ada bridge native, pilih file dari daftar file yang ditemukan di folder aset.
-- Pertahankan referensi audio lama. Migrasi path harus aditif dan tidak menghapus file sumber atau mengubah data massal tanpa backup.
+### Kontrak aset dan status implementasi
+- Folder persisten `BelMadrasah/assets/audio` dan `BelMadrasah/assets/logo` telah diimplementasikan dengan nama file bebas dan petunjuk copy-paste di halaman Konfigurasi.
+- Karena bridge/native file dialog dari paket PHP Desktop yang terpasang belum diverifikasi, Editor Jadwal memilih audio dari daftar file yang ditemukan di folder aset; tidak menyimpan fakepath dari HTML file picker.
+- Referensi audio lama dipertahankan. Perubahan pilihan audio hanya mengubah path pada kegiatan yang disimpan; file sumber tidak dipindah, diganti nama, atau dihapus.
+- Lokasi folder dapat disalin dari UI dan ditempel ke File Explorer. Tombol untuk membuka Explorer langsung belum dibuat karena mekanisme shell/native runtime belum diverifikasi.
+- Pemilihan dan tampilan logo kini disimpan melalui `school_logo_path` dan digunakan pada header Admin/Publik. Rendering, clipboard, dan pemilihan audio/logo masih perlu pengujian pada PHP Desktop Windows.
 
 ### Audit lanjutan
 - [ ] Periksa konfigurasi runtime untuk URL awal dan kemungkinan native file dialog/bridge.
