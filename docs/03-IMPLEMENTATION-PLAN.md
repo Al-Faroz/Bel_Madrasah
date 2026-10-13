@@ -118,3 +118,11 @@ Resolver kalender Normal/Khusus → scheduler/audio dan log status → restore a
 - Status **IMPLEMENTED**, belum **LOCAL TEST PASS**. Uji diagnostik dan pemutaran audio harus dijalankan kembali pada PHP Desktop Windows setelah salinan `www/` diperbarui.
 - **Batch berikutnya:** D8 — audit CSS yang sudah ada dan perapian responsivitas terukur; hindari menambah override tanpa menghapus/menyatukan aturan yang bertumpuk.
 
+## Checkpoint D8 — Audit CSS dan polish awal (2026-10-13)
+
+- Inventarisasi statis `assets/app.css`: 65,279 karakter / 912 baris, 683 blok aturan sederhana yang terdeteksi, 450 selector unik, dan 155 selector yang muncul lebih dari sekali. Angka ini bukan bukti semua duplikasi salah; beberapa aturan berada di media query atau memang override responsif.
+- Karena belum ada screenshot regresi dari runtime Windows, selector lama tidak digabung/dihapus secara otomatis. Pendekatan pertama hanya menambahkan gaya untuk selector baru yang sebelumnya tidak ada: panel lokasi aset, daftar backup, pratinjau restore, dan penyesuaian grid untuk layar sempit.
+- Commit: [`ba7df73`](https://github.com/Al-Faroz/Bel_Madrasah/commit/ba7df73497227eda98641203bf648a62ce5d8a82).
+- Status **IMPLEMENTED — POLISH AWAL**; D8 belum tuntas. Konsolidasi CSS lama dan verifikasi visual masih menunggu screenshot/runtime test agar aturan responsif yang valid tidak terhapus.
+- Setelah baseline screenshot tersedia, lanjutkan audit selector per konteks media query, hilangkan override yang benar-benar redundan, lalu lanjut ke Fase E: resolver kalender → scheduler/audio → hardening dan paket distribusi.
+
