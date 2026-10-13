@@ -6,7 +6,7 @@ $headerEscape = static fn (mixed $value): string => htmlspecialchars(
 );
 ?>
 <header class="topbar">
-    <div class="brand-mark" aria-hidden="true">BM</div>
+    <div class="brand-mark" aria-hidden="true"><?php if (($schoolLogoDataUri ?? '') !== ''): ?><img src="<?= $headerEscape($schoolLogoDataUri) ?>" alt="" style="display:block;width:100%;height:100%;object-fit:contain;border-radius:inherit"><?php else: ?>BM<?php endif; ?></div>
     <div>
         <p class="eyebrow"><?= $headerEscape($pageEyebrow ?? 'ADMINISTRASI') ?></p>
         <h1><?= $headerEscape($pageHeading ?? 'Bel Madrasah') ?></h1>
