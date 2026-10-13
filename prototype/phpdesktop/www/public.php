@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/lib/Database.php';
+require_once __DIR__ . '/lib/AssetHelpers.php';
 
 function h(mixed $value): string
 {
@@ -17,6 +18,7 @@ $now = new DateTimeImmutable('now');
 $weekday = (int) $now->format('N');
 $dateLabel = $days[$weekday] . ', ' . $now->format('j') . ' ' . $months[(int) $now->format('n')] . ' ' . $now->format('Y');
 $schoolName = 'Bel Madrasah';
+$schoolLogoPath = '';
 $activePackage = null;
 $events = [];
 $nextEvent = null;
@@ -26,6 +28,7 @@ $error = '';
 try {
     $db = new Database();
     $schoolName = trim((string) $db->getSetting('school_name', '')) ?: 'Bel Madrasah';
+    $schoolLogoPath = trim((string) $db->getSetting('school_logo_path', ''));
     foreach ($db->getSchedulePackages() as $package) {
         if ((int) $package['is_active'] === 1) {
             $activePackage = $package;
@@ -59,6 +62,7 @@ try {
 } catch (Throwable $exception) {
     $error = 'Data jadwal belum dapat dibaca. Hubungi operator untuk pemeriksaan.';
 }
+$schoolLogoDataUri = getLocalImageDataUri($schoolLogoPath);
 ?>
 <!doctype html>
 <html lang="id">
@@ -72,7 +76,7 @@ try {
 <body class="public-dashboard-body">
 <div class="public-shell">
     <header class="public-header">
-        <div class="public-brand-mark" aria-hidden="true">BM</div>
+        <div class="public-brand-mark" aria-hidden="true"><?php if ($schoolLogoDataUri !== ''): ?><img src="<?= h($schoolLogoDataUri) ?>" alt="" style="display:block;width:100%;height:100%;object-fit:contain;border-radius:inherit"><?php else: ?>BM<?php endif; ?></div>
         <div class="public-brand-copy">
             <p class="public-kicker">INFORMASI OPERASIONAL</p>
             <h1><?= h($schoolName) ?></h1>
