@@ -3,6 +3,15 @@
  * Konfigurasi view.
  * Controller menangani penyimpanan SQLite dan layout bersama menangani shell Admin.
  */
+<?php
+$schoolLogoRealPath = $schoolLogoPath !== '' ? realpath($schoolLogoPath) : false;
+$schoolLogoIsManaged = false;
+foreach ($logoAssets as $logoAsset) {
+    if ($schoolLogoRealPath !== false && $logoAsset['path'] === $schoolLogoRealPath) {
+        $schoolLogoIsManaged = true;
+        break;
+    }
+}
 ?>
 <section class="intro panel page-intro">
     <div>
@@ -25,6 +34,16 @@
         </label>
         <label for="operator-name">Nama operator (opsional)
             <input id="operator-name" type="text" name="operator_name" maxlength="80" value="<?= h($operatorName) ?>" placeholder="Nama petugas">
+        </label>
+        <label for="school-logo-asset">Logo madrasah (opsional)
+            <select id="school-logo-asset" name="school_logo_asset">
+                <option value="" <?= !$schoolLogoIsManaged ? 'selected' : '' ?>><?= $schoolLogoPath !== '' ? 'Pertahankan logo saat ini: ' . h(basename($schoolLogoPath)) : 'Belum memilih logo' ?></option>
+                <option value="__clear__">Hapus logo yang digunakan</option>
+                <?php foreach ($logoAssets as $logoAsset): ?>
+                    <option value="<?= h((string) $logoAsset['name']) ?>" <?= $schoolLogoRealPath !== false && $logoAsset['path'] === $schoolLogoRealPath ? 'selected' : '' ?>><?= h((string) $logoAsset['name']) ?></option>
+                <?php endforeach; ?>
+            </select>
+            <small>Pilih file yang sudah disalin ke folder Logo. Pemilihan ini menyimpan referensi path di SQLite; file tidak diunggah atau digandakan.</small>
         </label>
         <label for="default-volume">Volume bawaan yang diinginkan (%)
             <input id="default-volume" type="number" name="default_volume" min="0" max="100" step="1" required value="<?= h($volume) ?>">
