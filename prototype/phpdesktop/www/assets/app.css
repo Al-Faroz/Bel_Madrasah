@@ -128,11 +128,6 @@ footer { display: flex; justify-content: space-between; gap: 12px; padding: 20px
 .schema-table-list p { margin: 5px 0 0; color: var(--green); font-size: 12px; line-height: 1.8; overflow-wrap: anywhere; }
 
 
-/* Tahap 3 — navigasi kerangka aplikasi, konfigurasi, dan backup */
-.main-nav { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 20px; padding: 8px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.88); }
-.main-nav a { display: inline-flex; align-items: center; min-height: 38px; padding: 8px 14px; border-radius: 9px; color: var(--muted); font-size: 13px; font-weight: 700; text-decoration: none; }
-.main-nav a:hover { color: var(--green); background: var(--mint); }
-.main-nav a.active { color: #fff; background: var(--green); }
 .page-intro { margin: 0 0 18px; grid-template-columns: 1fr; }
 .page-intro h2 { margin-bottom: 8px; }
 .form-panel { padding: 24px; }
@@ -152,8 +147,6 @@ footer { display: flex; justify-content: space-between; gap: 12px; padding: 20px
 .backup-result { margin-top: 18px; }
 .backup-result code { overflow-wrap: anywhere; }
 @media (max-width: 680px) {
-    .main-nav { gap: 4px; }
-    .main-nav a { padding: 8px 10px; font-size: 12px; }
     .form-panel { padding: 17px; }
 }
 
@@ -551,22 +544,6 @@ h2, h3 { letter-spacing: -.02em; }
 .intro { gap: 24px; padding: 28px; }
 .intro h2 { font-size: clamp(24px, 3vw, 34px); letter-spacing: -.035em; }
 .clock-card { border-radius: var(--radius-md); background: #e9f5ed; }
-.main-nav {
-    position: relative;
-    display: flex; flex-wrap: wrap; align-items: center; gap: 5px;
-    margin: 0 0 24px; padding: 7px;
-    border: 1px solid var(--line); border-radius: 18px;
-    background: var(--surface); box-shadow: var(--elevation-1);
-}
-.main-nav a {
-    display: inline-flex; align-items: center; justify-content: center;
-    min-height: 42px; padding: 9px 15px;
-    border-radius: 13px; color: #526258;
-    font-size: 13px; font-weight: 600; text-decoration: none;
-    transition: background-color .16s ease, color .16s ease;
-}
-.main-nav a:hover { color: var(--primary); background: var(--surface-variant); }
-.main-nav a.active { color: var(--on-primary); background: var(--primary); box-shadow: 0 1px 2px rgba(15, 81, 50, .18); }
 .page-intro { margin-bottom: 20px; padding: 26px; }
 .page-intro h2 { font-size: clamp(22px, 2.5vw, 30px); }
 .section-heading { margin: 28px 0 14px; }
@@ -625,12 +602,9 @@ footer { color: #68786d; font-size: 11px; }
 }
 @media (max-width: 1024px) {
     .app-shell { padding: 24px 22px 20px; }
-    .main-nav a { padding-inline: 12px; }
 }
 @media (max-width: 760px) {
     .app-shell { padding: 18px 15px; }
-    .main-nav { border-radius: var(--radius-md); gap: 4px; }
-    .main-nav a { flex: 1 1 auto; padding: 9px 11px; }
     .intro, .page-intro { padding: 21px; }
     .form-panel { padding: 20px; }
 }
@@ -639,7 +613,6 @@ footer { color: #68786d; font-size: 11px; }
     .topbar { align-items: flex-start; }
     .brand-mark { width: 44px; height: 44px; border-radius: 14px; }
     h1 { font-size: 22px; }
-    .main-nav a { flex: 1 1 calc(50% - 4px); justify-content: flex-start; }
     .form-panel, .storage-panel, .audio-panel { padding: 17px; }
     .package-card { align-items: stretch; flex-direction: column; }
     .package-card-actions { justify-content: flex-start; }
