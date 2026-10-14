@@ -137,3 +137,10 @@ Resolver kalender Normal/Khusus → scheduler/audio dan log status → restore a
 - Status **IMPLEMENTED**, belum **LOCAL TEST PASS**. Perhitungan tanggal dan konflik harus diuji dengan `php tests/ScheduleResolverTest.php` pada PHP CLI yang memiliki PDO SQLite, lalu di PHP Desktop sebelum scheduler memakai hasil resolver.
 - **Batch berikutnya:** E2 — scheduler/audio otomatis dan status operasional, dengan penanganan audio yang hilang, keterlambatan tick, dan pemulihan setelah aplikasi minimisasi/restart.
 
+## Checkpoint UI Admin — 2026-10-14
+
+- Referensi RoyalUI resmi diperiksa langsung pada partial sidebar dan navbar.
+- **D1 shell baru: IMPLEMENTED** — sidebar navigasi, topbar workspace, indikator menu aktif, SVG lokal, serta stylesheet Admin terpisah dari public.
+- **Status visual/runtime: BELUM DIVERIFIKASI.** Perubahan belum diuji di PHP Desktop Chrome 130.1 pada Windows dan belum ada screenshot pascaperubahan.
+- **Tidak boleh menganggap D2–D8 selesai.** Langkah berikutnya tetap memeriksa dashboard hasil shell baru dan menguji seluruh link/layout di runtime target sebelum migrasi visual modul berikutnya.
+- Detail temuan dan commit ada di docs/06-BASELINE-AUDIT.md.
