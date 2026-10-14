@@ -99,19 +99,19 @@ $schoolLogoDataUri = getLocalImageDataUri($schoolLogoPath);
         <?php else: ?>
             <section class="public-overview-grid" aria-label="Ringkasan jadwal">
                 <article class="public-overview-card">
-                    <span class="public-card-icon" aria-hidden="true">▦</span>
+                    <span class="public-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>
                     <span class="public-card-label">Paket aktif</span>
                     <strong><?= $activePackage !== null ? h((string) $activePackage['name']) : 'Belum ditentukan' ?></strong>
                     <small><?= $activePackage !== null ? 'Sumber konfigurasi jadwal' : 'Operator perlu mengaktifkan paket' ?></small>
                 </article>
                 <article class="public-overview-card">
-                    <span class="public-card-icon" aria-hidden="true">◷</span>
+                    <span class="public-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
                     <span class="public-card-label">Kegiatan berikutnya</span>
                     <strong id="public-next-time"><?= $nextEvent !== null ? h(substr((string) $nextEvent['event_time'], 0, 5)) : '—' ?></strong>
                     <small id="public-next-name"><?= $nextEvent !== null ? h((string) $nextEvent['name']) : 'Tidak ada kegiatan aktif tersimpan berikutnya' ?></small>
                 </article>
                 <article class="public-overview-card">
-                    <span class="public-card-icon" aria-hidden="true">♫</span>
+                    <span class="public-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>
                     <span class="public-card-label">Kegiatan hari ini</span>
                     <strong><?= count($events) ?></strong>
                     <small>Kegiatan aktif sesuai aturan kalender yang berlaku</small>
