@@ -208,3 +208,14 @@ Minta pengujian pada paket PHP Desktop Chrome 130.1 + PHP 8.3 yang sebenarnya: b
 - **BELUM DIVERIFIKASI:** screenshot setelah perubahan, resize 1366/1024/390 px, klik navigasi seluruh halaman, overflow setiap modul, serta kompatibilitas runtime PHP Desktop Chrome 130.1 pada Windows.
 - Screenshot pengguna yang sebelumnya memperlihatkan navigasi horizontal adalah baseline sebelum perubahan shell ini; screenshot tersebut tidak membuktikan tampilan terbaru.
 - Tidak ada klaim LOCAL TEST PASS untuk perubahan UI ini. Pengujian harus dilakukan pada build PHP Desktop target dan hasilnya dicatat setelah ada bukti aktual.
+
+## Audit UI dan alur aset — 2026-10-14
+
+- Acuan RoyalUI resmi diperiksa pada partial sidebar dan navbar. Implementasi lokal mengambil pola sidebar/topbar/active state, bukan memuat dependensi eksternal.
+- Admin sekarang mempunyai stylesheet khusus assets/admin.css; halaman public tetap menggunakan stylesheet aplikasi bersama dengan selector public yang terscope. Ikon navigasi, metrik dashboard, diagnostik audio, dan ringkasan public memakai SVG inline lokal.
+- Judul topbar per halaman dibedakan: Dashboard, Paket Jadwal, Editor Jadwal, Konfigurasi, Backup & Restore, dan Pemeriksaan.
+- Tombol buka folder aset ditambahkan di Konfigurasi. Path folder berasal dari method Database dan tidak berasal dari nilai POST; hanya nama aksi audio/logo yang diterima. Jika fungsi exec tidak tersedia, UI menampilkan fallback salin lokasi folder.
+- Saat Konfigurasi dibuka, getAudioAssetsDirectory() dan getLogoAssetsDirectory() menyiapkan subfolder aset jika belum ada. Daftar audio/logo dibaca dari folder tersebut dan pilihan menyimpan referensi path di SQLite; file tidak disalin oleh aplikasi.
+- CSS statis dibaca ulang setelah perubahan. Pemeriksaan keseimbangan kurung CSS memberi hasil seimbang untuk app.css dan admin.css. Ini bukan pengganti PHP lint, rendering browser, atau uji runtime Windows.
+- **Belum diuji:** tombol Buka Folder pada PHP Desktop; clipboard; rendering logo; dropdown audio/logo setelah copy-paste file; form paket/editor/backup; resize jendela; dan navigasi penuh.
+- **Tidak ada klaim lulus runtime.** Bukti visual berikutnya harus berupa screenshot baru dari PHP Desktop setelah pengguna menarik perubahan terbaru.
