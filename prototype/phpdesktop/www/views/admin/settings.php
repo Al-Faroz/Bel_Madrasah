@@ -13,7 +13,7 @@ foreach ($logoAssets as $logoAsset) {
     }
 }
 ?>
-<section class="intro panel page-intro">
+<section class="intro page-intro">
     <div>
         <p class="eyebrow">PENGATURAN LOKAL</p>
         <h2>Konfigurasi aplikasi</h2>
