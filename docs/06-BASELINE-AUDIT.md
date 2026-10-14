@@ -200,7 +200,7 @@ Minta pengujian pada paket PHP Desktop Chrome 130.1 + PHP 8.3 yang sebenarnya: b
 - prototype/phpdesktop/www/partials/admin-nav.php menyatukan urutan navigasi Admin dan state halaman aktif; ikon navigasi menggunakan SVG inline lokal, tanpa font/icon remote.
 - prototype/phpdesktop/www/assets/admin.css ditambahkan sebagai stylesheet khusus Admin dan dimuat setelah app.css. Tujuannya membatasi redesign visual Admin agar tidak mengubah tampilan public.
 - Ikon metrik di view Dashboard diganti dari karakter Unicode menjadi SVG inline.
-- Commit implementasi: 4829b768, df42b40d, 189e1ef8, 38361830, d181cbbd, 02a1f267.
+- Commit implementasi: 4829b768, df42b40d, 189e1ef8, 38361830, d181cbbd, 02a1f267, 2d99d002 (status tombol destructive/sekunder).
 
 ### Status yang benar
 
