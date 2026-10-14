@@ -50,30 +50,63 @@ try {
     if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         $action = (string) ($_POST['editor_action'] ?? '');
         if ($action === 'preview_copy_schedule') {
-            $sourceRules = array_values(array_filter(
-                $db->getDayRules($selectedPackageId, 1),
-                static fn (array $item): bool => $item['rule_mode'] === 'normal'
-            ));
-            $targetRules = array_values(array_filter(
-                $db->getDayRules($selectedPackageId, 2),
-                static fn (array $item): bool => $item['rule_mode'] === 'normal'
-            ));
-            if ($sourceRules === [] || $targetRules === []) {
-                throw new InvalidArgumentException('Salin jadwal memerlukan aturan Normal untuk Senin dan Selasa pada paket yang dipilih. Buat kedua aturan terlebih dahulu.');
+            $sourceWeekday = (int) ($_POST['source_weekday'] ?? 1);
+            $targetWeekday = (int) ($_POST['target_weekday'] ?? 2);
+            if ($sourceWeekday < 1 || $sourceWeekday > 7 || $targetWeekday < 1 || $targetWeekday > 7
+                || $sourceWeekday === $targetWeekday) {
+                throw new InvalidArgumentException('Hari sumber dan tujuan harus valid dan berbeda.');
             }
-            $sourceRule = $sourceRules[0];
-            $targetRule = $targetRules[0];
+
+            $sourceRules = $db->getDayRules($selectedPackageId, $sourceWeekday);
+            $targetRules = $db->getDayRules($selectedPackageId, $targetWeekday);
+            if ($sourceRules === []) {
+                throw new InvalidArgumentException('Hari sumber belum memiliki aturan. Buat aturan sumber terlebih dahulu; data tujuan tidak diubah.');
+            }
+
+            $sourceRulePreview = [];
+            $sourceEvents = [];
+            $targetEventCount = 0;
+            foreach ($sourceRules as $sourceRule) {
+                $specialLabel = '';
+                if ($sourceRule['rule_mode'] === 'special') {
+                    $specialLabel = $sourceRule['special_type'] === 'pasaran'
+                        ? 'Pasaran: ' . (string) $sourceRule['special_value']
+                        : 'Minggu kalender: ' . ($weekOptions[(string) $sourceRule['special_value']] ?? (string) $sourceRule['special_value']);
+                }
+                $ruleLabel = $sourceRule['rule_mode'] === 'normal' ? 'Normal' : 'Khusus · ' . $specialLabel;
+                $events = $db->getBellEvents((int) $sourceRule['id']);
+                $sourceRulePreview[] = [
+                    'label' => $ruleLabel,
+                    'is_enabled' => (int) $sourceRule['is_enabled'],
+                    'event_count' => count($events),
+                ];
+                foreach ($events as $event) {
+                    $event['rule_label'] = $ruleLabel;
+                    $sourceEvents[] = $event;
+                }
+            }
+            foreach ($targetRules as $targetRule) {
+                $targetEventCount += count($db->getBellEvents((int) $targetRule['id']));
+            }
+
             $copyPreview = [
-                'source_rule_id' => (int) $sourceRule['id'],
-                'target_rule_id' => (int) $targetRule['id'],
-                'events' => $db->getBellEvents((int) $sourceRule['id']),
-                'target_count' => count($db->getBellEvents((int) $targetRule['id'])),
+                'source_weekday' => $sourceWeekday,
+                'target_weekday' => $targetWeekday,
+                'source_rules' => $sourceRulePreview,
+                'source_rule_count' => count($sourceRules),
+                'target_rule_count' => count($targetRules),
+                'events' => $sourceEvents,
+                'target_count' => $targetEventCount,
             ];
         } elseif ($action === 'confirm_copy_schedule') {
-            $sourceRuleId = (int) ($_POST['source_rule_id'] ?? 0);
-            $targetRuleId = (int) ($_POST['target_rule_id'] ?? 0);
-            $copiedCount = $db->replaceDayScheduleFromSource($selectedPackageId, $sourceRuleId, $targetRuleId);
-            $message = 'Jadwal Selasa berhasil diganti dengan ' . $copiedCount . ' kegiatan dari Senin. Paket dan hari lain tidak diubah.';
+            $sourceWeekday = (int) ($_POST['source_weekday'] ?? 0);
+            $targetWeekday = (int) ($_POST['target_weekday'] ?? 0);
+            $copyResult = $db->replaceWeekdayScheduleFromSource($selectedPackageId, $sourceWeekday, $targetWeekday);
+            $sourceDayName = $weekdays[$sourceWeekday] ?? 'hari sumber';
+            $targetDayName = $weekdays[$targetWeekday] ?? 'hari tujuan';
+            $message = 'Jadwal ' . $targetDayName . ' berhasil diganti dengan '
+                . $copyResult['rules'] . ' aturan dan ' . $copyResult['events']
+                . ' kegiatan dari ' . $sourceDayName . '. Paket dan hari lain tidak diubah.';
         } elseif ($action === 'save_rule') {
             $editingRuleId = (int) ($_POST['rule_id'] ?? 0);
             $ruleForm = [
