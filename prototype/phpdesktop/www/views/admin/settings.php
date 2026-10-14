@@ -66,13 +66,19 @@ foreach ($logoAssets as $logoAsset) {
         <div class="asset-path-item">
             <label for="audio-assets-path">Folder audio</label>
             <code id="audio-assets-path"><?= h($audioAssetsPath !== '' ? $audioAssetsPath : 'Folder belum tersedia') ?></code>
-            <div class="form-actions"><button type="button" class="button-compact" data-copy-target="audio-assets-path">Salin lokasi audio</button></div>
+            <div class="asset-folder-actions">
+                <form method="post" action="settings.php"><input type="hidden" name="asset_action" value="open_audio_folder"><button type="submit" class="button-compact">Buka Folder Audio</button></form>
+                <button type="button" class="button-compact button-secondary" data-copy-target="audio-assets-path">Salin lokasi</button>
+            </div>
             <small><?= count($audioAssets) ?> file audio ditemukan (MP3, WAV, OGG, M4A, AAC).</small>
         </div>
         <div class="asset-path-item">
             <label for="logo-assets-path">Folder logo</label>
             <code id="logo-assets-path"><?= h($logoAssetsPath !== '' ? $logoAssetsPath : 'Folder belum tersedia') ?></code>
-            <div class="form-actions"><button type="button" class="button-compact" data-copy-target="logo-assets-path">Salin lokasi logo</button></div>
+            <div class="asset-folder-actions">
+                <form method="post" action="settings.php"><input type="hidden" name="asset_action" value="open_logo_folder"><button type="submit" class="button-compact">Buka Folder Logo</button></form>
+                <button type="button" class="button-compact button-secondary" data-copy-target="logo-assets-path">Salin lokasi</button>
+            </div>
             <small><?= count($logoAssets) ?> file gambar ditemukan (PNG, JPG, WEBP, GIF, SVG).</small>
         </div>
     </div>
@@ -80,7 +86,7 @@ foreach ($logoAssets as $logoAsset) {
     <div class="package-rules">
         <h3>Petunjuk singkat</h3>
         <ol>
-            <li>Tekan tombol salin lokasi folder.</li>
+            <li>Tekan <strong>Buka Folder Audio</strong> atau <strong>Buka Folder Logo</strong>. Jika File Explorer tidak terbuka otomatis, tekan <strong>Salin lokasi</strong>.
             <li>Buka File Explorer, tekan <strong>Ctrl+L</strong>, tempel lokasi folder, lalu tekan Enter.</li>
             <li>Copy-paste file audio atau logo ke folder yang sesuai. Tidak perlu mengganti nama file.</li>
             <li>Jangan memindahkan atau menghapus file yang sedang dipakai jadwal. Referensi audio lama tetap dipertahankan.</li>
