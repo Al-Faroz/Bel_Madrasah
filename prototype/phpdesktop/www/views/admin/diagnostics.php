@@ -137,7 +137,7 @@
 
         <section class="audio-panel panel">
             <div class="audio-copy">
-                <div class="audio-icon" aria-hidden="true">♫</div>
+                <div class="audio-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
                 <div>
                     <h3>Pilih file audio dari komputer</h3>
                     <p>Uji MP3/WAV dari komputer. Pemutaran memakai komponen audio internal; uji file panjang sampai benar-benar selesai.</p>
