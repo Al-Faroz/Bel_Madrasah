@@ -28,6 +28,8 @@
             <form method="post" action="schedule-editor.php" class="copy-schedule-form">
                 <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>">
                 <input type="hidden" name="editor_action" value="preview_copy_schedule">
+                <input type="hidden" name="source_weekday" value="1">
+                <input type="hidden" name="target_weekday" value="2">
                 <div class="copy-schedule-route">
                     <div class="copy-schedule-day"><span>Sumber</span><strong>Senin</strong><small>Seluruh kegiatan</small></div>
                     <span class="copy-schedule-arrow" aria-hidden="true">→</span>
@@ -37,26 +39,33 @@
             </form>
         <?php else: ?>
             <div class="copy-preview-panel" aria-live="polite">
-                <div class="copy-preview-heading"><strong>Periksa sebelum menyimpan</strong><span><?= count($copyPreview['events']) ?> kegiatan dari Senin</span></div>
-                <p>Jadwal Selasa saat ini memiliki <?= (int) $copyPreview['target_count'] ?> kegiatan. Jika dilanjutkan, seluruh kegiatan Selasa akan diganti dengan daftar berikut.</p>
+                <?php $sourceDayName = $weekdays[(int) $copyPreview['source_weekday']] ?? 'Sumber'; $targetDayName = $weekdays[(int) $copyPreview['target_weekday']] ?? 'Tujuan'; ?>
+                <div class="copy-preview-heading"><strong>Periksa sebelum menyimpan</strong><span><?= (int) $copyPreview['source_rule_count'] ?> aturan · <?= count($copyPreview['events']) ?> kegiatan dari <?= h($sourceDayName) ?></span></div>
+                <p><?= h($targetDayName) ?> saat ini memiliki <?= (int) $copyPreview['target_rule_count'] ?> aturan dan <?= (int) $copyPreview['target_count'] ?> kegiatan. Jika dilanjutkan, seluruh aturan Normal/Khusus dan kegiatan <?= h($targetDayName) ?> akan diganti dengan salinan dari <?= h($sourceDayName) ?>.</p>
+                <div class="copy-preview-source-rules">
+                    <strong>Aturan yang akan disalin</strong>
+                    <ul><?php foreach ($copyPreview['source_rules'] as $sourceRule): ?>
+                        <li><?= h($sourceRule['label']) ?> · <?= (int) $sourceRule['event_count'] ?> kegiatan · <?= (int) $sourceRule['is_enabled'] === 1 ? 'Aktif' : 'Nonaktif' ?></li>
+                    <?php endforeach; ?></ul>
+                </div>
                 <?php if ($copyPreview['events'] === []): ?>
-                    <p class="copy-preview-empty">Senin belum memiliki kegiatan. Konfirmasi akan mengosongkan kegiatan Selasa.</p>
+                    <p class="copy-preview-empty"><?= h($sourceDayName) ?> memiliki aturan, tetapi belum memiliki kegiatan. Jika dilanjutkan, aturan <?= h($targetDayName) ?> akan diganti dan kegiatan yang ada di sana akan dihapus.</p>
                 <?php else: ?>
                     <div class="copy-preview-table-wrap"><table class="copy-preview-table">
-                        <thead><tr><th>Jam</th><th>Nama kegiatan</th><th>Audio</th><th>Status</th></tr></thead>
+                        <thead><tr><th>Pola hari</th><th>Jam</th><th>Nama kegiatan</th><th>Audio</th><th>Status</th></tr></thead>
                         <tbody><?php foreach ($copyPreview['events'] as $copyEvent): ?>
-                            <tr><td><?= h(substr((string) $copyEvent['event_time'], 0, 5)) ?></td><td><?= h($copyEvent['name']) ?></td><td><?= trim((string) $copyEvent['audio_path']) !== '' ? h(basename((string) $copyEvent['audio_path'])) : 'Belum diatur' ?></td><td><?= (int) $copyEvent['is_enabled'] === 1 ? 'Aktif' : 'Nonaktif' ?></td></tr>
+                            <tr><td><?= h($copyEvent['rule_label']) ?></td><td><?= h(substr((string) $copyEvent['event_time'], 0, 5)) ?></td><td><?= h($copyEvent['name']) ?></td><td><?= trim((string) $copyEvent['audio_path']) !== '' ? h(basename((string) $copyEvent['audio_path'])) : 'Belum diatur' ?></td><td><?= (int) $copyEvent['is_enabled'] === 1 ? 'Aktif' : 'Nonaktif' ?></td></tr>
                         <?php endforeach; ?></tbody>
                     </table></div>
                 <?php endif; ?>
-                <div class="copy-preview-warning"><strong>Perhatian:</strong> kegiatan Selasa yang ada sekarang akan dihapus dan diganti. Referensi audio disalin tanpa menggandakan file audio. Data Senin, paket lain, dan hari lain tidak berubah.</div>
+                <div class="copy-preview-warning"><strong>Perhatian:</strong> seluruh aturan dan kegiatan pada hari tujuan akan diganti, termasuk aturan Khusus. Referensi audio disalin tanpa menggandakan file. Hari sumber, paket lain, dan hari lain tidak berubah.</div>
                 <div class="copy-preview-actions">
-                    <form method="post" action="schedule-editor.php" onsubmit="return confirm('Yakin mengganti seluruh kegiatan Selasa dengan jadwal Senin? Tindakan ini tidak mengubah paket atau hari lain.');">
+                    <form method="post" action="schedule-editor.php" onsubmit="return confirm('Yakin mengganti seluruh aturan dan kegiatan hari tujuan dengan jadwal hari sumber? Paket dan hari lain tidak diubah.');">
                         <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>">
                         <input type="hidden" name="editor_action" value="confirm_copy_schedule">
-                        <input type="hidden" name="source_rule_id" value="<?= (int) $copyPreview['source_rule_id'] ?>">
-                        <input type="hidden" name="target_rule_id" value="<?= (int) $copyPreview['target_rule_id'] ?>">
-                        <button type="submit" class="copy-schedule-button is-confirm">Ya, Ganti Seluruh Jadwal Selasa</button>
+                        <input type="hidden" name="source_weekday" value="<?= (int) $copyPreview['source_weekday'] ?>">
+                        <input type="hidden" name="target_weekday" value="<?= (int) $copyPreview['target_weekday'] ?>">
+                        <button type="submit" class="copy-schedule-button is-confirm">Ya, Ganti Seluruh Jadwal <?= h($targetDayName) ?></button>
                     </form>
                     <a class="button-link-secondary" href="schedule-editor.php?package_id=<?= $selectedPackageId ?>">Batal</a>
                 </div>
