@@ -121,7 +121,7 @@ try {
 $now = new DateTimeImmutable('now');
 $documentTitle = 'Pemeriksaan Teknis — Bel Madrasah';
 $pageEyebrow = 'PEMERIKSAAN TEKNIS';
-$pageHeading = 'Bel Madrasah';
+$pageHeading = 'Pemeriksaan';
 $pageSubtitle = 'Runtime, database, persistensi, dan uji audio';
 $pageStatusLabel = 'MODE DIAGNOSTIK';
 $activePage = 'diagnostics';
