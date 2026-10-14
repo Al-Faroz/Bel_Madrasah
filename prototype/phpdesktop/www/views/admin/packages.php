@@ -5,7 +5,7 @@
  * Layout bersama menangani dokumen HTML, navigasi, dan footer.
  */
 ?>
-<section class="intro panel page-intro">
+<section class="intro page-intro">
     <div>
         <p class="eyebrow">SUMBER JADWAL GLOBAL</p>
         <h2>Kelola paket tanpa menghapus paket lainnya.</h2>
