@@ -409,9 +409,10 @@ body.admin-area { color: var(--admin-text); font-size: 14px; background: var(--a
     .admin-area footer { flex-direction: column; padding: 15px 14px; }
 }
 @media (max-width: 480px) {
-    .admin-area .main-nav { grid-template-columns: 1fr; }
-    .admin-area .main-nav .nav-item { min-height: 37px; }
-    .admin-area .page-intro { padding: 18px; }
+    .admin-area .main-nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .admin-area .main-nav .nav-item { min-height: 37px; padding-right: 6px; padding-left: 6px; font-size: 10px; }
+    .admin-area .nav-label { overflow-wrap: anywhere; }
+    .admin-area .page-intro { padding: 0; }
     .admin-area .form-panel,
     .admin-area .package-list-panel,
     .admin-area .backup-list-panel,
