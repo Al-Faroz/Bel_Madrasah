@@ -20,19 +20,19 @@
 
         <section class="dashboard-stats" aria-label="Ringkasan operasional">
             <article class="dashboard-stat panel">
-                <span class="stat-icon" aria-hidden="true">▦</span>
+                <span class="stat-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>
                 <span class="stat-label">Paket jadwal</span>
                 <strong><?= count($packages) ?></strong>
                 <small><?= $activePackage === null ? 'Belum ada paket aktif' : 'Satu paket digunakan secara global' ?></small>
             </article>
             <article class="dashboard-stat panel">
-                <span class="stat-icon" aria-hidden="true">◷</span>
+                <span class="stat-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
                 <span class="stat-label">Kegiatan aktif hari ini</span>
                 <strong><?= $enabledEventsCount ?></strong>
                 <small><?= $todayRuleCount > 0 ? 'Berdasarkan aturan kalender yang berlaku' : 'Belum ada aturan aktif untuk hari ini' ?></small>
             </article>
             <article class="dashboard-stat panel">
-                <span class="stat-icon" aria-hidden="true">♫</span>
+                <span class="stat-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>
                 <span class="stat-label">Mesin bel otomatis</span>
                 <strong class="stat-text">Tahap berikutnya</strong>
                 <small>Scheduler otomatis belum diaktifkan pada build ini</small>
