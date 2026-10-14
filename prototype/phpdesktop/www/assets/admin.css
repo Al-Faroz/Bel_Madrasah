@@ -374,6 +374,34 @@ body.admin-area { color: var(--admin-text); font-size: 14px; background: var(--a
     background: #a13a2f;
 }
 .admin-area .copy-schedule-button.is-confirm:hover { background: #852d25; }
+/* D5 — asset folder actions and readable Windows paths. */
+.admin-area .asset-folder-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+.admin-area .asset-folder-actions form { margin: 0; }
+.admin-area .asset-folder-actions button {
+    min-height: 34px;
+    padding: 7px 11px;
+    border-radius: 5px;
+    font-size: 11px;
+}
+.admin-area button.button-secondary {
+    border: 1px solid #dce4df;
+    color: var(--admin-primary);
+    background: #fff;
+}
+.admin-area button.button-secondary:hover { background: #f3f7f4; }
+.admin-area .asset-path-item code { display: block; overflow-wrap: anywhere; word-break: break-word; }
+@media (max-width: 480px) {
+    .admin-area .asset-folder-actions { align-items: stretch; }
+    .admin-area .asset-folder-actions form,
+    .admin-area .asset-folder-actions button { width: 100%; }
+}
+
 .admin-area .button-link-secondary:hover {
     border-color: #c9d8ce;
     color: var(--admin-primary-hover);
