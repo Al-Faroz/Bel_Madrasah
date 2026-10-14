@@ -242,3 +242,10 @@ Minta pengujian pada paket PHP Desktop Chrome 130.1 + PHP 8.3 yang sebenarnya: b
 - Semua tujuh tujuan href di partial navigasi Admin cocok dengan file PHP yang ada pada branch main.
 - Commit pembersihan: [65d6e9c](https://github.com/Al-Faroz/Bel_Madrasah/commit/65d6e9cca771a6d2384f86c3aebc89053d6c1f4c).
 - Ini tetap audit statis, bukan lint PHP, render visual, atau uji PHP Desktop Windows. Selector dengan deklarasi berbeda masih memerlukan penilaian kontekstual.
+
+## Koreksi panduan Editor Jadwal — 2026-10-14
+
+- Label “Catatan penting Tahap 5” dan pesan yang menyatakan resolver konflik akan dibuat pada Tahap 6 sudah tidak sesuai keadaan kode, karena ScheduleResolver telah tersedia.
+- Teks view diperbarui untuk menjelaskan perilaku saat ini: konflik aturan Khusus ditandai resolver dan memakai fallback Normal; scheduler/pemutaran otomatis belum aktif.
+- Perubahan teks saja; tidak mengubah resolver, aturan database, atau operasi jadwal.
+- Commit: [a8b9ac1](https://github.com/Al-Faroz/Bel_Madrasah/commit/a8b9ac1f384c1a1a7cafb1ca0124483e90d25caf).
