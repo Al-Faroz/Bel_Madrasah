@@ -863,6 +863,7 @@ footer { color: #68786d; font-size: 11px; }
 .public-overview-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:18px 0}
 .public-overview-card{display:grid;align-content:start;gap:6px;min-width:0;padding:22px;border:1px solid var(--line);border-radius:20px;background:#fff;box-shadow:var(--elevation-1)}
 .public-card-icon{display:grid;place-items:center;width:42px;height:42px;margin-bottom:7px;border-radius:14px;background:var(--mint);color:var(--primary);font-size:22px}
+.public-card-icon svg{display:block;width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .public-card-label{color:var(--muted);font-size:12px;font-weight:650}
 .public-overview-card>strong{font-size:clamp(20px,2.4vw,28px);line-height:1.2;letter-spacing:-.025em;overflow-wrap:anywhere}
 .public-overview-card small{color:var(--muted);font-size:11px;line-height:1.5}
