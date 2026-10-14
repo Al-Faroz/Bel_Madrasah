@@ -81,7 +81,7 @@ try {
 $now = new DateTimeImmutable('now');
 $documentTitle = 'Backup dan Restore — Bel Madrasah';
 $pageEyebrow = 'PERLINDUNGAN DATA';
-$pageHeading = 'Bel Madrasah';
+$pageHeading = 'Backup & Restore';
 $pageSubtitle = 'Cadangkan atau pulihkan database lokal dengan pemeriksaan';
 $pageStatusLabel = 'BACKUP / RESTORE';
 $activePage = 'backup';
