@@ -154,8 +154,8 @@ try {
             $eventTime = trim((string) ($_POST['event_time'] ?? ''));
             $sortOrder = (int) ($_POST['sort_order'] ?? 0);
 
-            // Validate the form before storing an uploaded file, so invalid data
-            // cannot leave an orphaned audio file in AppData.
+            // Validate every event field before saving anything to SQLite.
+            // Audio is selected from the managed asset list; the source file is never uploaded or copied.
             if ($eventName === '' || strlen($eventName) > 100) {
                 throw new InvalidArgumentException('Nama kegiatan wajib diisi dan maksimal 100 karakter.');
             }
