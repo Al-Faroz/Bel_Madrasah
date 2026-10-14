@@ -208,7 +208,7 @@ try {
 $now = new DateTimeImmutable('now');
 $documentTitle = 'Editor Jadwal Harian — Bel Madrasah';
 $pageEyebrow = 'PENGELOLAAN JADWAL';
-$pageHeading = 'Bel Madrasah';
+$pageHeading = 'Editor Jadwal';
 $pageSubtitle = 'Atur pola hari dan kegiatan bel dalam setiap paket';
 $pageStatusLabel = 'EDITOR JADWAL';
 $activePage = 'schedule-editor';
