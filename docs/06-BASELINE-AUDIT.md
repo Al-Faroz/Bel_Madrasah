@@ -233,3 +233,12 @@ Minta pengujian pada paket PHP Desktop Chrome 130.1 + PHP 8.3 yang sebenarnya: b
 - Sesudah perubahan, app.css tidak memiliki selector .page-intro. Ini mengurangi benturan antara aturan UI lama dan sistem visual Admin baru.
 - Commit: [ffe4bee](https://github.com/Al-Faroz/Bel_Madrasah/commit/ffe4bee21238ba0174e9ae760c36d9a81f9ba9d3).
 - Konsolidasi selector lain masih terbuka; jangan menyatukan aturan media-query hanya berdasarkan nama selector tanpa membandingkan konteks dan perilaku.
+
+## Audit duplikasi CSS — 2026-10-14
+
+- Parser statis sederhana mengidentifikasi aturan yang benar-benar identik berdasarkan selector, konteks media/at-rule, dan isi deklarasi.
+- Tiga duplikasi identik di app.css dihapus: aturan html dasar, padding app-shell pada breakpoint 760 px, dan ukuran h1 pada breakpoint 460 px.
+- Hasil pemeriksaan setelah penghapusan: app.css 65.437 karakter, 682 aturan terdeteksi, 0 kelompok duplikasi identik, 0 selector .main-nav, dan 0 selector .page-intro. admin.css 19.760 karakter, 171 aturan terdeteksi, 0 kelompok duplikasi identik, tanpa URL eksternal pada kedua stylesheet.
+- Semua tujuh tujuan href di partial navigasi Admin cocok dengan file PHP yang ada pada branch main.
+- Commit pembersihan: [65d6e9c](https://github.com/Al-Faroz/Bel_Madrasah/commit/65d6e9cca771a6d2384f86c3aebc89053d6c1f4c).
+- Ini tetap audit statis, bukan lint PHP, render visual, atau uji PHP Desktop Windows. Selector dengan deklarasi berbeda masih memerlukan penilaian kontekstual.
