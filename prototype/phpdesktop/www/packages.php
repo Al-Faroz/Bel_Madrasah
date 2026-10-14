@@ -33,6 +33,25 @@ try {
             $db->activateSchedulePackage($targetId);
             $message = 'Paket jadwal aktif berhasil diganti. Hanya paket ini yang akan menjadi sumber jadwal global.';
             $editId = 0;
+        } elseif ($action === 'delete') {
+            $targetId = filter_var($_POST['package_id'] ?? null, FILTER_VALIDATE_INT);
+            if ($targetId === false || $targetId === null || $targetId < 1) {
+                throw new InvalidArgumentException('Paket yang akan dihapus tidak valid.');
+            }
+            $targetPackage = $db->getSchedulePackage($targetId);
+            if ($targetPackage === null) {
+                throw new InvalidArgumentException('Paket yang akan dihapus tidak ditemukan.');
+            }
+            $deleted = $db->hardDeleteSchedulePackage($targetId);
+            $message = 'Hard delete berhasil: paket "' . (string) $targetPackage['name'] . '", '
+                . $deleted['rules'] . ' aturan, dan ' . $deleted['events']
+                . ' kegiatan dihapus permanen. Riwayat pemutaran tetap dipertahankan.';
+            if ($editId === $targetId) {
+                $editId = 0;
+                $formName = '';
+                $formDescription = '';
+                $formOffDays = '7';
+            }
         } elseif ($action === 'save') {
             $postedId = filter_var($_POST['package_id'] ?? 0, FILTER_VALIDATE_INT);
             $postedId = $postedId !== false && $postedId > 0 ? $postedId : 0;
