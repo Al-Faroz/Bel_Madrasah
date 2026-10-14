@@ -226,3 +226,10 @@ Minta pengujian pada paket PHP Desktop Chrome 130.1 + PHP 8.3 yang sebenarnya: b
 - Pencarian string pada app.css sesudah commit tidak menemukan selector .main-nav. Gaya navigasi Admin sekarang dikelola satu tempat di admin.css, sehingga aturan horizontal lama tidak lagi menumpuk dengan sidebar.
 - Ukuran app.css sesudah penghapusan: 65.780 karakter. Ini belum merupakan konsolidasi seluruh CSS; selector lain yang berulang masih perlu diaudit secara kontekstual.
 - Commit: [821e3b3](https://github.com/Al-Faroz/Bel_Madrasah/commit/821e3b38ca5909ab2d346a988da4ad979b6a543f).
+
+## Konsolidasi selector judul halaman — 2026-10-14
+
+- Setelah seluruh modul Admin memakai layout bersama, selector .page-intro lama di app.css tidak lagi menjadi sumber gaya yang diperlukan. Aturan tersebut dipindahkan secara efektif ke admin.css yang terscope pada area Admin, termasuk breakpoint sempit.
+- Sesudah perubahan, app.css tidak memiliki selector .page-intro. Ini mengurangi benturan antara aturan UI lama dan sistem visual Admin baru.
+- Commit: [ffe4bee](https://github.com/Al-Faroz/Bel_Madrasah/commit/ffe4bee21238ba0174e9ae760c36d9a81f9ba9d3).
+- Konsolidasi selector lain masih terbuka; jangan menyatukan aturan media-query hanya berdasarkan nama selector tanpa membandingkan konteks dan perilaku.
