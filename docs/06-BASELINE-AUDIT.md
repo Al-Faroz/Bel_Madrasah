@@ -32,7 +32,7 @@
 5. **Status scheduler/audio belum nyata.** Label yang menjelaskan jadwal tersimpan bukan status pemutaran aktual harus dipertahankan sampai mesin scheduler mengirim status runtime.
 6. **Backup/Restore sudah diimplementasikan, tetapi belum diuji runtime.** Halaman menyediakan pratinjau file backup, pemeriksaan integritas SQLite dan struktur tabel, konfirmasi eksplisit, serta backup pra-pemulihan. Mekanisme copy/rollback tetap berisiko sampai diuji pada PHP Desktop Windows dengan database uji.
 7. **Aktivasi paket dan edit paket memerlukan regresi data.** Pastikan constraint satu paket aktif dan perilaku hari awal tetap sesuai, tanpa perubahan data diam-diam.
-8. **Salin jadwal berisiko overwrite.** Alur preview/konfirmasi ada, namun harus diuji dengan data dummy untuk memastikan source/target benar, tidak ada perubahan sebelum konfirmasi, dan audio/path dipertahankan.
+8. **Salin jadwal berisiko overwrite.** Implementasi terbaru mengganti seluruh aturan Normal/Khusus dan kegiatan pada hari tujuan melalui pratinjau dan konfirmasi. Tetap harus diuji dengan data dummy untuk memastikan tidak ada perubahan sebelum konfirmasi, paket/hari lain tetap utuh, dan referensi audio dipertahankan.
 9. **Validasi keamanan/ketahanan belum diaudit penuh.** Periksa CSRF untuk form POST, otorisasi lokal yang relevan untuk aplikasi desktop, validasi ID milik paket yang dipilih, penanganan error, dan escaping output pada seluruh halaman.
 10. **Tidak ada klaim lulus runtime untuk UI terbaru.** Screenshot pengguna menunjukkan layout tidak sesuai ekspektasi. Semua redesign berikutnya perlu uji screenshot pada PHP Desktop yang sebenarnya.
 
@@ -58,7 +58,7 @@
 - Folder persisten `BelMadrasah/assets/audio` dan `BelMadrasah/assets/logo` telah diimplementasikan dengan nama file bebas dan petunjuk copy-paste di halaman Konfigurasi.
 - Karena bridge/native file dialog dari paket PHP Desktop yang terpasang belum diverifikasi, Editor Jadwal memilih audio dari daftar file yang ditemukan di folder aset; tidak menyimpan fakepath dari HTML file picker.
 - Referensi audio lama dipertahankan. Perubahan pilihan audio hanya mengubah path pada kegiatan yang disimpan; file sumber tidak dipindah, diganti nama, atau dihapus.
-- Lokasi folder dapat disalin dari UI dan ditempel ke File Explorer. Tombol untuk membuka Explorer langsung belum dibuat karena mekanisme shell/native runtime belum diverifikasi.
+- Lokasi folder dapat disalin dari UI dan ditempel ke File Explorer. Tombol Buka Folder juga sudah diimplementasikan dengan pembuka Explorer berbasis `exec` pada Windows dan fallback salin lokasi; keberhasilannya pada PHP Desktop belum diverifikasi.
 - Pemilihan dan tampilan logo kini disimpan melalui `school_logo_path` dan digunakan pada header Admin/Publik. Rendering, clipboard, dan pemilihan audio/logo masih perlu pengujian pada PHP Desktop Windows.
 
 ### Audit lanjutan
@@ -249,3 +249,13 @@ Minta pengujian pada paket PHP Desktop Chrome 130.1 + PHP 8.3 yang sebenarnya: b
 - Teks view diperbarui untuk menjelaskan perilaku saat ini: konflik aturan Khusus ditandai resolver dan memakai fallback Normal; scheduler/pemutaran otomatis belum aktif.
 - Perubahan teks saja; tidak mengubah resolver, aturan database, atau operasi jadwal.
 - Commit: [a8b9ac1](https://github.com/Al-Faroz/Bel_Madrasah/commit/a8b9ac1f384c1a1a7cafb1ca0124483e90d25caf).
+
+
+## Audit lanjutan Editor Jadwal — 2026-10-14
+
+- Pemeriksaan statis menemukan bug sintaks pada `prototype/phpdesktop/www/views/admin/settings.php`: pembuka PHP kedua muncul sebelum blok PHP pertama ditutup. Tag pembuka duplikat dihapus pada commit [b008608](https://github.com/Al-Faroz/Bel_Madrasah/commit/b008608b31b026b6e2108750c74e263abf66eaa2). Ini membuktikan bahwa audit sebelumnya belum setara dengan PHP lint; seluruh view tetap perlu lint di runtime/CLI yang sesuai.
+- Audit alur **Salin Jadwal** menemukan ketidaksesuaian: UI menyatakan seluruh jadwal tujuan diganti, tetapi implementasi lama hanya mengganti kegiatan pada aturan Normal Selasa dan membiarkan aturan Khusus tetap ada.
+- Metode Database kini menyalin seluruh aturan Normal/Khusus dan kegiatan dari hari sumber ke hari tujuan dalam satu transaksi. Semua aturan/kegiatan lama pada hari tujuan diganti; paket, hari sumber, dan hari lain tidak diubah. Referensi path audio disalin sebagai referensi, bukan file fisik. Hari sumber yang belum memiliki aturan ditolak sebelum data tujuan dihapus.
+- Pratinjau kini menampilkan jumlah aturan dan kegiatan sumber/tujuan, daftar pola aturan sumber, serta pola pada setiap kegiatan. Peringatan menyebutkan bahwa aturan Khusus pada hari tujuan juga akan diganti.
+- Commit implementasi: [e7beb21](https://github.com/Al-Faroz/Bel_Madrasah/commit/e7beb218d8c14b6df0411fd90579e36fa13eff19), [fe63d60](https://github.com/Al-Faroz/Bel_Madrasah/commit/fe63d604e98554fc92fee7848e7d267c52d66c80), [7ea6a06](https://github.com/Al-Faroz/Bel_Madrasah/commit/7ea6a063b552e47705b503368a604884c5f9f19), dan [3e7647b](https://github.com/Al-Faroz/Bel_Madrasah/commit/3e7647bc9b73a51745c8820c35028ed3f3c9b6f3).
+- **Status: IMPLEMENTED, belum LOCAL TEST PASS.** Belum dijalankan melalui PHP lint atau PHP Desktop Windows, dan belum ada regresi SQLite yang membuktikan rollback, penggantian aturan Khusus, referensi audio, serta isolasi paket/hari lain. Jangan menganggap operasi salin aman dipakai sebelum uji tersebut lulus.
