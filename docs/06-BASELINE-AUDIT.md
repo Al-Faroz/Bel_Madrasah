@@ -259,3 +259,13 @@ Minta pengujian pada paket PHP Desktop Chrome 130.1 + PHP 8.3 yang sebenarnya: b
 - Pratinjau kini menampilkan jumlah aturan dan kegiatan sumber/tujuan, daftar pola aturan sumber, serta pola pada setiap kegiatan. Peringatan menyebutkan bahwa aturan Khusus pada hari tujuan juga akan diganti.
 - Commit implementasi: [e7beb21](https://github.com/Al-Faroz/Bel_Madrasah/commit/e7beb218d8c14b6df0411fd90579e36fa13eff19), [fe63d60](https://github.com/Al-Faroz/Bel_Madrasah/commit/fe63d604e98554fc92fee7848e7d267c52d66c80), [7ea6a06](https://github.com/Al-Faroz/Bel_Madrasah/commit/7ea6a063b552e47705b503368a604884c5f9f19), dan [3e7647b](https://github.com/Al-Faroz/Bel_Madrasah/commit/3e7647bc9b73a51745c8820c35028ed3f3c9b6f3).
 - **Status: IMPLEMENTED, belum LOCAL TEST PASS.** Belum dijalankan melalui PHP lint atau PHP Desktop Windows, dan belum ada regresi SQLite yang membuktikan rollback, penggantian aturan Khusus, referensi audio, serta isolasi paket/hari lain. Jangan menganggap operasi salin aman dipakai sebelum uji tersebut lulus.
+
+
+## Pengelolaan Paket Jadwal — 2026-10-14
+
+- Form Edit Paket kini menampilkan tiga pilihan hari libur mingguan yang sama dengan form Buat Paket: Jumat, Minggu, dan Sabtu–Minggu. Nilai dikirim ke `saveSchedulePackage()` dan disimpan ke kolom `schedule_packages.off_days`.
+- Perubahan hari libur pada paket yang sudah memiliki jadwal tidak menghapus atau memindahkan aturan/kegiatan secara otomatis. UI memberi peringatan untuk memeriksa Editor Jadwal sesudah perubahan. Ini sengaja menjaga data jadwal yang telah dikonfigurasi dari penghapusan diam-diam.
+- Ditambahkan aksi **Hapus permanen (hard delete)** untuk paket nonaktif. Database menghapus baris paket; foreign key `ON DELETE CASCADE` menghapus aturan hari dan kegiatan bel yang terkait. Riwayat `playback_log` dipertahankan dengan referensi paket/kegiatan menjadi `NULL` sesuai skema.
+- Proteksi server menolak hard delete paket aktif, paket terakhir, dan ID yang tidak valid/tidak ditemukan. UI meminta konfirmasi eksplisit dengan istilah HARD DELETE PERMANEN. File audio fisik tidak disentuh oleh operasi ini.
+- Implementasi: [05eeb0d](https://github.com/Al-Faroz/Bel_Madrasah/commit/05eeb0df09624bcc3c41af1d97f0f6a32a5b5dbe), [f85803d](https://github.com/Al-Faroz/Bel_Madrasah/commit/f85803dc495ed36c7accd96e52a63f292cb4d298), [3353cd6](https://github.com/Al-Faroz/Bel_Madrasah/commit/3353cd6f906fba70021b148c6a95c91adbeb8369).
+- **Status: IMPLEMENTED, belum LOCAL TEST PASS.** Belum diuji dengan database SQLite aktual, foreign-key cascade, proteksi paket aktif/terakhir, duplicate nama, atau runtime PHP Desktop Windows.
