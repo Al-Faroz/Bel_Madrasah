@@ -219,3 +219,10 @@ Minta pengujian pada paket PHP Desktop Chrome 130.1 + PHP 8.3 yang sebenarnya: b
 - CSS statis dibaca ulang setelah perubahan. Pemeriksaan keseimbangan kurung CSS memberi hasil seimbang untuk app.css dan admin.css. Ini bukan pengganti PHP lint, rendering browser, atau uji runtime Windows.
 - **Belum diuji:** tombol Buka Folder pada PHP Desktop; clipboard; rendering logo; dropdown audio/logo setelah copy-paste file; form paket/editor/backup; resize jendela; dan navigasi penuh.
 - **Tidak ada klaim lulus runtime.** Bukti visual berikutnya harus berupa screenshot baru dari PHP Desktop setelah pengguna menarik perubahan terbaru.
+
+## Pemeriksaan lanjutan navigasi CSS — 2026-10-14
+
+- Sebelum shell sidebar, app.css memiliki dua kelompok aturan navigasi horizontal dan beberapa aturan breakpoint untuk selector .main-nav. Setelah navigasi dipusatkan pada partial admin-nav.php dan styling sidebar berada di admin.css, seluruh aturan .main-nav lama di app.css dihapus.
+- Pencarian string pada app.css sesudah commit tidak menemukan selector .main-nav. Gaya navigasi Admin sekarang dikelola satu tempat di admin.css, sehingga aturan horizontal lama tidak lagi menumpuk dengan sidebar.
+- Ukuran app.css sesudah penghapusan: 65.780 karakter. Ini belum merupakan konsolidasi seluruh CSS; selector lain yang berulang masih perlu diaudit secara kontekstual.
+- Commit: [821e3b3](https://github.com/Al-Faroz/Bel_Madrasah/commit/821e3b38ca5909ab2d346a988da4ad979b6a543f).
