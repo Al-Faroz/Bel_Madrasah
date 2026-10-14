@@ -157,6 +157,8 @@ Resolver kalender Normal/Khusus → scheduler/audio dan log status → restore a
 - **D6 / Backup-restore** dan **D7 / Diagnostik:** panel, badge, path panjang, tabel, dan pesan status dirapikan.
 - **Public dashboard:** ikon simbol diganti dengan SVG inline lokal. Tidak ada CDN atau font ikon baru.
 - **Pembersihan navigasi CSS:** aturan `.main-nav` lama yang membentuk navigasi horizontal di `app.css` dihapus setelah shell bersama dipastikan menjadi satu-satunya sumber markup navigasi. Gaya sidebar kini dikelola oleh `admin.css`; tidak ada aturan `.main-nav` tersisa di `app.css`.
+- **Pembersihan duplikasi CSS:** tiga aturan yang identik dalam konteks media yang sama dihapus dari `app.css` setelah parser statis memeriksa selector, konteks, dan deklarasinya. Audit ini tidak menghapus override berbeda yang mungkin memang diperlukan.
+- Commit pembersihan duplikasi: [65d6e9c](https://github.com/Al-Faroz/Bel_Madrasah/commit/65d6e9cca771a6d2384f86c3aebc89053d6c1f4c).
 - **Pembersihan page heading CSS:** selector `.page-intro` lama dihapus dari `app.css`; tampilan judul modul kini hanya dimiliki `admin.css`, termasuk breakpoint sempit. Commit: [ffe4bee](https://github.com/Al-Faroz/Bel_Madrasah/commit/ffe4bee21238ba0174e9ae760c36d9a81f9ba9d3).
 - **Responsivitas:** menu Admin pada lebar sempit tetap dua kolom; padding judul halaman tidak kembali membesar pada breakpoint 480 px.
 
