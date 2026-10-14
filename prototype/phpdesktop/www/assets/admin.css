@@ -288,6 +288,24 @@ body.admin-area { color: var(--admin-text); font-size: 14px; background: var(--a
     font-size: 12px;
 }
 .admin-area .copy-preview-panel { border-radius: 6px; }
+.admin-area .copy-preview-source-rules {
+    margin: 12px 0;
+    padding: 12px 14px;
+    border: 1px solid var(--admin-line);
+    border-radius: 6px;
+    background: #f8faf9;
+}
+.admin-area .copy-preview-source-rules > strong { color: #43524a; font-size: 11px; }
+.admin-area .copy-preview-source-rules ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px 18px;
+    margin: 8px 0 0;
+    padding: 0;
+    list-style: none;
+}
+.admin-area .copy-preview-source-rules li { color: #65726b; font-size: 11px; line-height: 1.5; }
+.admin-area .copy-preview-table { min-width: 760px; }
 .admin-area .copy-preview-table-wrap,
 .admin-area .bell-events-table-wrap { border-color: var(--admin-line); border-radius: 6px; }
 .admin-area .copy-preview-table th,
