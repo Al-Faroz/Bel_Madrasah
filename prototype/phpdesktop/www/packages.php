@@ -106,7 +106,7 @@ try {
 $now = new DateTimeImmutable('now');
 $documentTitle = 'Paket Jadwal — Bel Madrasah';
 $pageEyebrow = 'PENGELOLAAN JADWAL';
-$pageHeading = 'Bel Madrasah';
+$pageHeading = 'Paket Jadwal';
 $pageSubtitle = 'Kelola paket dan pilih satu jadwal yang berlaku';
 $pageStatusLabel = 'PAKET JADWAL';
 $activePage = 'packages';
