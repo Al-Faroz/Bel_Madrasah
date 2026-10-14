@@ -156,6 +156,7 @@ Resolver kalender Normal/Khusus → scheduler/audio dan log status → restore a
 - **D5 / Konfigurasi aset:** tombol **Buka Folder Audio** dan **Buka Folder Logo** ditambahkan. Helper hanya menerima path folder aset yang diperoleh dari Database, membuka Explorer di Windows jika fungsi exec tersedia, dan mengembalikan fallback salin path jika tidak dapat menjalankannya. Tombol folder memakai aksi POST tersendiri agar tidak ikut menyimpan/mengubah preferensi konfigurasi.
 - **D6 / Backup-restore** dan **D7 / Diagnostik:** panel, badge, path panjang, tabel, dan pesan status dirapikan.
 - **Public dashboard:** ikon simbol diganti dengan SVG inline lokal. Tidak ada CDN atau font ikon baru.
+- **Pembersihan navigasi CSS:** aturan `.main-nav` lama yang membentuk navigasi horizontal di `app.css` dihapus setelah shell bersama dipastikan menjadi satu-satunya sumber markup navigasi. Gaya sidebar kini dikelola oleh `admin.css`; tidak ada aturan `.main-nav` tersisa di `app.css`.
 - **Responsivitas:** menu Admin pada lebar sempit tetap dua kolom; padding judul halaman tidak kembali membesar pada breakpoint 480 px.
 
 ### Commit penting
@@ -167,6 +168,7 @@ Resolver kalender Normal/Khusus → scheduler/audio dan log status → restore a
 - Pembuka folder aset: [0d6b771](https://github.com/Al-Faroz/Bel_Madrasah/commit/0d6b771f06d2f587e3978430db9cb4eefb98b9c1)
 - Backup/Diagnostik: [54a39f3](https://github.com/Al-Faroz/Bel_Madrasah/commit/54a39f3d87497686b89299d46676ff2e54c4801f)
 - Public icons dan responsivitas: [65b411f](https://github.com/Al-Faroz/Bel_Madrasah/commit/65b411f38abb70399f0353cb7cca857e9db63ca6)
+- Hapus CSS navigasi horizontal lama: [821e3b3](https://github.com/Al-Faroz/Bel_Madrasah/commit/821e3b38ca5909ab2d346a988da4ad979b6a543f)
 
 ### Status dan batas verifikasi
 
