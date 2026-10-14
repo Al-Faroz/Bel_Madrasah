@@ -218,8 +218,17 @@ body.admin-area { color: var(--admin-text); font-size: 14px; background: var(--a
 .admin-area .md-button-outlined,
 .admin-area .button-link-secondary { border: 1px solid #dce4df; color: var(--admin-primary); background: #fff; }
 .admin-area .action-feedback { border-radius: 5px; }
-.admin-area .package-active { border-color: #dce9e0; background: #f9fcfa; }
+.admin-area .package-active { border: 1px solid var(--admin-line); border-left: 3px solid var(--admin-primary); border-radius: 8px; background: #fff; box-shadow: 0 2px 7px rgba(29,44,54,.025); }
+.admin-area .package-active h2 { font-size: 19px; line-height: 1.4; }
+.admin-area .package-active p:not(.eyebrow) { font-size: 12px; line-height: 1.6; }
 .admin-area .package-card { border-radius: 6px; }
+.admin-area .package-card-actions .button-compact,
+.admin-area .package-form-panel .button-compact { min-height: 36px; padding: 8px 12px; border-radius: 5px; font-size: 12px; }
+.admin-area .package-card-actions .text-action { min-height: 36px; padding: 7px 10px; border-radius: 5px; }
+.admin-area .package-badge { border-radius: 4px; }
+.admin-area .package-form-panel .section-heading h2 { font-size: 16px; }
+.admin-area .package-off-days .off-day-choice { border-radius: 6px; }
+.admin-area .package-rules { border-radius: 8px; }
 .admin-area .package-card.is-active { border-color: #c8dfd0; background: #f8fbf9; }
 .admin-area .package-badge,
 .admin-area .active-indicator,
