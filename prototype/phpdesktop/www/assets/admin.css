@@ -298,3 +298,27 @@ body.admin-area { color: var(--admin-text); font-size: 14px; background: var(--a
     .admin-area .dashboard-stats { grid-template-columns: 1fr; }
     .admin-area .dashboard-main-card { padding: 16px; }
 }
+
+/* Preserve destructive/confirmation semantics after normalizing base button styles. */
+.admin-area .text-danger {
+    border: 1px solid #f0d0cc;
+    border-radius: 5px;
+    padding: 7px 10px;
+    color: #9d3027;
+    background: #fff0ee;
+}
+.admin-area .text-danger:hover {
+    color: #84251d;
+    background: #fbe0dc;
+}
+.admin-area .copy-schedule-button.is-confirm {
+    color: #fff;
+    border-color: #8e2e26;
+    background: #a13a2f;
+}
+.admin-area .copy-schedule-button.is-confirm:hover { background: #852d25; }
+.admin-area .button-link-secondary:hover {
+    border-color: #c9d8ce;
+    color: var(--admin-primary-hover);
+    background: #f7faf8;
+}
