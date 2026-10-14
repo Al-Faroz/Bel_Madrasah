@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/lib/Database.php';
+require_once __DIR__ . '/lib/AssetHelpers.php';
 
 function h(string $value): string
 {
@@ -24,6 +25,25 @@ try {
     $volume = $db->getSetting('default_volume', '80');
 
     if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+        $assetAction = (string) ($_POST['asset_action'] ?? '');
+        if ($assetAction !== '') {
+            try {
+                if (!in_array($assetAction, ['open_audio_folder', 'open_logo_folder'], true)) {
+                    throw new InvalidArgumentException('Aksi folder aset tidak dikenal.');
+                }
+                $folderPath = $assetAction === 'open_audio_folder'
+                    ? $db->getAudioAssetsDirectory()
+                    : $db->getLogoAssetsDirectory();
+                $folderLabel = $assetAction === 'open_audio_folder' ? 'Audio' : 'Logo';
+                if (openAssetFolderInExplorer($folderPath)) {
+                    $message = 'Folder ' . $folderLabel . ' dibuka di File Explorer.';
+                } else {
+                    $error = 'Folder ' . $folderLabel . ' sudah disiapkan, tetapi File Explorer tidak dapat dibuka otomatis pada runtime ini. Gunakan tombol Salin Lokasi dan tempel path di File Explorer.';
+                }
+            } catch (Throwable $exception) {
+                $error = 'Folder aset belum dapat dibuka: ' . $exception->getMessage();
+            }
+        } else {
         $schoolName = trim((string) ($_POST['school_name'] ?? ''));
         $operatorName = trim((string) ($_POST['operator_name'] ?? ''));
         $volumeInput = filter_var($_POST['default_volume'] ?? '80', FILTER_VALIDATE_INT);
@@ -52,6 +72,7 @@ try {
             } catch (InvalidArgumentException $exception) {
                 $error = $exception->getMessage();
             }
+        }
         }
     }
 } catch (Throwable $exception) {
