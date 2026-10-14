@@ -78,7 +78,7 @@ if ($db instanceof Database) {
 $now = new DateTimeImmutable('now');
 $documentTitle = 'Konfigurasi — Bel Madrasah';
 $pageEyebrow = 'PENGATURAN APLIKASI';
-$pageHeading = 'Bel Madrasah';
+$pageHeading = 'Konfigurasi';
 $pageSubtitle = 'Konfigurasi lokal dan pengelolaan lokasi aset';
 $pageStatusLabel = 'KONFIGURASI';
 $activePage = 'settings';
