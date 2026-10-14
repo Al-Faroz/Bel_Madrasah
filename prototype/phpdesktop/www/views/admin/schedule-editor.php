@@ -137,7 +137,7 @@
                             <span class="section-note"><?= count($ruleEvents) ?> kegiatan</span>
                         </div>
                         <?php if ($rule['rule_mode'] === 'special'): ?>
-                            <p class="overlap-warning"><strong>Perhatian:</strong> aturan Khusus pada hari yang sama dapat bertumpang tindih dengan atribut lain pada tanggal tertentu. Resolver dan peringatan tanggal konflik akan dilengkapi pada Tahap 6. Pastikan aturan ini memang diperlukan.</p>
+                            <p class="overlap-warning"><strong>Perhatian:</strong> aturan Khusus pada hari yang sama dapat bertumpang tindih pada tanggal tertentu. Resolver kalender sudah menandai konflik jika beberapa aturan Khusus cocok; pada konflik, pola Normal menjadi fallback. Pastikan setiap aturan Khusus memang diperlukan.</p>
                         <?php endif; ?>
                         <div class="event-list">
                             <?php if ($ruleEvents !== []): ?>
@@ -227,12 +227,12 @@
     </section>
 
     <section class="panel package-rules editor-guidance">
-        <h2>Catatan penting Tahap 5</h2>
+        <h2>Panduan aturan jadwal</h2>
         <ul>
             <li>Hari Normal adalah pola dasar. Aturan Khusus dimaksudkan untuk menggantikan pola Normal ketika atribut tanggalnya cocok; bukan memutar keduanya.</li>
             <li>Pasaran Jawa dan minggu kalender merupakan dua jenis atribut yang terpisah. Satu aturan Khusus hanya boleh memakai salah satunya.</li>
-            <li>Jika Pasaran dan Minggu kalender berpotensi cocok pada tanggal yang sama, halaman memberi peringatan. Penentuan prioritas tanggal dan fallback Normal dibuat di Tahap 6.</li>
-            <li>Audio dipilih dari folder aset lokal; aplikasi menyimpan referensi path tanpa mengunggah atau menggandakan file. Referensi audio lama tetap dipertahankan jika file belum dipindahkan.</li>
+            <li>Jika beberapa aturan Khusus cocok pada tanggal yang sama, resolver menandai konflik dan menggunakan pola Normal sebagai fallback; jadwal Khusus tidak digabung secara diam-diam.</li>
+            <li>Audio dipilih dari daftar file pada folder aset lokal; aplikasi menyimpan referensi path tanpa mengunggah atau menggandakan file. Referensi audio lama tetap dipertahankan jika file belum dipindahkan. Resolver saat ini menyuplai informasi jadwal; scheduler/pemutaran otomatis belum aktif.</li>
         </ul>
     </section>
 
