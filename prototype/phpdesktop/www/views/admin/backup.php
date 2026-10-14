@@ -4,7 +4,7 @@
  * Controller melakukan validasi dan operasi SQLite; layout bersama menyediakan shell Admin.
  */
 ?>
-<section class="intro panel page-intro">
+<section class="intro page-intro">
     <div>
         <p class="eyebrow">PERLINDUNGAN DATA</p>
         <h2>Backup dan pemulihan database</h2>
