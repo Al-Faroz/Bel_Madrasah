@@ -310,6 +310,69 @@ body.admin-area { color: var(--admin-text); font-size: 14px; background: var(--a
 .admin-area table { width: 100%; border-collapse: collapse; }
 .admin-area th { color: #56636d; background: #f6f8f9; font-size: 10px; font-weight: 800; text-align: left; }
 .admin-area td, .admin-area th { padding: 10px 12px; border-bottom: 1px solid #e8edef; vertical-align: middle; }
+
+/* D6 — backup/restore panels and tables. */
+.admin-area .backup-panel,
+.admin-area .backup-list-panel,
+.admin-area .restore-preview-panel {
+    border-radius: 8px;
+    box-shadow: 0 2px 7px rgba(29,44,54,.025);
+}
+.admin-area .backup-panel { padding: 22px; }
+.admin-area .backup-panel .section-heading { margin: 0 0 16px; }
+.admin-area .backup-list-panel,
+.admin-area .restore-preview-panel { padding: 22px; }
+.admin-area .backup-list-panel .section-heading,
+.admin-area .restore-preview-panel .section-heading { margin: 0 0 16px; }
+.admin-area .storage-path {
+    display: grid;
+    gap: 6px;
+    margin: 10px 0;
+    padding: 12px 13px;
+    border: 1px solid #e8edef;
+    border-radius: 6px;
+    background: #f8fafb;
+}
+.admin-area .storage-path code { overflow-wrap: anywhere; word-break: break-word; color: #4f5e68; font-size: 11px; }
+.admin-area .restore-confirm-form { padding: 16px; border: 1px solid #eadfbe; border-radius: 6px; background: #fffdf7; }
+.admin-area .copy-preview-warning { border-radius: 5px; }
+.admin-area .backup-result { border-color: #d5e8db; background: #f5faf6; }
+
+/* D7 — diagnostics cards distinguish reported runtime state without oversized decoration. */
+.admin-area .intro.panel {
+    grid-template-columns: minmax(0, 1fr) 190px;
+    gap: 22px;
+    padding: 22px;
+    border-radius: 8px;
+    box-shadow: 0 2px 7px rgba(29,44,54,.025);
+}
+.admin-area .intro.panel h2 { font-size: 21px; line-height: 1.35; }
+.admin-area .intro.panel p:not(.eyebrow) { font-size: 12px; line-height: 1.65; }
+.admin-area .checks-grid { gap: 12px; }
+.admin-area .check-card,
+.admin-area .storage-panel,
+.admin-area .audio-panel { border-radius: 8px; box-shadow: 0 2px 7px rgba(29,44,54,.025); }
+.admin-area .check-card { padding: 16px; }
+.admin-area .check-value { font-size: 20px; overflow-wrap: anywhere; }
+.admin-area .check-icon { width: 25px; height: 25px; border-radius: 5px; }
+.admin-area .storage-header { gap: 16px; }
+.admin-area .storage-header h3,
+.admin-area .audio-copy h3 { font-size: 15px; }
+.admin-area .storage-header p,
+.admin-area .storage-help { font-size: 11px; line-height: 1.6; }
+.admin-area .storage-badge { border-radius: 4px; font-size: 9px; }
+.admin-area .record-grid > div { border-radius: 5px; }
+.admin-area .schema-table-list { border-radius: 5px; overflow-wrap: anywhere; }
+.admin-area .storage-error { overflow-x: auto; white-space: pre-wrap; overflow-wrap: anywhere; }
+.admin-area .audio-icon { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 7px; color: var(--admin-primary); background: var(--admin-primary-soft); font-size: 0; }
+.admin-area .audio-icon svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+@media (max-width: 760px) {
+    .admin-area .intro.panel { grid-template-columns: 1fr; }
+    .admin-area .backup-panel,
+    .admin-area .backup-list-panel,
+    .admin-area .restore-preview-panel { padding: 17px; }
+}
+
 .admin-area footer {
     display: flex;
     justify-content: space-between;
