@@ -53,7 +53,7 @@ $offDayLabel = $activePackage === null ? '—' : ($offDayLabels[(string) ($activ
 
 $documentTitle = 'Dashboard — Bel Madrasah';
 $pageEyebrow = 'PUSAT KONTROL OPERASIONAL';
-$pageHeading = 'Bel Madrasah';
+$pageHeading = 'Dashboard';
 $pageSubtitle = 'Ringkasan pengaturan jadwal dan kesiapan operasional';
 $pageStatusLabel = 'DASHBOARD ADMIN';
 $activePage = 'dashboard';
