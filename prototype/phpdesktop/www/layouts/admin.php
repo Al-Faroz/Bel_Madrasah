@@ -44,18 +44,31 @@ try {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#17633e">
+    <meta name="theme-color" content="#1f6b46">
     <title><?= htmlspecialchars($documentTitle, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></title>
     <link rel="stylesheet" href="assets/app.css">
+    <link rel="stylesheet" href="assets/admin.css">
 </head>
 <body class="admin-area">
 <div class="app-shell admin-shell">
-    <?php require __DIR__ . '/../partials/admin-header.php'; ?>
-    <?php require __DIR__ . '/../partials/admin-nav.php'; ?>
-    <main class="admin-main">
-        <?php require $viewPath; ?>
-    </main>
-    <?php require __DIR__ . '/../partials/admin-footer.php'; ?>
+    <aside class="admin-sidebar" aria-label="Area administrasi">
+        <a class="sidebar-brand" href="dashboard.php" aria-label="Bel Madrasah — Dashboard">
+            <span class="sidebar-brand-mark" aria-hidden="true">BM</span>
+            <span class="sidebar-brand-copy"><strong>Bel Madrasah</strong><small>PUSAT KONTROL</small></span>
+        </a>
+        <?php require __DIR__ . '/../partials/admin-nav.php'; ?>
+        <div class="sidebar-bottom">
+            <span class="sidebar-bottom-mark" aria-hidden="true"></span>
+            <span><strong>Mode lokal</strong><small>Data tersimpan di perangkat ini</small></span>
+        </div>
+    </aside>
+    <div class="admin-workspace">
+        <?php require __DIR__ . '/../partials/admin-header.php'; ?>
+        <main class="admin-main">
+            <?php require $viewPath; ?>
+        </main>
+        <?php require __DIR__ . '/../partials/admin-footer.php'; ?>
+    </div>
 </div>
 </body>
 </html>
