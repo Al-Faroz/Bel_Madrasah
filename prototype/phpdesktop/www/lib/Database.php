@@ -617,6 +617,53 @@ final class Database
     }
 
     /**
+     * Permanently delete a non-active package and its dependent rules/events.
+     * Playback history is retained by its ON DELETE SET NULL foreign keys.
+     */
+    public function hardDeleteSchedulePackage(int $id): array
+    {
+        $package = $this->getSchedulePackage($id);
+        if ($package === null) {
+            throw new InvalidArgumentException('Paket yang akan dihapus tidak ditemukan.');
+        }
+        if ((int) $package['is_active'] === 1) {
+            throw new InvalidArgumentException('Paket aktif tidak dapat dihapus. Aktifkan paket lain terlebih dahulu.');
+        }
+        $packageCount = (int) $this->pdo->query('SELECT COUNT(*) FROM schedule_packages')->fetchColumn();
+        if ($packageCount <= 1) {
+            throw new InvalidArgumentException('Paket terakhir tidak dapat dihapus. Aplikasi harus memiliki minimal satu paket jadwal.');
+        }
+
+        $this->pdo->beginTransaction();
+        try {
+            $ruleStatement = $this->pdo->prepare('SELECT id FROM day_rules WHERE package_id = :package_id');
+            $ruleStatement->execute([':package_id' => $id]);
+            $ruleIds = array_map('intval', $ruleStatement->fetchAll(PDO::FETCH_COLUMN));
+            $eventCount = 0;
+            if ($ruleIds !== []) {
+                $placeholders = implode(',', array_fill(0, count($ruleIds), '?'));
+                $eventStatement = $this->pdo->prepare('SELECT COUNT(*) FROM bell_events WHERE day_rule_id IN (' . $placeholders . ')');
+                $eventStatement->execute($ruleIds);
+                $eventCount = (int) $eventStatement->fetchColumn();
+            }
+
+            $statement = $this->pdo->prepare('DELETE FROM schedule_packages WHERE id = :id AND is_active = 0');
+            $statement->execute([':id' => $id]);
+            if ($statement->rowCount() !== 1) {
+                throw new RuntimeException('Paket tidak terhapus. Data mungkin sudah berubah; muat ulang halaman.');
+            }
+
+            $this->pdo->commit();
+            return ['rules' => count($ruleIds), 'events' => $eventCount];
+        } catch (Throwable $exception) {
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
+            throw $exception;
+        }
+    }
+
+    /**
      * Atomically switch the globally active package. The partial unique index
      * remains the final guard against two active packages.
      */
