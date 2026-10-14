@@ -134,6 +134,7 @@ body.admin-area { color: var(--admin-text); font-size: 14px; background: var(--a
     position: relative;
     display: flex;
     align-items: center;
+    justify-content: flex-start;
     gap: 14px;
     min-height: 84px;
     margin: 0;
