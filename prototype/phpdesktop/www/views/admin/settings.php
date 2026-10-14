@@ -3,7 +3,6 @@
  * Konfigurasi view.
  * Controller menangani penyimpanan SQLite dan layout bersama menangani shell Admin.
  */
-<?php
 $schoolLogoRealPath = $schoolLogoPath !== '' ? realpath($schoolLogoPath) : false;
 $schoolLogoIsManaged = false;
 foreach ($logoAssets as $logoAsset) {
