@@ -750,51 +750,86 @@ final class Database
     }
 
     /**
-     * Replace all events in a target weekday rule with a source rule's events.
-     * The package and weekday checks prevent cross-package or wrong-day edits.
-     * Audio paths are copied as references; the audio files themselves are untouched.
+     * Replace every rule and event on a target weekday with a copy of a source weekday.
+     * Runs atomically; package and all other weekdays remain untouched.
+     * Audio files are never copied—only their stored references are reused.
+     *
+     * @return array{rules:int,events:int}
      */
-    public function replaceDayScheduleFromSource(int $packageId, int $sourceRuleId, int $targetRuleId): int
+    public function replaceWeekdayScheduleFromSource(int $packageId, int $sourceWeekday, int $targetWeekday): array
     {
-        $sourceRule = $this->getDayRule($sourceRuleId);
-        $targetRule = $this->getDayRule($targetRuleId);
-        if ($sourceRule === null || $targetRule === null) {
-            throw new InvalidArgumentException('Aturan sumber atau tujuan tidak ditemukan. Silakan buat pratinjau ulang.');
+        if ($sourceWeekday < 1 || $sourceWeekday > 7 || $targetWeekday < 1 || $targetWeekday > 7
+            || $sourceWeekday === $targetWeekday) {
+            throw new InvalidArgumentException('Pilih dua hari berbeda yang valid.');
         }
-        if ((int) $sourceRule['package_id'] !== $packageId || (int) $targetRule['package_id'] !== $packageId) {
-            throw new InvalidArgumentException('Sumber dan tujuan harus berada pada paket jadwal yang sama.');
-        }
-        if ((int) $sourceRule['weekday'] !== 1 || $sourceRule['rule_mode'] !== 'normal'
-            || (int) $targetRule['weekday'] !== 2 || $targetRule['rule_mode'] !== 'normal') {
-            throw new InvalidArgumentException('Operasi ini hanya menyalin aturan Normal Senin ke aturan Normal Selasa.');
+        if ($this->getSchedulePackage($packageId) === null) {
+            throw new InvalidArgumentException('Paket jadwal tidak ditemukan.');
         }
 
-        $sourceEvents = $this->getBellEvents($sourceRuleId);
-        $now = date('Y-m-d H:i:s');
         $this->pdo->beginTransaction();
         try {
-            $delete = $this->pdo->prepare('DELETE FROM bell_events WHERE day_rule_id = :day_rule_id');
-            $delete->execute([':day_rule_id' => $targetRuleId]);
-            $insert = $this->pdo->prepare(
+            $sourceRules = $this->getDayRules($packageId, $sourceWeekday);
+            if ($sourceRules === []) {
+                throw new InvalidArgumentException('Hari sumber belum memiliki aturan. Tidak ada data tujuan yang diubah.');
+            }
+
+            $sourceRulesWithEvents = [];
+            $eventCount = 0;
+            foreach ($sourceRules as $sourceRule) {
+                $events = $this->getBellEvents((int) $sourceRule['id']);
+                $sourceRulesWithEvents[] = ['rule' => $sourceRule, 'events' => $events];
+                $eventCount += count($events);
+            }
+
+            $deleteTarget = $this->pdo->prepare(
+                'DELETE FROM day_rules WHERE package_id = :package_id AND weekday = :weekday'
+            );
+            $deleteTarget->execute([':package_id' => $packageId, ':weekday' => $targetWeekday]);
+
+            $now = date('Y-m-d H:i:s');
+            $insertRule = $this->pdo->prepare(
+                'INSERT INTO day_rules
+                    (package_id, weekday, rule_mode, special_type, special_value, is_enabled, created_at, updated_at)
+                 VALUES
+                    (:package_id, :weekday, :rule_mode, :special_type, :special_value, :is_enabled, :created_at, :updated_at)'
+            );
+            $insertEvent = $this->pdo->prepare(
                 'INSERT INTO bell_events
                     (day_rule_id, name, event_time, audio_path, is_enabled, sort_order, created_at, updated_at)
                  VALUES
                     (:day_rule_id, :name, :event_time, :audio_path, :is_enabled, :sort_order, :created_at, :updated_at)'
             );
-            foreach ($sourceEvents as $event) {
-                $insert->execute([
-                    ':day_rule_id' => $targetRuleId,
-                    ':name' => (string) $event['name'],
-                    ':event_time' => (string) $event['event_time'],
-                    ':audio_path' => (string) $event['audio_path'],
-                    ':is_enabled' => (int) $event['is_enabled'],
-                    ':sort_order' => (int) $event['sort_order'],
+
+            foreach ($sourceRulesWithEvents as $sourceItem) {
+                $sourceRule = $sourceItem['rule'];
+                $insertRule->execute([
+                    ':package_id' => $packageId,
+                    ':weekday' => $targetWeekday,
+                    ':rule_mode' => (string) $sourceRule['rule_mode'],
+                    ':special_type' => $sourceRule['special_type'],
+                    ':special_value' => $sourceRule['special_value'],
+                    ':is_enabled' => (int) $sourceRule['is_enabled'],
                     ':created_at' => $now,
                     ':updated_at' => $now,
                 ]);
+                $newRuleId = (int) $this->pdo->lastInsertId();
+
+                foreach ($sourceItem['events'] as $event) {
+                    $insertEvent->execute([
+                        ':day_rule_id' => $newRuleId,
+                        ':name' => (string) $event['name'],
+                        ':event_time' => (string) $event['event_time'],
+                        ':audio_path' => (string) $event['audio_path'],
+                        ':is_enabled' => (int) $event['is_enabled'],
+                        ':sort_order' => (int) $event['sort_order'],
+                        ':created_at' => $now,
+                        ':updated_at' => $now,
+                    ]);
+                }
             }
+
             $this->pdo->commit();
-            return count($sourceEvents);
+            return ['rules' => count($sourceRulesWithEvents), 'events' => $eventCount];
         } catch (Throwable $exception) {
             if ($this->pdo->inTransaction()) {
                 $this->pdo->rollBack();
