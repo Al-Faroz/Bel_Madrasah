@@ -191,3 +191,20 @@ Minta pengujian pada paket PHP Desktop Chrome 130.1 + PHP 8.3 yang sebenarnya: b
 - CSS statis diaudit: 65.279 karakter / 912 baris, 683 blok aturan sederhana, 450 selector unik, 155 selector berulang. Gaya responsif tambahan hanya menyasar komponen baru; konsolidasi selector lama ditahan sampai ada screenshot regresi karena sebagian pengulangan berasal dari media query/override.
 - Risiko prioritas: uji pemulihan dengan file valid/rusak, pemeriksaan koneksi SQLite setelah restore, regresi data jadwal/audio, konsistensi navigasi window PHP Desktop, audit keamanan POST/CSRF, dan konsolidasi CSS berdasarkan konteks media query.
 
+## Update audit UI Admin — 2026-10-14
+
+### Hasil pemeriksaan acuan RoyalUI dan perubahan shell
+
+- Template resmi RoyalUI diperiksa pada struktur partial sidebar dan navbar. Pola yang dipakai sebagai acuan adalah navigasi sidebar, topbar terpisah, indikator halaman aktif, serta konten dashboard berbasis panel; dependensi template tidak dipasang dari CDN.
+- prototype/phpdesktop/www/layouts/admin.php sekarang memakai grid shell Admin: sidebar navigasi dan workspace terpisah. Layout public tidak diubah.
+- prototype/phpdesktop/www/partials/admin-nav.php menyatukan urutan navigasi Admin dan state halaman aktif; ikon navigasi menggunakan SVG inline lokal, tanpa font/icon remote.
+- prototype/phpdesktop/www/assets/admin.css ditambahkan sebagai stylesheet khusus Admin dan dimuat setelah app.css. Tujuannya membatasi redesign visual Admin agar tidak mengubah tampilan public.
+- Ikon metrik di view Dashboard diganti dari karakter Unicode menjadi SVG inline.
+- Commit implementasi: 4829b768, df42b40d, 189e1ef8, 38361830, d181cbbd, 02a1f267.
+
+### Status yang benar
+
+- **IMPLEMENTED (kode repository):** shell sidebar/topbar, navigasi aktif, stylesheet Admin lokal, ikon SVG.
+- **BELUM DIVERIFIKASI:** screenshot setelah perubahan, resize 1366/1024/390 px, klik navigasi seluruh halaman, overflow setiap modul, serta kompatibilitas runtime PHP Desktop Chrome 130.1 pada Windows.
+- Screenshot pengguna yang sebelumnya memperlihatkan navigasi horizontal adalah baseline sebelum perubahan shell ini; screenshot tersebut tidak membuktikan tampilan terbaru.
+- Tidak ada klaim LOCAL TEST PASS untuk perubahan UI ini. Pengujian harus dilakukan pada build PHP Desktop target dan hasilnya dicatat setelah ada bukti aktual.
