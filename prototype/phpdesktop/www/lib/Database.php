@@ -875,8 +875,18 @@ final class Database
                 }
             }
 
+            // Verify the target while the transaction is still open; roll back if the copy is incomplete.
+            $copiedRules = $this->getDayRules($packageId, $targetWeekday);
+            $copiedEventCount = 0;
+            foreach ($copiedRules as $copiedRule) {
+                $copiedEventCount += count($this->getBellEvents((int) $copiedRule['id']));
+            }
+            if (count($copiedRules) !== count($sourceRulesWithEvents) || $copiedEventCount !== $eventCount) {
+                throw new RuntimeException('Verifikasi salin jadwal gagal. Perubahan hari tujuan dibatalkan.');
+            }
+
             $this->pdo->commit();
-            return ['rules' => count($sourceRulesWithEvents), 'events' => $eventCount];
+            return ['rules' => count($copiedRules), 'events' => $copiedEventCount];
         } catch (Throwable $exception) {
             if ($this->pdo->inTransaction()) {
                 $this->pdo->rollBack();
