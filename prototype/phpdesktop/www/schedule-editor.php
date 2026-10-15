@@ -28,6 +28,8 @@ $editingRuleId = 0;
 $ruleForm = ['weekday' => '1', 'rule_mode' => 'normal', 'special_type' => 'pasaran', 'special_value' => 'Legi', 'is_enabled' => '1'];
 $eventFormErrors = [];
 $copyPreview = null;
+$copySourceWeekday = (int) ($_POST['source_weekday'] ?? 1);
+$copyTargetWeekday = (int) ($_POST['target_weekday'] ?? 2);
 $audioAssets = [];
 
 try {
@@ -50,8 +52,8 @@ try {
     if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         $action = (string) ($_POST['editor_action'] ?? '');
         if ($action === 'preview_copy_schedule') {
-            $sourceWeekday = (int) ($_POST['source_weekday'] ?? 1);
-            $targetWeekday = (int) ($_POST['target_weekday'] ?? 2);
+            $sourceWeekday = $copySourceWeekday;
+            $targetWeekday = $copyTargetWeekday;
             if ($sourceWeekday < 1 || $sourceWeekday > 7 || $targetWeekday < 1 || $targetWeekday > 7
                 || $sourceWeekday === $targetWeekday) {
                 throw new InvalidArgumentException('Hari sumber dan tujuan harus valid dan berbeda.');
@@ -99,8 +101,8 @@ try {
                 'target_count' => $targetEventCount,
             ];
         } elseif ($action === 'confirm_copy_schedule') {
-            $sourceWeekday = (int) ($_POST['source_weekday'] ?? 0);
-            $targetWeekday = (int) ($_POST['target_weekday'] ?? 0);
+            $sourceWeekday = $copySourceWeekday;
+            $targetWeekday = $copyTargetWeekday;
             $copyResult = $db->replaceWeekdayScheduleFromSource($selectedPackageId, $sourceWeekday, $targetWeekday);
             $sourceDayName = $weekdays[$sourceWeekday] ?? 'hari sumber';
             $targetDayName = $weekdays[$targetWeekday] ?? 'hari tujuan';
