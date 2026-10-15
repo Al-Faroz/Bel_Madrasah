@@ -68,12 +68,12 @@
                 <?php endif; ?>
                 <div class="copy-preview-warning"><strong>Perhatian:</strong> seluruh aturan dan kegiatan pada hari tujuan akan diganti, termasuk aturan Khusus. Referensi audio disalin tanpa menggandakan file. Hari sumber, paket lain, dan hari lain tidak berubah.</div>
                 <div class="copy-preview-actions">
-                    <form method="post" action="schedule-editor.php?package_id=<?= $selectedPackageId ?>">
+                    <form id="copy-confirm-form" method="post" action="schedule-editor.php?package_id=<?= $selectedPackageId ?>">
                         <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>">
                         <input type="hidden" name="editor_action" value="confirm_copy_schedule">
                         <input type="hidden" name="source_weekday" value="<?= (int) $copyPreview['source_weekday'] ?>">
                         <input type="hidden" name="target_weekday" value="<?= (int) $copyPreview['target_weekday'] ?>">
-                        <button type="submit" class="copy-schedule-button is-confirm">Ya, Ganti Seluruh Jadwal <?= h($targetDayName) ?></button>
+                        <button type="button" class="copy-schedule-button is-confirm" onclick="document.getElementById('copy-confirm-form').submit();">Ya, Ganti Seluruh Jadwal <?= h($targetDayName) ?></button>
                     </form>
                     <a class="button-link-secondary" href="schedule-editor.php?package_id=<?= $selectedPackageId ?>">Batal</a>
                 </div>
