@@ -492,3 +492,102 @@ body.admin-area { color: var(--admin-text); font-size: 14px; background: var(--a
     color: var(--admin-primary-hover);
     background: #f7faf8;
 }
+
+/* Schedule editor follow-up: reserve the full content width for the editable event table. */
+.admin-area .editor-grid {
+    grid-template-columns: minmax(0, 1fr);
+}
+.admin-area .editor-rule-form {
+    width: 100%;
+    max-width: 760px;
+}
+.admin-area .editor-rules-list {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+}
+.admin-area .rules-list-help {
+    max-width: 900px;
+    margin: 8px 0 14px;
+    line-height: 1.55;
+}
+.admin-area .bell-events-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+.admin-area .bell-events-table {
+    width: 100%;
+    min-width: 900px;
+    table-layout: fixed;
+}
+.admin-area .bell-events-table th:nth-child(1) { width: 13%; }
+.admin-area .bell-events-table th:nth-child(2) { width: 22%; }
+.admin-area .bell-events-table th:nth-child(3) { width: 8%; }
+.admin-area .bell-events-table th:nth-child(4) { width: 27%; }
+.admin-area .bell-events-table th:nth-child(5) { width: 10%; }
+.admin-area .bell-events-table th:nth-child(6) { width: 20%; }
+.admin-area .bell-events-table td,
+.admin-area .bell-events-table th {
+    padding: 8px 9px;
+    overflow-wrap: anywhere;
+}
+.admin-area .bell-events-table td input:not([type="checkbox"]):not([type="file"]),
+.admin-area .bell-events-table td select {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+}
+.admin-area .bell-events-table .bell-time-cell input[type="time"] {
+    min-width: 108px;
+}
+.admin-area .bell-audio-input select {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+}
+.admin-area .bell-audio-status {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+.admin-area .bell-actions-cell {
+    min-width: 0;
+    white-space: normal;
+}
+.admin-area .bell-actions-cell .delete-event-form {
+    margin-top: 6px;
+}
+.admin-area .copy-schedule-route {
+    width: 100%;
+    max-width: 760px;
+}
+.admin-area .copy-schedule-day select {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    min-height: 38px;
+    padding: 8px 10px;
+    border: 1px solid #cfdad1;
+    border-radius: 5px;
+    color: var(--ink);
+    background: #fff;
+    font: inherit;
+    font-size: 12px;
+}
+.admin-area .copy-schedule-day small {
+    line-height: 1.4;
+}
+@media (max-width: 640px) {
+    .admin-area .copy-schedule-route {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .admin-area .copy-schedule-arrow {
+        justify-self: center;
+        transform: rotate(90deg);
+    }
+    .admin-area .bell-events-table {
+        min-width: 900px;
+    }
+}
+
