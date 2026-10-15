@@ -269,3 +269,24 @@ Minta pengujian pada paket PHP Desktop Chrome 130.1 + PHP 8.3 yang sebenarnya: b
 - Proteksi server menolak hard delete paket aktif, paket terakhir, dan ID yang tidak valid/tidak ditemukan. UI meminta konfirmasi eksplisit dengan istilah HARD DELETE PERMANEN. File audio fisik tidak disentuh oleh operasi ini.
 - Implementasi: [05eeb0d](https://github.com/Al-Faroz/Bel_Madrasah/commit/05eeb0df09624bcc3c41af1d97f0f6a32a5b5dbe), [f85803d](https://github.com/Al-Faroz/Bel_Madrasah/commit/f85803dc495ed36c7accd96e52a63f292cb4d298), [3353cd6](https://github.com/Al-Faroz/Bel_Madrasah/commit/3353cd6f906fba70021b148c6a95c91adbeb8369).
 - **Status: IMPLEMENTED, belum LOCAL TEST PASS.** Belum diuji dengan database SQLite aktual, foreign-key cascade, proteksi paket aktif/terakhir, duplicate nama, atau runtime PHP Desktop Windows.
+
+## 8. Follow-up — aktivasi paket dan Editor Jadwal (2026-10-15)
+
+Perbaikan kode yang sudah masuk ke branch utama:
+
+- Aktivasi paket kini diverifikasi kembali dari database setelah operasi selesai; dialog konfirmasi JavaScript yang sebelumnya dapat membatalkan submit dihapus karena pergantian paket tidak menghapus data.
+- Salin Jadwal kini menyediakan pilihan hari sumber dan tujuan, mengirim konteks paket pada URL dan POST, serta mempertahankan pilihan hari saat pratinjau/konfirmasi. Perintah salin tetap mengganti seluruh aturan dan kegiatan hari tujuan, bukan hanya kegiatan dari aturan Normal.
+- Kolom tabel kegiatan diselaraskan: input jam berada di kolom Jam, nama kegiatan di Keterangan bel, urutan di kolom tersendiri, lalu Audio, Status, dan Aksi.
+- Daftar Pola yang Tersimpan kini mendapat ruang lebar penuh agar tabel dapat dibaca; pada layar sempit tabel memakai scroll horizontal.
+- Tombol Edit Aturan diganti menjadi Ubah Pola Hari, disertai penjelasan bahwa tabel mengedit kegiatan bel, sedangkan formulir pola mengedit Normal/Khusus, atribut khusus, dan status aturan.
+
+### Status verifikasi
+
+**Kode diperbarui dan diperiksa secara statis; belum LOCAL TEST PASS.** Pemeriksaan statis memastikan handler aktivasi memiliki verifikasi pasca-simpan, form salin memiliki pilihan hari, kolom tabel sesuai dengan kontrol input, dan CSS lebar sudah tersedia. Ini bukan bukti bahwa tombol sudah berhasil di PHP Desktop Windows. Masih wajib diuji langsung:
+
+1. Aktifkan paket nonaktif, muat ulang halaman, dan pastikan status aktif berubah serta halaman Public membaca paket baru.
+2. Pratinjau salin untuk dua hari berbeda, batalkan, lalu ulangi dan konfirmasi; periksa seluruh aturan/kegiatan hari tujuan dan pastikan hari sumber serta hari lain tidak berubah.
+3. Edit jam, nama, urutan, audio, dan status satu kegiatan; simpan dan buka ulang halaman untuk memastikan persistensi.
+4. Uji lebar tabel pada jendela desktop normal dan jendela yang dipersempit.
+5. Ubah pola Normal/Khusus melalui Ubah Pola Hari, simpan, dan pastikan perubahan tidak mengubah data kegiatan bel yang ada.
+
