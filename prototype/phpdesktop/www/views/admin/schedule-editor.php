@@ -22,20 +22,28 @@
 
     <section class="panel copy-schedule-panel">
         <div class="section-heading">
-            <div><p class="eyebrow">AKSI CEPAT</p><h2>Salin jadwal antarhari</h2><p class="copy-schedule-description">Salin seluruh kegiatan dari Senin ke Selasa pada paket ini. Data Selasa akan diganti setelah konfirmasi; paket dan hari lain tetap aman.</p></div>
+            <div><p class="eyebrow">AKSI CEPAT</p><h2>Salin jadwal antarhari</h2><p class="copy-schedule-description">Pilih hari sumber dan tujuan. Seluruh pola Normal/Khusus beserta kegiatan pada hari tujuan akan diganti setelah Anda memeriksa pratinjau.</p></div>
         </div>
         <?php if ($copyPreview === null): ?>
-            <form method="post" action="schedule-editor.php" class="copy-schedule-form">
+            <form method="post" action="schedule-editor.php?package_id=<?= $selectedPackageId ?>" class="copy-schedule-form">
                 <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>">
                 <input type="hidden" name="editor_action" value="preview_copy_schedule">
-                <input type="hidden" name="source_weekday" value="1">
-                <input type="hidden" name="target_weekday" value="2">
                 <div class="copy-schedule-route">
-                    <div class="copy-schedule-day"><span>Sumber</span><strong>Senin</strong><small>Seluruh kegiatan</small></div>
+                    <label class="copy-schedule-day" for="copy-source-weekday"><span>Sumber</span>
+                        <select id="copy-source-weekday" name="source_weekday" required>
+                            <?php foreach ($weekdays as $dayNumber => $dayName): ?><option value="<?= $dayNumber ?>" <?= $copySourceWeekday === $dayNumber ? 'selected' : '' ?>><?= h($dayName) ?></option><?php endforeach; ?>
+                        </select>
+                        <small>Jadwal yang disalin</small>
+                    </label>
                     <span class="copy-schedule-arrow" aria-hidden="true">→</span>
-                    <div class="copy-schedule-day is-target"><span>Tujuan</span><strong>Selasa</strong><small>Ganti seluruh kegiatan</small></div>
+                    <label class="copy-schedule-day is-target" for="copy-target-weekday"><span>Tujuan</span>
+                        <select id="copy-target-weekday" name="target_weekday" required>
+                            <?php foreach ($weekdays as $dayNumber => $dayName): ?><option value="<?= $dayNumber ?>" <?= $copyTargetWeekday === $dayNumber ? 'selected' : '' ?>><?= h($dayName) ?></option><?php endforeach; ?>
+                        </select>
+                        <small>Jadwal yang diganti</small>
+                    </label>
                 </div>
-                <button type="submit" class="copy-schedule-button">Pratinjau Salin Jadwal</button>
+                <button type="submit" class="copy-schedule-button">Tampilkan Pratinjau</button>
             </form>
         <?php else: ?>
             <div class="copy-preview-panel" aria-live="polite">
@@ -60,7 +68,7 @@
                 <?php endif; ?>
                 <div class="copy-preview-warning"><strong>Perhatian:</strong> seluruh aturan dan kegiatan pada hari tujuan akan diganti, termasuk aturan Khusus. Referensi audio disalin tanpa menggandakan file. Hari sumber, paket lain, dan hari lain tidak berubah.</div>
                 <div class="copy-preview-actions">
-                    <form method="post" action="schedule-editor.php" onsubmit="return confirm('Yakin mengganti seluruh aturan dan kegiatan hari tujuan dengan jadwal hari sumber? Paket dan hari lain tidak diubah.');">
+                    <form method="post" action="schedule-editor.php?package_id=<?= $selectedPackageId ?>" onsubmit="return confirm('Yakin mengganti seluruh aturan dan kegiatan hari tujuan dengan jadwal hari sumber? Paket dan hari lain tidak diubah.');">
                         <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>">
                         <input type="hidden" name="editor_action" value="confirm_copy_schedule">
                         <input type="hidden" name="source_weekday" value="<?= (int) $copyPreview['source_weekday'] ?>">
@@ -111,6 +119,7 @@
 
         <section class="panel editor-rules-list">
             <div class="section-heading"><div><p class="eyebrow">POLA YANG TERSIMPAN</p><h2>Aturan per hari</h2></div><span class="section-note" id="rules-count"><?= count($rules ?? []) ?> aturan</span></div>
+            <p class="form-note rules-list-help">Kegiatan bel dapat diedit langsung pada tabel di bawah. <strong>Ubah Pola Hari</strong> hanya untuk mengubah jenis pola (Normal/Khusus), atribut khusus, dan status aturan.</p>
             <label class="schedule-day-filter">Tampilkan data hari
                 <select id="schedule-day-filter" aria-label="Tampilkan aturan untuk hari">
                     <?php foreach ($weekdays as $dayNumber => $dayName): ?><option value="<?= $dayNumber ?>" <?= (int) $ruleForm['weekday'] === $dayNumber ? 'selected' : '' ?>><?= h($dayName) ?></option><?php endforeach; ?>
@@ -142,7 +151,7 @@
                             <span class="package-badge <?= (int) $rule['is_enabled'] === 1 ? 'active' : '' ?>"><?= (int) $rule['is_enabled'] === 1 ? 'AKTIF' : 'NONAKTIF' ?></span>
                         </div>
                         <div class="rule-card-actions">
-                            <form method="post" action="schedule-editor.php"><input type="hidden" name="package_id" value="<?= $selectedPackageId ?>"><input type="hidden" name="editor_action" value="edit_rule"><input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>"><button type="submit" class="button-compact rule-edit-button">Edit Aturan</button></form>
+                            <form method="post" action="schedule-editor.php?package_id=<?= $selectedPackageId ?>"><input type="hidden" name="package_id" value="<?= $selectedPackageId ?>"><input type="hidden" name="editor_action" value="edit_rule"><input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>"><button type="submit" class="button-compact rule-edit-button">Ubah Pola Hari</button></form>
                             <span class="section-note"><?= count($ruleEvents) ?> kegiatan</span>
                         </div>
                         <?php if ($rule['rule_mode'] === 'special'): ?>
@@ -152,7 +161,7 @@
                             <?php if ($ruleEvents !== []): ?>
                                 <div class="bell-events-table-wrap">
                                     <table class="bell-events-table">
-                                        <thead><tr><th>Jam</th><th>Keterangan bel</th><th>Audio</th><th>Status</th><th>Aksi</th></tr></thead>
+                                        <thead><tr><th>Jam</th><th>Keterangan bel</th><th>Urutan</th><th>Audio</th><th>Status</th><th>Aksi</th></tr></thead>
                                         <tbody>
                                         <?php foreach ($ruleEvents as $event): ?>
                                             <?php
@@ -168,18 +177,19 @@
                                             ?>
                                             <tr>
                                                 <td class="bell-time-cell">
-                                                    <form id="event-form-<?= (int) $event['id'] ?>" class="bell-event-row-form" method="post" action="schedule-editor.php">
+                                                    <form id="event-form-<?= (int) $event['id'] ?>" class="bell-event-row-form" method="post" action="schedule-editor.php?package_id=<?= $selectedPackageId ?>">
                                                         <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>"><input type="hidden" name="editor_action" value="save_event"><input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>"><input type="hidden" name="event_id" value="<?= (int) $event['id'] ?>">
                                                     </form>
-                                                    <strong><?= h(substr((string) $event['event_time'], 0, 5)) ?></strong>
+                                                    <label class="sr-only" for="event-time-<?= (int) $event['id'] ?>">Jam</label>
+                                                    <input form="event-form-<?= (int) $event['id'] ?>" id="event-time-<?= (int) $event['id'] ?>" type="time" name="event_time" required value="<?= h((string) $event['event_time']) ?>">
                                                 </td>
                                                 <td>
-                                                        <label class="sr-only" for="event-name-<?= (int) $event['id'] ?>">Keterangan bel</label>
-                                                        <input form="event-form-<?= (int) $event['id'] ?>" id="event-name-<?= (int) $event['id'] ?>" name="event_name" maxlength="100" required value="<?= h((string) $event['name']) ?>">
-                                                        <label class="sr-only" for="event-time-<?= (int) $event['id'] ?>">Jam</label>
-                                                        <input form="event-form-<?= (int) $event['id'] ?>" id="event-time-<?= (int) $event['id'] ?>" type="time" name="event_time" required value="<?= h((string) $event['event_time']) ?>">
-                                                        <label class="sr-only" for="event-order-<?= (int) $event['id'] ?>">Urutan</label>
-                                                        <input form="event-form-<?= (int) $event['id'] ?>" id="event-order-<?= (int) $event['id'] ?>" type="number" name="sort_order" min="0" max="9999" required value="<?= (int) $event['sort_order'] ?>" title="Urutan pemutaran">
+                                                    <label class="sr-only" for="event-name-<?= (int) $event['id'] ?>">Keterangan bel</label>
+                                                    <input form="event-form-<?= (int) $event['id'] ?>" id="event-name-<?= (int) $event['id'] ?>" name="event_name" maxlength="100" required value="<?= h((string) $event['name']) ?>">
+                                                </td>
+                                                <td class="bell-order-cell">
+                                                    <label class="sr-only" for="event-order-<?= (int) $event['id'] ?>">Urutan</label>
+                                                    <input form="event-form-<?= (int) $event['id'] ?>" id="event-order-<?= (int) $event['id'] ?>" type="number" name="sort_order" min="0" max="9999" required value="<?= (int) $event['sort_order'] ?>" title="Urutan pemutaran">
                                                 </td>
                                                 <td>
                                                         <label class="bell-audio-input" for="event-audio-<?= (int) $event['id'] ?>">Audio dari folder aset</label>
