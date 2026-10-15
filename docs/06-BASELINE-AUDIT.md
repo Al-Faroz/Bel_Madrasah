@@ -290,3 +290,11 @@ Perbaikan kode yang sudah masuk ke branch utama:
 4. Uji lebar tabel pada jendela desktop normal dan jendela yang dipersempit.
 5. Ubah pola Normal/Khusus melalui Ubah Pola Hari, simpan, dan pastikan perubahan tidak mengubah data kegiatan bel yang ada.
 
+### Koreksi Salin Jadwal — hasil tampak kosong setelah salin
+
+Audit lanjutan menemukan bahwa setelah POST konfirmasi, nilai hari pada formulir aturan tetap kembali ke nilai awal (Senin). Skrip filter daftar pola mengikuti nilai formulir tersebut, sehingga hari tujuan yang baru disalin dapat tersembunyi walaupun data telah tersimpan. Controller kini mengarahkan nilai hari formulir/filter ke hari tujuan dan menyebutkan hari tujuan pada pesan hasil.
+
+Fungsi database juga menghitung ulang aturan serta kegiatan pada hari tujuan sebelum commit. Jika jumlah aturan atau kegiatan tidak sama dengan sumber, transaksi dibatalkan agar salinan parsial tidak dianggap berhasil.
+
+**Status:** perubahan sudah masuk ke branch utama dan diperiksa secara statis; tetap belum LOCAL TEST PASS sampai alur salin dijalankan di PHP Desktop Windows.
+
