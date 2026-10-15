@@ -104,11 +104,13 @@ try {
             $sourceWeekday = $copySourceWeekday;
             $targetWeekday = $copyTargetWeekday;
             $copyResult = $db->replaceWeekdayScheduleFromSource($selectedPackageId, $sourceWeekday, $targetWeekday);
+            // Setelah salin, arahkan filter daftar pola ke hari tujuan supaya hasilnya langsung terlihat.
+            $ruleForm['weekday'] = (string) $targetWeekday;
             $sourceDayName = $weekdays[$sourceWeekday] ?? 'hari sumber';
             $targetDayName = $weekdays[$targetWeekday] ?? 'hari tujuan';
-            $message = 'Jadwal ' . $targetDayName . ' berhasil diganti dengan '
+            $message = 'Jadwal ' . $targetDayName . ' berhasil disalin dari ' . $sourceDayName . ': '
                 . $copyResult['rules'] . ' aturan dan ' . $copyResult['events']
-                . ' kegiatan dari ' . $sourceDayName . '. Paket dan hari lain tidak diubah.';
+                . ' kegiatan. Daftar pola sekarang menampilkan ' . $targetDayName . '. Hari sumber dan hari lain tidak diubah.';
         } elseif ($action === 'save_rule') {
             $editingRuleId = (int) ($_POST['rule_id'] ?? 0);
             $ruleForm = [
