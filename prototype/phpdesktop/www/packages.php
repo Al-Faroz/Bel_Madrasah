@@ -31,7 +31,11 @@ try {
                 throw new InvalidArgumentException('Paket tujuan tidak valid.');
             }
             $db->activateSchedulePackage($targetId);
-            $message = 'Paket jadwal aktif berhasil diganti. Hanya paket ini yang akan menjadi sumber jadwal global.';
+            $verifiedPackage = $db->getSchedulePackage($targetId);
+            if ($verifiedPackage === null || (int) $verifiedPackage['is_active'] !== 1) {
+                throw new RuntimeException('Status aktif paket tidak berhasil diverifikasi setelah penyimpanan.');
+            }
+            $message = 'Paket jadwal "' . (string) $verifiedPackage['name'] . '" berhasil diaktifkan dan diverifikasi.';
             $editId = 0;
         } elseif ($action === 'delete') {
             $targetId = filter_var($_POST['package_id'] ?? null, FILTER_VALIDATE_INT);
