@@ -17,7 +17,7 @@
 
 - `dashboard.php`: dashboard admin dengan ringkasan paket, kegiatan, dan tautan ke modul.
 - `packages.php`: daftar, buat/edit, aktivasi paket dan pilihan hari libur.
-- `schedule-editor.php`: aturan hari, kegiatan bel, serta alur preview/konfirmasi salin Senin ke Selasa.
+- `schedule-editor.php`: aturan hari, kegiatan bel, serta alur preview/konfirmasi salin seluruh pola dan kegiatan antarhari.
 - `settings.php`: nama sekolah, operator, dan preferensi volume.
 - `backup.php`: pembuatan backup database ke folder AppData.
 - `public.php`: dashboard baca-saja yang menyusun jadwal berdasarkan aturan Normal; memberi peringatan jika aturan Khusus ada.
