@@ -68,7 +68,7 @@
                 <?php endif; ?>
                 <div class="copy-preview-warning"><strong>Perhatian:</strong> seluruh aturan dan kegiatan pada hari tujuan akan diganti, termasuk aturan Khusus. Referensi audio disalin tanpa menggandakan file. Hari sumber, paket lain, dan hari lain tidak berubah.</div>
                 <div class="copy-preview-actions">
-                    <form method="post" action="schedule-editor.php?package_id=<?= $selectedPackageId ?>" onsubmit="return confirm('Yakin mengganti seluruh aturan dan kegiatan hari tujuan dengan jadwal hari sumber? Paket dan hari lain tidak diubah.');">
+                    <form method="post" action="schedule-editor.php?package_id=<?= $selectedPackageId ?>">
                         <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>">
                         <input type="hidden" name="editor_action" value="confirm_copy_schedule">
                         <input type="hidden" name="source_weekday" value="<?= (int) $copyPreview['source_weekday'] ?>">
