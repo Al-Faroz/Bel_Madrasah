@@ -126,14 +126,6 @@
 
 <script>
 (function () {
-    document.querySelectorAll(".package-activate-form").forEach(function (form) {
-        form.addEventListener("submit", function (event) {
-            const name = form.dataset.packageName || "paket ini";
-            if (!window.confirm("Aktifkan paket " + name + "? Paket ini menjadi sumber jadwal global. Paket aktif sebelumnya tidak dihapus.")) {
-                event.preventDefault();
-            }
-        });
-    });
     document.querySelectorAll(".package-delete-form").forEach(function (form) {
         form.addEventListener("submit", function (event) {
             const name = form.dataset.packageName || "paket ini";
