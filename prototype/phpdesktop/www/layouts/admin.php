@@ -53,7 +53,7 @@ try {
 <div class="app-shell admin-shell">
     <aside class="admin-sidebar" aria-label="Area administrasi">
         <a class="sidebar-brand" href="dashboard.php" aria-label="Bel Madrasah — Dashboard">
-            <span class="sidebar-brand-mark" aria-hidden="true">BM</span>
+            <span class="sidebar-brand-mark" aria-hidden="true"><?php if (($schoolLogoDataUri ?? '') !== ''): ?><img src="<?= htmlspecialchars($schoolLogoDataUri, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" alt=""><?php else: ?>BM<?php endif; ?></span>
             <span class="sidebar-brand-copy"><strong>Bel Madrasah</strong><small>PUSAT KONTROL</small></span>
         </a>
         <?php require __DIR__ . '/../partials/admin-nav.php'; ?>
