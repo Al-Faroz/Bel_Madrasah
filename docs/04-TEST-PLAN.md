@@ -44,6 +44,7 @@ Pengujian harus dilakukan pada runtime **PHP Desktop Chrome 130.1 + PHP 8.3 di W
 ### Editor Jadwal
 - [ ] Pilih paket/hari; aturan yang tampil cocok.
 - [ ] Tambah/edit/nonaktifkan/hapus kegiatan sesuai dukungan fitur.
+- [ ] Kolom waktu di Editor Jadwal menampilkan format 24 jam `HH:MM` (tanpa AM/PM) dan menolak nilai di luar `00:00–23:59`.
 - [ ] Waktu dan urutan divalidasi.
 - [ ] File audio tersimpan pada lokasi aplikasi yang benar.
 - [ ] Edit tanpa memilih file audio baru mempertahankan file lama.
@@ -61,6 +62,8 @@ Pengujian harus dilakukan pada runtime **PHP Desktop Chrome 130.1 + PHP 8.3 di W
 
 ### Dashboard Publik
 - [ ] Nama sekolah, tanggal, jam, paket dan jadwal yang tampil benar.
+- [ ] Logo tersimpan tampil pada header Publik, header Admin, dan merek sidebar Admin; jika file hilang/tidak didukung, fallback tampil jelas.
+- [ ] Pratinjau logo di Konfigurasi sesuai dengan logo yang sedang tersimpan.
 - [ ] Jadwal berikutnya dihitung dari data dan waktu yang benar.
 - [ ] Status audio tidak mengklaim audio diputar jika tidak ada status runtime.
 - [ ] Tampilan tetap jelas saat layar/jendela diubah ukurannya.
