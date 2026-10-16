@@ -338,15 +338,32 @@ final class Database
         unset($this->pdo);
 
         try {
-            if (!copy($sourcePath, $this->path)) {
-                throw new RuntimeException('Windows tidak dapat mengganti database aktif dari file backup.');
+            clearstatcache(true, $this->path);
+            if (!is_writable(dirname($this->path))) {
+                throw new RuntimeException('Folder database aktif tidak dapat ditulis oleh pengguna Windows.');
             }
+            if (!@copy($sourcePath, $this->path)) {
+                $copyError = error_get_last();
+                $detail = is_array($copyError) && isset($copyError['message']) ? ': ' . $copyError['message'] : '';
+                throw new RuntimeException('Windows tidak dapat mengganti database aktif dari file backup' . $detail);
+            }
+            clearstatcache(true, $this->path);
+            if (!is_file($this->path) || filesize($this->path) === false || filesize($this->path) <= 0) {
+                throw new RuntimeException('File database hasil pemulihan kosong atau tidak terbentuk.');
+            }
+
             $this->pdo = new PDO('sqlite:' . $this->path);
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
             $this->pdo->exec('PRAGMA foreign_keys = ON');
             $this->pdo->exec('PRAGMA busy_timeout = 5000');
             $this->initializeSchema();
+
+            $verification = $this->validateBackupDatabase($this->path);
+            if (strtolower((string) ($verification['integrity'] ?? '')) !== 'ok') {
+                throw new RuntimeException('Verifikasi integritas database setelah pemulihan gagal.');
+            }
+
             return $preRestorePath;
         } catch (Throwable $exception) {
             unset($this->pdo);
