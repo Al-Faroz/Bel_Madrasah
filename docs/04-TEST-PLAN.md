@@ -56,7 +56,7 @@ Pengujian harus dilakukan pada runtime **PHP Desktop Chrome 130.1 + PHP 8.3 di W
 - [ ] Nama madrasah/operator dan volume tersimpan setelah restart.
 - [ ] Backup menghasilkan file non-kosong yang dapat ditemukan.
 - [ ] Backup dapat diperiksa sebagai database SQLite yang valid.
-- [ ] Restore belum dianggap tersedia sampai ada alur implementasi dan pengujian khusus.
+- [ ] Alur Restore sudah tersedia di kode; status tetap BELUM PASS sampai diuji di PHP Desktop Windows dengan backup valid dan file tidak valid.
 - [ ] Kegagalan backup memberi pesan yang bisa dipahami.
 
 ### Dashboard Publik
@@ -91,10 +91,14 @@ Pengujian harus dilakukan pada runtime **PHP Desktop Chrome 130.1 + PHP 8.3 di W
 ## 7. Backup, restore, dan stabilitas
 
 - [ ] Backup tetap valid ketika aplikasi berjalan.
-- [ ] Restore memvalidasi file dan meminta konfirmasi.
-- [ ] Sebelum restore, salinan data saat ini dibuat atau prosedur rollback tersedia.
-- [ ] File database tidak valid ditolak tanpa merusak database aktif.
-- [ ] Folder data tidak dapat ditulis menghasilkan pesan yang jelas.
+- [ ] Dari daftar backup lokal, tombol “Periksa & pratinjau” menampilkan hasil pemeriksaan SQLite sebelum restore.
+- [ ] Restore menolak konfirmasi jika checkbox persetujuan belum dicentang.
+- [ ] Restore backup valid mengganti data aktif dengan isi backup yang dipilih.
+- [ ] Setelah restore berhasil, data paket, aturan, kegiatan, dan konfigurasi cocok dengan backup yang dipulihkan.
+- [ ] Backup pra-restore otomatis terbentuk dan tetap muncul di daftar backup.
+- [ ] File kosong, bukan SQLite, tidak utuh, atau bukan database Bel Madrasah ditolak tanpa mengubah database aktif.
+- [ ] Jika proses penggantian gagal, aplikasi mencoba mengembalikan backup pra-restore dan memberi pesan hasil rollback.
+- [ ] Folder data/backup yang tidak dapat ditulis menghasilkan pesan yang jelas.
 - [ ] File audio hilang/rusak ditangani tanpa crash.
 - [ ] CPU/RAM idle dan selama audio diukur pada komputer target.
 
