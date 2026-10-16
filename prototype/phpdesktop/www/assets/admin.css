@@ -62,6 +62,13 @@ body.admin-area { color: var(--admin-text); font-size: 14px; background: var(--a
     font-weight: 800;
     letter-spacing: -.03em;
 }
+.sidebar-brand-mark img {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: inherit;
+}
 .sidebar-brand-copy { display: grid; gap: 3px; min-width: 0; }
 .sidebar-brand-copy strong { font-size: 14px; line-height: 1.2; letter-spacing: -.02em; }
 .sidebar-brand-copy small { color: var(--admin-muted); font-size: 9px; font-weight: 800; letter-spacing: .13em; }
@@ -192,6 +199,41 @@ body.admin-area { color: var(--admin-text); font-size: 14px; background: var(--a
 .admin-area .backup-list-panel,
 .admin-area .restore-preview-panel,
 .admin-area .asset-path-panel { padding: 22px; }
+.school-logo-preview {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 0 0 18px;
+    padding: 14px;
+    border: 1px solid var(--admin-line);
+    border-radius: 6px;
+    background: #f8faf9;
+}
+.school-logo-preview-image {
+    display: grid;
+    place-items: center;
+    flex: 0 0 76px;
+    width: 76px;
+    height: 76px;
+    padding: 6px;
+    border: 1px solid #e2e8e4;
+    border-radius: 7px;
+    background: #fff;
+}
+.school-logo-preview-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+.school-logo-preview-image span {
+    color: var(--admin-primary);
+    font-size: 18px;
+    font-weight: 800;
+}
+.school-logo-preview-copy { min-width: 0; }
+.school-logo-preview-copy strong { display: block; color: var(--admin-text); font-size: 12px; }
+.school-logo-preview-copy p { margin: 4px 0 0; color: var(--admin-muted); font-size: 11px; line-height: 1.6; }
 .admin-area input, .admin-area select, .admin-area textarea {
     border-radius: 5px !important;
     border-color: #d7dfe4 !important;
