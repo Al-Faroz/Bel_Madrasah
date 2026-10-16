@@ -70,7 +70,7 @@ $schoolLogoDataUri = getLocalImageDataUri($schoolLogoPath);
 <body class="public-dashboard-body">
 <div class="public-shell">
     <header class="public-header">
-        <div class="public-brand-mark" aria-hidden="true"><?php if ($schoolLogoDataUri !== ''): ?><img src="<?= h($schoolLogoDataUri) ?>" alt="" style="display:block;width:100%;height:100%;object-fit:contain;border-radius:inherit"><?php else: ?>BM<?php endif; ?></div>
+        <div class="public-brand-mark<?= $schoolLogoDataUri !== '' ? ' has-logo' : '' ?>" aria-hidden="true"><?php if ($schoolLogoDataUri !== ''): ?><img src="<?= h($schoolLogoDataUri) ?>" alt=""><?php else: ?>BM<?php endif; ?></div>
         <div class="public-brand-copy">
             <p class="public-kicker">INFORMASI OPERASIONAL</p>
             <h1><?= h($schoolName) ?></h1>
