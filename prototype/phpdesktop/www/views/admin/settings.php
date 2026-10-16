@@ -44,6 +44,19 @@ foreach ($logoAssets as $logoAsset) {
             </select>
             <small>Pilih file yang sudah disalin ke folder Logo. Pemilihan ini menyimpan referensi path di SQLite; file tidak diunggah atau digandakan.</small>
         </label>
+        <div class="school-logo-preview" aria-live="polite">
+            <div class="school-logo-preview-image">
+                <?php if (($schoolLogoDataUri ?? '') !== ''): ?>
+                    <img src="<?= h($schoolLogoDataUri) ?>" alt="Pratinjau logo madrasah">
+                <?php else: ?>
+                    <span aria-hidden="true">BM</span>
+                <?php endif; ?>
+            </div>
+            <div class="school-logo-preview-copy">
+                <strong><?= ($schoolLogoDataUri ?? '') !== '' ? 'Logo yang sedang digunakan' : 'Belum ada logo yang bisa ditampilkan' ?></strong>
+                <p><?php if (($schoolLogoDataUri ?? '') !== ''): ?>Logo ini digunakan pada tampilan Publik dan area Admin setelah konfigurasi disimpan.<?php elseif ($schoolLogoPath !== ''): ?>Referensi logo tersimpan, tetapi file tidak dapat dibaca sebagai gambar yang didukung. Periksa file di folder Logo dan pilih ulang.<?php else: ?>Pilih logo di atas lalu tekan Simpan konfigurasi. Pratinjau ini menampilkan logo yang sudah tersimpan.<?php endif; ?></p>
+            </div>
+        </div>
         <label for="default-volume">Volume bawaan yang diinginkan (%)
             <input id="default-volume" type="number" name="default_volume" min="0" max="100" step="1" required value="<?= h($volume) ?>">
             <small>Preferensi ini disimpan sekarang; penerapan ke audio otomatis dilakukan pada tahap berikutnya.</small>
