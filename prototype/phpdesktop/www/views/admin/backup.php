@@ -76,12 +76,12 @@
     <div class="copy-preview-warning">
         <strong>Perhatian:</strong> pemulihan akan mengganti data database aktif dengan isi backup ini. Sebelum mengganti, aplikasi membuat backup pra-pemulihan dari database aktif saat ini. Jangan menutup aplikasi selama proses berlangsung.
     </div>
-    <form method="post" action="backup.php" class="restore-confirm-form" onsubmit="return confirm('Pulihkan database dari backup ini? Database aktif akan diganti, tetapi salinan pra-pemulihan dibuat terlebih dahulu.');">
+    <form id="restore-confirm-form" method="post" action="backup.php" class="restore-confirm-form">
         <input type="hidden" name="backup_action" value="confirm_restore">
         <input type="hidden" name="backup_name" value="<?= h((string) $restorePreview['name']) ?>">
         <label class="checkbox-line"><input type="checkbox" name="restore_confirm" value="1" required> Saya memahami bahwa data aktif akan diganti dengan data backup yang dipilih.</label>
         <div class="form-actions">
-            <button type="submit" class="copy-schedule-button is-confirm">Pulihkan database ini</button>
+            <button type="button" class="copy-schedule-button is-confirm" onclick="document.getElementById('restore-confirm-form').requestSubmit();">Pulihkan database dari backup</button>
             <a class="button-link-secondary" href="backup.php">Batalkan</a>
         </div>
     </form>
