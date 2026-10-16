@@ -69,6 +69,17 @@ body.admin-area { color: var(--admin-text); font-size: 14px; background: var(--a
     object-fit: contain;
     border-radius: inherit;
 }
+.sidebar-brand-mark.has-logo {
+    overflow: hidden;
+    padding: 0;
+    color: inherit;
+    background: transparent;
+    box-shadow: none;
+}
+.sidebar-brand-mark.has-logo img {
+    width: 100%;
+    height: 100%;
+}
 .sidebar-brand-copy { display: grid; gap: 3px; min-width: 0; }
 .sidebar-brand-copy strong { font-size: 14px; line-height: 1.2; letter-spacing: -.02em; }
 .sidebar-brand-copy small { color: var(--admin-muted); font-size: 9px; font-weight: 800; letter-spacing: .13em; }
