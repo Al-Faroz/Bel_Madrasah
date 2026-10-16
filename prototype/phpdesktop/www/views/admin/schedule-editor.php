@@ -181,7 +181,7 @@
                                                         <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>"><input type="hidden" name="editor_action" value="save_event"><input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>"><input type="hidden" name="event_id" value="<?= (int) $event['id'] ?>">
                                                     </form>
                                                     <label class="sr-only" for="event-time-<?= (int) $event['id'] ?>">Jam</label>
-                                                    <input form="event-form-<?= (int) $event['id'] ?>" id="event-time-<?= (int) $event['id'] ?>" type="time" name="event_time" required value="<?= h((string) $event['event_time']) ?>">
+                                                    <input form="event-form-<?= (int) $event['id'] ?>" id="event-time-<?= (int) $event['id'] ?>" type="text" name="event_time" inputmode="numeric" autocomplete="off" spellcheck="false" pattern="([01][0-9]|2[0-3]):[0-5][0-9]" maxlength="5" placeholder="HH:MM" title="Gunakan format 24 jam, misalnya 07:05" required value="<?= h(substr((string) $event['event_time'], 0, 5)) ?>">
                                                 </td>
                                                 <td>
                                                     <label class="sr-only" for="event-name-<?= (int) $event['id'] ?>">Keterangan bel</label>
@@ -222,7 +222,7 @@
                                     <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>"><input type="hidden" name="editor_action" value="save_event"><input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>"><input type="hidden" name="event_id" value="0">
                                     <div class="event-form-grid">
                                         <label>Nama kegiatan<input name="event_name" maxlength="100" required placeholder="Contoh: Bel masuk"></label>
-                                        <label>Waktu<input type="time" name="event_time" required value="07:00"></label>
+                                        <label>Waktu<input type="text" name="event_time" inputmode="numeric" autocomplete="off" spellcheck="false" pattern="([01][0-9]|2[0-3]):[0-5][0-9]" maxlength="5" placeholder="HH:MM" title="Gunakan format 24 jam, misalnya 07:05" required value="07:00"><small>Format 24 jam: 00:00 sampai 23:59.</small></label>
                                         <label>Urutan<input type="number" name="sort_order" min="0" max="9999" required value="<?= count($ruleEvents) + 1 ?>"></label>
                                         <label class="audio-upload-label">Audio dari folder aset
                                             <select name="audio_asset">
