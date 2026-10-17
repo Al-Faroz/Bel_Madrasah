@@ -46,6 +46,8 @@ Pengujian harus dilakukan pada runtime **PHP Desktop Chrome 130.1 + PHP 8.3 di W
 - [ ] Tambah/edit/nonaktifkan/hapus kegiatan sesuai dukungan fitur.
 - [ ] Kolom waktu di Editor Jadwal menampilkan format 24 jam `HH:MM` (tanpa AM/PM) dan menolak nilai di luar `00:00–23:59`.
 - [ ] Waktu dan urutan divalidasi.
+- [ ] Setelah menyimpan atau menghapus kegiatan, filter tetap menampilkan hari yang sedang diedit; pola tidak tampak hilang hanya karena filter kembali ke Senin.
+- [ ] Jika validasi simpan kegiatan gagal, pesan kesalahan tampil dan filter tetap pada hari yang sedang diedit.
 - [ ] File audio tersimpan pada lokasi aplikasi yang benar.
 - [ ] Edit tanpa memilih file audio baru mempertahankan file lama.
 - [ ] Salin Jadwal menampilkan preview yang cocok dengan sumber.
