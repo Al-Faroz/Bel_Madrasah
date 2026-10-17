@@ -116,9 +116,14 @@ final class ScheduleResolver
         }
 
         usort($events, static function (array $a, array $b): int {
-            $timeComparison = strcmp((string) $a['event_time'], (string) $b['event_time']);
-            return $timeComparison !== 0
-                ? $timeComparison
+            $timeComparison = strcmp(substr((string) $a['event_time'], 0, 5), substr((string) $b['event_time'], 0, 5));
+            if ($timeComparison !== 0) {
+                return $timeComparison;
+            }
+
+            $orderComparison = (int) $a['sort_order'] <=> (int) $b['sort_order'];
+            return $orderComparison !== 0
+                ? $orderComparison
                 : ((int) $a['id'] <=> (int) $b['id']);
         });
 
