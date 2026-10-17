@@ -981,6 +981,126 @@ final class Database
         }
     }
 
+    public function getActiveSchedulePackage(): ?array
+    {
+        $row = $this->pdo->query(
+            'SELECT * FROM schedule_packages WHERE is_active = 1 ORDER BY id ASC LIMIT 1'
+        )->fetch();
+
+        return $row === false ? null : $row;
+    }
+
+    public function getPlaybackLog(int $id): ?array
+    {
+        $statement = $this->pdo->prepare('SELECT * FROM playback_log WHERE id = :id');
+        $statement->execute([':id' => $id]);
+        $row = $statement->fetch();
+
+        return $row === false ? null : $row;
+    }
+
+    public function getPlaybackLogForEventAt(int $eventId, string $scheduledFor): ?array
+    {
+        $statement = $this->pdo->prepare(
+            'SELECT * FROM playback_log
+             WHERE event_id = :event_id AND scheduled_for = :scheduled_for
+             ORDER BY id DESC LIMIT 1'
+        );
+        $statement->execute([':event_id' => $eventId, ':scheduled_for' => $scheduledFor]);
+        $row = $statement->fetch();
+
+        return $row === false ? null : $row;
+    }
+
+    /**
+     * Atomically add one scheduler outcome for an event/time pair.
+     * The conditional INSERT prevents a normal poll/refresh from logging the same
+     * scheduled event twice. Existing log rows are never overwritten.
+     */
+    public function recordPlaybackLogIfMissing(
+        int $packageId,
+        int $eventId,
+        string $scheduledFor,
+        string $status,
+        string $message
+    ): ?int {
+        if (!in_array($status, ['started', 'completed', 'failed', 'missed', 'skipped'], true)) {
+            throw new InvalidArgumentException('Status log pemutaran tidak valid.');
+        }
+        if (!preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/', $scheduledFor)) {
+            throw new InvalidArgumentException('Waktu jadwal untuk log tidak valid.');
+        }
+
+        $statement = $this->pdo->prepare(
+            'INSERT INTO playback_log
+                (package_id, event_id, scheduled_for, status, message, created_at)
+             SELECT :package_id, :event_id, :scheduled_for, :status, :message, :created_at
+             WHERE NOT EXISTS (
+                SELECT 1 FROM playback_log
+                WHERE event_id = :check_event_id AND scheduled_for = :check_scheduled_for
+             )'
+        );
+        $statement->execute([
+            ':package_id' => $packageId,
+            ':event_id' => $eventId,
+            ':scheduled_for' => $scheduledFor,
+            ':status' => $status,
+            ':message' => mb_substr($message, 0, 500, 'UTF-8'),
+            ':created_at' => date('Y-m-d H:i:s'),
+            ':check_event_id' => $eventId,
+            ':check_scheduled_for' => $scheduledFor,
+        ]);
+
+        return $statement->rowCount() === 1 ? (int) $this->pdo->lastInsertId() : null;
+    }
+
+    public function updatePlaybackLogStatus(int $id, string $status, string $message): bool
+    {
+        if (!in_array($status, ['completed', 'failed'], true)) {
+            throw new InvalidArgumentException('Status akhir pemutaran tidak valid.');
+        }
+
+        $statement = $this->pdo->prepare(
+            'UPDATE playback_log
+             SET status = :status, message = :message
+             WHERE id = :id AND status = \'started\''
+        );
+        $statement->execute([
+            ':status' => $status,
+            ':message' => mb_substr($message, 0, 500, 'UTF-8'),
+            ':id' => $id,
+        ]);
+
+        return $statement->rowCount() === 1;
+    }
+
+    /**
+     * A page navigation/reload stops the previous page's media element.
+     * Reconcile unfinished runs rather than leaving a false "started" status.
+     */
+    public function markStartedPlaybackAsFailed(string $message = 'Pemutaran terhenti saat halaman dimuat ulang atau berpindah.'): int
+    {
+        $statement = $this->pdo->prepare(
+            'UPDATE playback_log SET status = \'failed\', message = :message WHERE status = \'started\''
+        );
+        $statement->execute([':message' => mb_substr($message, 0, 500, 'UTF-8')]);
+
+        return $statement->rowCount();
+    }
+
+    public function getLatestPlaybackLog(): ?array
+    {
+        $row = $this->pdo->query(
+            'SELECT l.*, e.name AS event_name, p.name AS package_name
+             FROM playback_log l
+             LEFT JOIN bell_events e ON e.id = l.event_id
+             LEFT JOIN schedule_packages p ON p.id = l.package_id
+             ORDER BY l.id DESC LIMIT 1'
+        )->fetch();
+
+        return $row === false ? null : $row;
+    }
+
     /**
      * Persistent asset root for files copied by the operator.
      * Existing audio files in the legacy /audio directory are intentionally untouched.
