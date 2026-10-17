@@ -1,6 +1,9 @@
 <?php
 declare(strict_types=1);
 
+// Deployment target saat ini menggunakan WIB (Asia/Jakarta); samakan jam halaman, resolver, dan log meskipun php.ini runtime tidak menetapkan date.timezone.
+date_default_timezone_set('Asia/Jakarta');
+
 // Keep calendar resolution and scheduled times aligned with the school's local timezone.
 date_default_timezone_set('Asia/Jakarta');
 
