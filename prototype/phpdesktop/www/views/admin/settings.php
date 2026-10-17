@@ -16,7 +16,7 @@ foreach ($logoAssets as $logoAsset) {
     <div>
         <p class="eyebrow">PENGATURAN LOKAL</p>
         <h2>Konfigurasi aplikasi</h2>
-        <p>Nilai disimpan di SQLite lokal dan tetap ada setelah aplikasi ditutup. Volume di sini adalah preferensi untuk integrasi pemutar pada tahap berikutnya, belum mengubah volume audio otomatis.</p>
+        <p>Nilai disimpan di SQLite lokal dan tetap ada setelah aplikasi ditutup. Volume ini menjadi preferensi pemutar audio otomatis internal; perubahan berlaku pada pemutaran berikutnya.</p>
     </div>
 </section>
 
@@ -59,7 +59,7 @@ foreach ($logoAssets as $logoAsset) {
         </div>
         <label for="default-volume">Volume bawaan yang diinginkan (%)
             <input id="default-volume" type="number" name="default_volume" min="0" max="100" step="1" required value="<?= h($volume) ?>">
-            <small>Preferensi ini disimpan sekarang; penerapan ke audio otomatis dilakukan pada tahap berikutnya.</small>
+            <small>Nilai ini digunakan oleh pemutar audio otomatis internal setelah disimpan.</small>
         </label>
         <div class="form-actions"><button type="submit">Simpan konfigurasi</button></div>
     </form>
