@@ -223,7 +223,7 @@ try {
     // Seed hanya berjalan sekali dan tidak menimpa aturan yang sudah dibuat pengguna.
     $starterScheduleCreated = $db->ensureStarterScheduleRules($selectedPackageId);
     if ($starterScheduleCreated) {
-        $message = 'Pola awal Senin–Jumat dibuat. Waktu bel adalah contoh—silakan sesuaikan dengan jadwal madrasah.';
+        $message = 'Pola awal dibuat mengikuti pengaturan hari libur paket ini. Waktu bel masih berupa contoh—silakan sesuaikan dengan jadwal madrasah.';
     }
     $rules = $db->getDayRules($selectedPackageId);
     $eventsByRule = [];
