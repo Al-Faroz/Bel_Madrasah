@@ -8,7 +8,7 @@ Scheduler hanya bekerja selama aplikasi Bel Madrasah terbuka dan runtime PHP Des
 
 ## 2. Sumber kebenaran
 
-- Waktu yang dipakai adalah waktu lokal sistem Windows, konsisten dengan jam yang ditampilkan aplikasi. Jangan menetapkan timezone berbeda diam-diam.
+- Zona waktu aplikasi saat ini ditetapkan eksplisit ke **Asia/Jakarta (WIB)** agar jam server-rendered, resolver, dan log konsisten walau `php.ini` runtime tidak mengatur `date.timezone`. Komputer Windows yang menjalankan aplikasi harus menggunakan zona waktu WIB untuk deployment ini; jika target sekolah berbeda zona, timezone harus menjadi konfigurasi eksplisit sebelum dipakai.
 - Paket aktif global dipilih dari `schedule_packages`.
 - Tanggal dan hari diselesaikan oleh `ScheduleResolver`, termasuk pasaran Jawa dan Model A (minggu kalender).
 - Hanya aturan dan kegiatan berstatus aktif yang boleh dijalankan.
