@@ -12,6 +12,19 @@ function audioStreamError(string $message, int $status): never
     exit;
 }
 
+$fetchSite = strtolower((string) ($_SERVER['HTTP_SEC_FETCH_SITE'] ?? ''));
+if ($fetchSite === 'cross-site') {
+    audioStreamError('Permintaan audio lintas situs ditolak.', 403);
+}
+$origin = trim((string) ($_SERVER['HTTP_ORIGIN'] ?? ''));
+if ($origin !== '') {
+    $originHost = parse_url($origin, PHP_URL_HOST);
+    $requestHost = parse_url('http://' . (string) ($_SERVER['HTTP_HOST'] ?? ''), PHP_URL_HOST);
+    if (!is_string($originHost) || !is_string($requestHost) || strcasecmp($originHost, $requestHost) !== 0) {
+        audioStreamError('Origin permintaan tidak sesuai dengan aplikasi.', 403);
+    }
+}
+
 try {
     $runId = filter_var($_GET['run_id'] ?? 0, FILTER_VALIDATE_INT);
     if ($runId === false || $runId < 1) {
