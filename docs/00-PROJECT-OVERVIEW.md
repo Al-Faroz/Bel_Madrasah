@@ -64,8 +64,12 @@ Belum menjadi kebutuhan awal: sinkronisasi cloud, kontrol jarak jauh internet, a
 
 - **PoC runtime PHP Desktop:** dilaporkan berjalan baik oleh pengguna.
 - **Persistensi SQLite dan uji audio awal:** dilaporkan PASS untuk skenario yang sudah dicoba.
-- **Fitur paket/editor/UI yang saat ini ada:** belum boleh dianggap desain final atau lulus regresi; harus diaudit terhadap roadmap baru.
-- **Scheduler otomatis, resolver kalender final, restore, dan paket distribusi:** belum boleh dianggap selesai tanpa implementasi dan pengujian khusus.
+- **Salin Jadwal:** dilaporkan berjalan baik pada pengujian pengguna.
+- **Backup & Restore utama:** dilaporkan FIX tanpa kendala setelah dicoba pada PHP Desktop Windows; kasus kegagalan khusus belum otomatis dianggap PASS.
+- **Resolver kalender:** kode tersedia dan memiliki fixture regresi; hasil fixture/runtime terkini tetap harus dibuktikan melalui pengujian.
+- **Scheduler/audio otomatis:** fondasi polling, log idempoten, stream audio lokal, dan status UI sudah ditambahkan pada repository; belum LOCAL TEST PASS. Kebijakan autoplay dan perilaku timer pada runtime PHP Desktop pengguna masih harus diuji.
+- **Editor Jadwal dan UI:** perbaikan kode terbaru belum berarti regresi runtime seluruh halaman sudah lulus.
+- **Distribusi Windows:** belum dianggap selesai sampai prosedur runtime, autoplay, restart, minimize/sleep-wake, dan panduan operator diuji.
 
 ## 8. Aturan kolaborasi
 
