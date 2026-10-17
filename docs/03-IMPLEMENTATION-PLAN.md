@@ -181,3 +181,18 @@ Resolver kalender Normal/Khusus → scheduler/audio dan log status → restore a
 - **BELUM DIVERIFIKASI:** sintaks PHP melalui PHP CLI, pemanggilan File Explorer pada PHP Desktop Windows, perubahan tampilan aktual, navigasi klik, perilaku tombol pada semua modul, dan resize 1366/1024/390 px.
 - **Belum LOCAL TEST PASS.** Belum ada screenshot pascaperubahan dari pengguna. D8 belum selesai karena CSS lama masih memiliki banyak selector berulang dan konsolidasi harus dilakukan hati-hati dengan baseline visual, bukan penghapusan otomatis.
 - Tidak ada perubahan skema SQLite, migrasi database, path database utama, atau data pengguna dalam batch UI ini.
+
+## Checkpoint lanjutan — 2026-10-17
+
+### Editor Jadwal — audit kode dan regresi filter
+
+- Audit sumber menemukan bahwa setelah kegiatan disimpan/dihapus, filter daftar aturan dapat kembali ke Senin karena nilai hari tidak dipertahankan pada POST tindakan kegiatan. Ini berpotensi membuat hasil yang baru disimpan tampak menghilang meskipun data sudah tersimpan.
+- Controller kini mempertahankan hari milik aturan terkait untuk tindakan simpan dan hapus kegiatan, termasuk ketika validasi simpan melempar pesan kesalahan. Commit: [2772582](https://github.com/Al-Faroz/Bel_Madrasah/commit/277258299e358d2b04b7ecd6c2a6c84031025c48).
+- Pesan pola awal diperbaiki agar mengikuti pengaturan hari libur paket, bukan selalu menyebut Senin–Jumat. Commit: [e215a29](https://github.com/Al-Faroz/Bel_Madrasah/commit/e215a29e725c8738b1ac2cfa8842d79e84ce1f01).
+- Checklist regresi filter editor dan pola awal ditambahkan ke rencana pengujian. Commit: [664cd4d](https://github.com/Al-Faroz/Bel_Madrasah/commit/664cd4dfa6904154d659665371b7870a92ce0b8e), [1a3ccaf](https://github.com/Al-Faroz/Bel_Madrasah/commit/1a3ccaf3e3f9024aba8f58a72fb4845ee5f494fd).
+- Status batch ini: **PERBAIKAN KODE TERIMPLEMENTASI; belum diuji ulang oleh pengguna di PHP Desktop Windows.** Ini pemeriksaan dan koreksi sumber, bukan klaim uji runtime.
+
+### Backup & Restore
+
+- Pada 2026-10-17, pengguna melaporkan alur Backup & Restore sudah diterapkan dan dicoba di Windows, **FIX tanpa kendala**. Status alur utama dicatat sebagai **LOCAL TEST PASS berdasarkan laporan pengguna**.
+- Skenario kegagalan khusus (file rusak/kosong, skema tidak cocok, folder tidak dapat ditulis, dan rollback) tetap belum dinyatakan PASS satu per satu karena belum ada laporan hasil terpisah.
