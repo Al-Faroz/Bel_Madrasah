@@ -86,14 +86,20 @@ Pengujian harus dilakukan pada runtime **PHP Desktop Chrome 130.1 + PHP 8.3 di W
 
 ## 6. Uji scheduler dan audio otomatis
 
+- [ ] Jalankan `php tests/ScheduleResolverTest.php`; seluruh fixture kalender dan urutan kegiatan harus PASS.
+- [ ] Jalankan `php tests/SchedulerPlaybackLogTest.php`; deduplikasi log dan transisi status harus PASS.
 - [ ] Audio mulai pada waktu uji dan keluar melalui perangkat audio yang diharapkan.
-- [ ] Satu kejadian tidak diputar dua kali.
+- [ ] Dua kegiatan pada waktu sama diputar berurutan sesuai `sort_order`, tidak tumpang tindih.
+- [ ] Satu kejadian tidak diputar dua kali setelah refresh atau navigasi Public/Admin.
 - [ ] Audio panjang selesai tanpa dipotong.
-- [ ] Kejadian yang terlewat mengikuti kebijakan yang ditetapkan.
+- [ ] Kejadian lebih lambat dari toleransi 30 detik dicatat `missed` dan tidak diputar terlambat.
+- [ ] Kegiatan tanpa audio dicatat `skipped`; file hilang/rusak atau autoplay yang ditolak dicatat `failed`.
 - [ ] Status/log sesuai keadaan aktual: menunggu, memulai, diputar, selesai, gagal, terlewat.
+- [ ] Preferensi volume 0–100 diterapkan pada elemen audio internal.
 - [ ] Restart tidak memicu ulang kejadian yang sudah diproses.
 - [ ] Perilaku saat aplikasi diminimalkan/ditutup didokumentasikan.
 - [ ] Sleep/wake dan perubahan jam Windows diuji.
+- [ ] Konfigurasi autoplay pada paket PHP Desktop yang benar-benar dipakai diperiksa; audio harus bisa berjalan tanpa dialog yang menghambat jadwal.
 
 ## 7. Backup, restore, dan stabilitas
 
