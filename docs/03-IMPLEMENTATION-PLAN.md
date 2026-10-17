@@ -201,6 +201,7 @@ Resolver kalender Normal/Khusus → scheduler/audio dan log status → restore a
 
 - Spesifikasi kontrak scheduler ditambahkan di [07-SCHEDULER-SPEC.md](07-SCHEDULER-SPEC.md): waktu lokal Windows, resolver sebagai sumber jadwal, urutan kegiatan, toleransi keterlambatan 30 detik, deduplikasi kejadian, status log, dan batas operasi saat aplikasi ditutup.
 - Ditambahkan endpoint polling `scheduler.php`, yang memilih paket aktif, memakai `ScheduleResolver`, melewatkan kegiatan tanpa audio, mencatat file hilang sebagai gagal, dan mengklaim kejadian satu kali melalui `playback_log`.
+- Zona waktu PHP ditetapkan eksplisit ke `Asia/Jakarta` agar jam Public, resolver, dan log tidak bergantung pada nilai `date.timezone` yang belum diketahui dari runtime. Komputer Windows target harus dikonfigurasi WIB; verifikasi tetap masuk checklist.
 - Ditambahkan `audio-stream.php`, yang hanya menyalurkan file dari referensi kegiatan di database, memeriksa ekstensi/keberadaan file, dan mendukung permintaan byte-range media.
 - Ditambahkan `assets/scheduler.js` pada Public dan layout Admin. Script memeriksa jadwal tiap detik, memutar audio melalui elemen media internal, menerapkan preferensi `default_volume`, memperbarui status log, dan merekonsiliasi pemutaran yang terhenti ketika halaman berpindah.
 - Status scheduler ditampilkan di header Public dan footer Admin. Urutan kegiatan pada waktu sama kini memakai `sort_order` sebelum ID sebagai pemecah seri. Konfigurasi volume diperbarui agar sesuai dengan integrasi pemutar.
