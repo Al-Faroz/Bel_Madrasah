@@ -20,8 +20,12 @@ try {
 
     $db = new Database();
     $run = $db->getPlaybackLog((int) $runId);
-    if ($run === null || (string) $run['status'] !== 'started' || empty($run['event_id'])) {
+    if ($run === null || (string) $run['status'] !== 'started') {
         audioStreamError('Kejadian audio tidak aktif atau sudah ditutup.', 409);
+    }
+    if (empty($run['event_id'])) {
+        $db->updatePlaybackLogStatus((int) $runId, 'failed', 'Referensi kegiatan sudah tidak tersedia.');
+        audioStreamError('Referensi kegiatan sudah tidak tersedia.', 404);
     }
 
     $event = $db->getBellEvent((int) $run['event_id']);
