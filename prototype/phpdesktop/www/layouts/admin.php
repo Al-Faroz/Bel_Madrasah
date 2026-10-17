@@ -70,5 +70,6 @@ try {
         <?php require __DIR__ . '/../partials/admin-footer.php'; ?>
     </div>
 </div>
+<script src="assets/scheduler.js" defer></script>
 </body>
 </html>
