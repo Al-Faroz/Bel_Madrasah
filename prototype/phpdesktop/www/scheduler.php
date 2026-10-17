@@ -20,6 +20,9 @@ try {
     $action = (string) ($_GET['action'] ?? $_POST['action'] ?? 'tick');
 
     if ($action === 'page_start') {
+        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+            schedulerRespond(['ok' => false, 'message' => 'Inisialisasi scheduler harus menggunakan POST.'], 405);
+        }
         $closedRuns = $db->markStartedPlaybackAsFailed();
         schedulerRespond(['ok' => true, 'state' => 'ready', 'reconciled_runs' => $closedRuns]);
     }
