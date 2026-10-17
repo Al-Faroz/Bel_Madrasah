@@ -1045,7 +1045,7 @@ final class Database
             ':event_id' => $eventId,
             ':scheduled_for' => $scheduledFor,
             ':status' => $status,
-            ':message' => mb_substr($message, 0, 500, 'UTF-8'),
+            ':message' => substr($message, 0, 500, 'UTF-8'),
             ':created_at' => date('Y-m-d H:i:s'),
             ':check_event_id' => $eventId,
             ':check_scheduled_for' => $scheduledFor,
@@ -1067,7 +1067,7 @@ final class Database
         );
         $statement->execute([
             ':status' => $status,
-            ':message' => mb_substr($message, 0, 500, 'UTF-8'),
+            ':message' => substr($message, 0, 500, 'UTF-8'),
             ':id' => $id,
         ]);
 
@@ -1083,7 +1083,7 @@ final class Database
         $statement = $this->pdo->prepare(
             'UPDATE playback_log SET status = \'failed\', message = :message WHERE status = \'started\''
         );
-        $statement->execute([':message' => mb_substr($message, 0, 500, 'UTF-8')]);
+        $statement->execute([':message' => substr($message, 0, 500, 'UTF-8')]);
 
         return $statement->rowCount();
     }
