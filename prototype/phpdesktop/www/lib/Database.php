@@ -1101,15 +1101,23 @@ final class Database
         return $statement->rowCount();
     }
 
-    public function getLatestPlaybackLog(): ?array
+    public function getLatestPlaybackLog(?string $date = null): ?array
     {
-        $row = $this->pdo->query(
-            'SELECT l.*, e.name AS event_name, p.name AS package_name
-             FROM playback_log l
-             LEFT JOIN bell_events e ON e.id = l.event_id
-             LEFT JOIN schedule_packages p ON p.id = l.package_id
-             ORDER BY l.id DESC LIMIT 1'
-        )->fetch();
+        $sql = 'SELECT l.*, e.name AS event_name, p.name AS package_name
+                FROM playback_log l
+                LEFT JOIN bell_events e ON e.id = l.event_id
+                LEFT JOIN schedule_packages p ON p.id = l.package_id';
+        if ($date !== null) {
+            if (!preg_match('/^\\d{4}-\\d{2}-\\d{2}$/', $date)) {
+                throw new InvalidArgumentException('Tanggal log pemutaran tidak valid.');
+            }
+            $sql .= ' WHERE substr(l.scheduled_for, 1, 10) = :date';
+            $statement = $this->pdo->prepare($sql . ' ORDER BY l.id DESC LIMIT 1');
+            $statement->execute([':date' => $date]);
+            $row = $statement->fetch();
+        } else {
+            $row = $this->pdo->query($sql . ' ORDER BY l.id DESC LIMIT 1')->fetch();
+        }
 
         return $row === false ? null : $row;
     }
