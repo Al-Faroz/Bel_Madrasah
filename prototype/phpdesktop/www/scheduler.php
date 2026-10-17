@@ -100,7 +100,7 @@ try {
             $scheduledFor,
             $now->getTimezone()
         );
-        if (!$scheduledAt instanceof DateTimeImmutable) {
+        if (!($scheduledAt instanceof DateTimeImmutable)) {
             continue;
         }
 
