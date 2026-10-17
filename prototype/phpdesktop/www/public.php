@@ -76,7 +76,7 @@ $schoolLogoDataUri = getLocalImageDataUri($schoolLogoPath);
             <h1><?= h($schoolName) ?></h1>
             <p>Informasi jadwal bel madrasah</p>
         </div>
-        <div class="public-live-indicator"><span></span> PANEL INFORMASI</div>
+        <div class="public-live-indicator" data-scheduler-status data-scheduler-state="waiting" role="status" aria-live="polite"><span aria-hidden="true"></span><span data-scheduler-status-text>Menyiapkan scheduler…</span></div>
         <a class="md-button md-button-tonal" href="dashboard.php" target="_self">Dashboard Admin</a>
     </header>
 
@@ -186,5 +186,6 @@ $schoolLogoDataUri = getLocalImageDataUri($schoolLogoPath);
     window.setInterval(updateClock, 1000);
 })();
 </script>
+<script src="assets/scheduler.js" defer></script>
 </body>
 </html>
