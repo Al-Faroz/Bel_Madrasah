@@ -153,6 +153,8 @@ try {
             if ($rule === null || (int) $rule['package_id'] !== $selectedPackageId) {
                 throw new InvalidArgumentException('Aturan hari untuk kegiatan tidak ditemukan.');
             }
+            // Pertahankan filter hari setelah simpan, termasuk ketika validasi kegiatan gagal.
+            $ruleForm['weekday'] = (string) $rule['weekday'];
             $eventId = (int) ($_POST['event_id'] ?? 0);
             $eventName = trim((string) ($_POST['event_name'] ?? ''));
             $eventTime = trim((string) ($_POST['event_time'] ?? ''));
@@ -204,6 +206,8 @@ try {
             if ($rule === null || (int) $rule['package_id'] !== $selectedPackageId) {
                 throw new InvalidArgumentException('Aturan hari untuk kegiatan tidak ditemukan.');
             }
+            // Setelah hapus, tetap tampilkan hari yang berisi aturan terkait.
+            $ruleForm['weekday'] = (string) $rule['weekday'];
             $db->deleteBellEvent((int) ($_POST['event_id'] ?? 0), $ruleId);
             $message = 'Kegiatan bel berhasil dihapus.';
         } else {
