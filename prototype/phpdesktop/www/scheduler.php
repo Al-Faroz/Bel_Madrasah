@@ -109,7 +109,10 @@ try {
             continue;
         }
 
-        if ($delaySeconds > $graceSeconds) {
+        // Once a same-minute batch has started, finish its events sequentially even
+        // if a previous long audio takes more than the initial dispatch grace window.
+        $batchAlreadyStarted = $db->hasPlaybackStartedForScheduledTime($packageId, $scheduledFor);
+        if ($delaySeconds > $graceSeconds && !$batchAlreadyStarted) {
             $db->recordPlaybackLogIfMissing(
                 $packageId,
                 (int) $event['id'],
