@@ -11,7 +11,6 @@
     player.style.display = 'none';
     document.body.appendChild(player);
 
-    let pollTimer = null;
     let polling = false;
     let isPlaying = false;
     let activeRunId = 0;
@@ -173,12 +172,12 @@
 
     async function initialize() {
         try {
-            await fetch(endpoint + '?action=page_start&_=' + Date.now(), { cache: 'no-store' });
+            await postForm({ action: 'page_start' });
         } catch (error) {
             setStatus('Scheduler belum siap: ' + error.message, 'error');
         }
         poll();
-        pollTimer = window.setInterval(poll, 1000);
+        window.setInterval(poll, 1000);
     }
 
     initialize();
