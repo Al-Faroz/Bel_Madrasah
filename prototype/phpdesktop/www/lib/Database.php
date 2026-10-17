@@ -1012,6 +1012,19 @@ final class Database
         return $row === false ? null : $row;
     }
 
+    public function hasPlaybackStartedForScheduledTime(int $packageId, string $scheduledFor): bool
+    {
+        $statement = $this->pdo->prepare(
+            "SELECT COUNT(*) FROM playback_log
+             WHERE package_id = :package_id
+               AND scheduled_for = :scheduled_for
+               AND status IN ('started', 'completed', 'failed', 'skipped')"
+        );
+        $statement->execute([':package_id' => $packageId, ':scheduled_for' => $scheduledFor]);
+
+        return (int) $statement->fetchColumn() > 0;
+    }
+
     /**
      * Atomically add one scheduler outcome for an event/time pair.
      * The conditional INSERT prevents a normal poll/refresh from logging the same
