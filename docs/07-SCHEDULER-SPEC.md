@@ -23,7 +23,7 @@ Setiap kejadian memiliki kunci logis `event_id + scheduled_for`, dengan `schedul
 1. Scheduler memeriksa jadwal secara berkala dengan interval pendek dan menghitung tanggal/waktu aktual setiap pemeriksaan; jangan hanya mengandalkan penghitung interval.
 2. Kejadian hanya boleh diklaim satu kali untuk satu `event_id + scheduled_for`, termasuk setelah halaman di-refresh atau navigasi Public/Admin.
 3. Kegiatan yang jatuh pada menit yang sama diputar satu per satu sesuai urutan, bukan ditumpuk secara bersamaan.
-4. Toleransi keterlambatan awal yang disarankan adalah **maksimal 30 detik**. Jika aplikasi kembali aktif setelah batas itu, jangan memutar bel lama secara terlambat; catat sebagai `missed`. Batas ini perlu diuji ketika aplikasi diminimalkan dan setelah sleep/wake.
+4. Toleransi awal untuk memulai satu batch adalah **maksimal 30 detik**. Jika aplikasi kembali aktif setelah batas itu, jangan memutar bel lama secara terlambat; catat sebagai `missed`. Setelah satu kegiatan pada menit tertentu sudah dimulai, kegiatan lain pada menit yang sama tetap boleh antre berurutan sampai selesai, meskipun audio sebelumnya melewati 30 detik. Batas ini perlu diuji ketika aplikasi diminimalkan dan setelah sleep/wake.
 5. Kejadian dari tanggal sebelumnya tidak boleh diputar ketika aplikasi dibuka kembali.
 6. Kegiatan aktif tanpa path audio ditandai `skipped` dengan alasan yang jelas. Referensi audio yang tidak ditemukan atau gagal dibaca ditandai `failed`; jangan menampilkan status seolah audio berhasil diputar.
 7. Setelah media benar-benar selesai, catat `completed`. Jika pemutaran gagal, ditolak oleh kebijakan autoplay, atau dihentikan sebelum selesai, catat `failed` dengan pesan yang relevan.
