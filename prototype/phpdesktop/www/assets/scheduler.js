@@ -165,6 +165,8 @@
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' }
             }).catch(function () {});
         }
+        player.pause();
+        player.removeAttribute('src');
         activeRunId = 0;
         isPlaying = false;
     });
@@ -181,7 +183,4 @@
 
     initialize();
 
-    window.addEventListener('beforeunload', function () {
-        if (pollTimer !== null) window.clearInterval(pollTimer);
-    });
 })();
