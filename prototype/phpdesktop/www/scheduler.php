@@ -190,7 +190,7 @@ try {
         ]);
     }
 
-    $latestLog = $db->getLatestPlaybackLog();
+    $latestLog = $db->getLatestPlaybackLog($now->format('Y-m-d'));
     schedulerRespond([
         'ok' => true,
         'state' => (bool) $resolution['conflict'] ? 'conflict' : 'waiting',
