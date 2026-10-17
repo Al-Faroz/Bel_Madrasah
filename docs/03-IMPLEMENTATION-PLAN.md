@@ -196,3 +196,15 @@ Resolver kalender Normal/Khusus → scheduler/audio dan log status → restore a
 
 - Pada 2026-10-17, pengguna melaporkan alur Backup & Restore sudah diterapkan dan dicoba di Windows, **FIX tanpa kendala**. Status alur utama dicatat sebagai **LOCAL TEST PASS berdasarkan laporan pengguna**.
 - Skenario kegagalan khusus (file rusak/kosong, skema tidak cocok, folder tidak dapat ditulis, dan rollback) tetap belum dinyatakan PASS satu per satu karena belum ada laporan hasil terpisah.
+
+### Scheduler/Audio — fondasi implementasi (2026-10-17)
+
+- Spesifikasi kontrak scheduler ditambahkan di [07-SCHEDULER-SPEC.md](07-SCHEDULER-SPEC.md): waktu lokal Windows, resolver sebagai sumber jadwal, urutan kegiatan, toleransi keterlambatan 30 detik, deduplikasi kejadian, status log, dan batas operasi saat aplikasi ditutup.
+- Ditambahkan endpoint polling `scheduler.php`, yang memilih paket aktif, memakai `ScheduleResolver`, melewatkan kegiatan tanpa audio, mencatat file hilang sebagai gagal, dan mengklaim kejadian satu kali melalui `playback_log`.
+- Ditambahkan `audio-stream.php`, yang hanya menyalurkan file dari referensi kegiatan di database, memeriksa ekstensi/keberadaan file, dan mendukung permintaan byte-range media.
+- Ditambahkan `assets/scheduler.js` pada Public dan layout Admin. Script memeriksa jadwal tiap detik, memutar audio melalui elemen media internal, menerapkan preferensi `default_volume`, memperbarui status log, dan merekonsiliasi pemutaran yang terhenti ketika halaman berpindah.
+- Status scheduler ditampilkan di header Public dan footer Admin. Urutan kegiatan pada waktu sama kini memakai `sort_order` sebelum ID sebagai pemecah seri. Konfigurasi volume diperbarui agar sesuai dengan integrasi pemutar.
+- Ditambahkan fixture regresi untuk urutan kegiatan waktu sama serta [SchedulerPlaybackLogTest.php](../tests/SchedulerPlaybackLogTest.php) untuk deduplikasi log dan transisi status.
+- Commit utama: [8d4a4e5](https://github.com/Al-Faroz/Bel_Madrasah/commit/8d4a4e5fa591b85a9724f2d3ade9ea8a5009f7a0), [f3796b6](https://github.com/Al-Faroz/Bel_Madrasah/commit/f3796b63594e310d518b2e8d7d7a9cbf15b70bfc), [55b5988](https://github.com/Al-Faroz/Bel_Madrasah/commit/55b59889ada273fe2701fe25356e14ade465c15a), [533c908](https://github.com/Al-Faroz/Bel_Madrasah/commit/533c9081577144c06099bc5f2d3a47c17d1ecbfe), [092b0bb](https://github.com/Al-Faroz/Bel_Madrasah/commit/092b0bb0c53e9d38ad33463eb80865dcb484c45a).
+- **Status: IMPLEMENTED — BELUM LOCAL TEST PASS.** Pemeriksaan ulang file dari repository dan pemeriksaan statis dasar dilakukan, tetapi PHP lint, fixture PHP, autoplay, audio aktual, deduplikasi pada runtime, minimize/restore, dan navigasi belum dijalankan di PHP Desktop Windows. Konfigurasi runtime pengguna tidak ada di repository, sehingga kebijakan autoplay belum dapat dipastikan.
+- Sebelum penggunaan operasional, tarik perubahan terbaru, jalankan kedua fixture PHP CLI, lalu lakukan uji audio satu menit ke depan di PHP Desktop. Jangan menganggap status `started`/UI sebagai bukti suara fisik terdengar tanpa pemeriksaan langsung.
