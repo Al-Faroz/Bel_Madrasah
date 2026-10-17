@@ -2,12 +2,12 @@
 
 Aplikasi bel otomatis untuk kebutuhan operasional madrasah/sekolah di Windows.
 
-**Status proyek:** Proof of Concept (PoC) runtime `phpdesktop-chrome-130.1-php-8.3`, SQLite lokal, dan audio internal telah dilaporkan berjalan untuk skenario uji awal. Pengembangan produk kini menggunakan roadmap baru yang dimulai dari audit baseline, spesifikasi, dan desain UI yang bersih. Implementasi UI sebelumnya belum dianggap final atau lulus regresi hanya karena tersedia di repository.
+**Status proyek:** PoC runtime `phpdesktop-chrome-130.1-php-8.3`, SQLite lokal, dan audio internal telah dilaporkan berjalan untuk skenario uji awal. Alur utama Backup & Restore juga dilaporkan FIX oleh pengguna pada Windows. Fondasi scheduler dan stream audio internal kini tersedia di repository, tetapi **belum diuji di PHP Desktop Windows**; autoplay, ketepatan waktu, dan perilaku saat minimize/sleep-wake masih harus diverifikasi.
 
 ## Tujuan
 
 - Mengelola paket jadwal dan kegiatan bel sekolah.
-- Memutar audio lokal secara otomatis sesuai jadwal setelah scheduler selesai dikembangkan dan diuji.
+- Memutar audio lokal secara otomatis sesuai jadwal; fondasi scheduler tersedia, tetapi belum dinyatakan lulus sampai uji PHP Desktop Windows.
 - Berjalan lokal tanpa XAMPP, Apache/MySQL terpisah, atau pemutar audio eksternal.
 - Menjaga data pengguna tetap ada saat aplikasi diperbarui.
 - Menyediakan dashboard admin untuk operator dan dashboard publik untuk status operasional.
@@ -32,7 +32,7 @@ Dokumen desain: [docs/05-UI-UX-MATERIAL-DESIGN.md](docs/05-UI-UX-MATERIAL-DESIGN
 3. Rancang app shell serta sistem UI yang konsisten.
 4. Implementasikan dan uji modul satu per satu: dashboard, paket jadwal, editor, konfigurasi, backup/restore, diagnostik, public dashboard.
 5. Implementasikan resolver kalender dan prioritas jadwal.
-6. Implementasikan scheduler dan pemutaran audio otomatis.
+6. Implementasikan scheduler dan pemutaran audio otomatis (**fondasi kode tersedia; uji runtime Windows masih terbuka**).
 7. Uji backup/restore, stabilitas, kinerja, dan distribusi Windows.
 8. Jalankan uji penerimaan dan dokumentasikan keterbatasan.
 
@@ -44,6 +44,7 @@ Dokumen desain: [docs/05-UI-UX-MATERIAL-DESIGN.md](docs/05-UI-UX-MATERIAL-DESIGN
 - [Roadmap pengerjaan baru](docs/03-IMPLEMENTATION-PLAN.md)
 - [Rencana pengujian](docs/04-TEST-PLAN.md)
 - [Acuan UI/UX](docs/05-UI-UX-MATERIAL-DESIGN.md)
+- [Spesifikasi scheduler dan audio otomatis](docs/07-SCHEDULER-SPEC.md)
 
 ## Pola kolaborasi
 
