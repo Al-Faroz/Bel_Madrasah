@@ -38,6 +38,7 @@ Pengujian harus dilakukan pada runtime **PHP Desktop Chrome 130.1 + PHP 8.3 di W
 - [ ] Daftar paket lama tampil dan status aktif benar.
 - [ ] Buat/edit paket percobaan; validasi nama kosong/duplikat jelas.
 - [ ] Pilihan hari libur tersimpan dan tampil konsisten.
+- [ ] Pola awal otomatis mengikuti hari libur paket; pesan status tidak menyebut Senin–Jumat jika paket memakai konfigurasi lain.
 - [ ] Aktivasi paket meminta konfirmasi dan hanya mengaktifkan satu paket.
 - [ ] Restart tidak menghilangkan perubahan.
 
@@ -59,7 +60,8 @@ Pengujian harus dilakukan pada runtime **PHP Desktop Chrome 130.1 + PHP 8.3 di W
 - [ ] Nama madrasah/operator dan volume tersimpan setelah restart.
 - [ ] Backup menghasilkan file non-kosong yang dapat ditemukan.
 - [ ] Backup dapat diperiksa sebagai database SQLite yang valid.
-- [ ] Alur Restore sudah tersedia di kode; status tetap BELUM PASS sampai diuji di PHP Desktop Windows dengan backup valid dan file tidak valid.
+- [x] Alur Backup & Restore utama diuji langsung oleh pengguna pada PHP Desktop Windows dan dilaporkan FIX tanpa kendala.
+- [ ] Uji negatif Restore: file kosong/rusak, skema tidak cocok, folder tidak dapat ditulis, dan rollback ketika penggantian gagal (belum diklaim PASS karena hasil tiap skenario belum dilaporkan).
 - [ ] Kegagalan backup memberi pesan yang bisa dipahami.
 
 ### Dashboard Publik
