@@ -4,9 +4,6 @@ declare(strict_types=1);
 // Deployment target saat ini menggunakan WIB (Asia/Jakarta); samakan jam halaman, resolver, dan log meskipun php.ini runtime tidak menetapkan date.timezone.
 date_default_timezone_set('Asia/Jakarta');
 
-// Keep calendar resolution and scheduled times aligned with the school's local timezone.
-date_default_timezone_set('Asia/Jakarta');
-
 /**
  * Tahap 2: database aplikasi utama.
  * Semua data permanen berada di AppData/LocalAppData, bukan di folder runtime.
@@ -197,7 +194,6 @@ final class Database
         $value = $statement->fetchColumn();
         return $value === false ? $default : (string) $value;
     }
-
     public function saveSettings(array $settings): void
     {
         $allowed = ['school_name', 'operator_name', 'default_volume', 'school_logo_path'];
@@ -397,8 +393,7 @@ final class Database
      * The caller must provide a new destination path that does not exist yet.
      */
     public function createBackup(string $destination): string
-    {
-        $directory = dirname($destination);
+    {        $directory = dirname($destination);
         if (!is_dir($directory) && !mkdir($directory, 0770, true) && !is_dir($directory)) {
             throw new RuntimeException('Folder backup tidak dapat dibuat.');
         }
@@ -597,8 +592,7 @@ final class Database
             throw new InvalidArgumentException('Nama paket wajib diisi dan maksimal 80 karakter.');
         }
         if (strlen($description) > 300) {
-            throw new InvalidArgumentException('Keterangan maksimal 300 karakter.');
-        }
+            throw new InvalidArgumentException('Keterangan maksimal 300 karakter.');        }
         if (!in_array($offDays, ['5', '7', '6,7'], true)) {
             throw new InvalidArgumentException('Pilihan hari libur mingguan tidak valid.');
         }
@@ -797,8 +791,7 @@ final class Database
             return (int) $this->pdo->lastInsertId();
         }
 
-        $existing = $this->getDayRule($id);
-        if ($existing === null) {
+        $existing = $this->getDayRule($id);        if ($existing === null) {
             throw new InvalidArgumentException('Aturan hari yang akan diubah tidak ditemukan.');
         }
         if ((int) $existing['package_id'] !== $packageId) {
@@ -998,7 +991,6 @@ final class Database
         $statement = $this->pdo->prepare('SELECT * FROM playback_log WHERE id = :id');
         $statement->execute([':id' => $id]);
         $row = $statement->fetch();
-
         return $row === false ? null : $row;
     }
 
@@ -1198,111 +1190,3 @@ final class Database
             ];
         }
         usort($files, static fn (array $a, array $b): int => strnatcasecmp($a['name'], $b['name']));
-        return $files;
-    }
-
-    public function listAudioAssets(): array
-    {
-        return $this->listAssetFiles($this->getAudioAssetsDirectory(), ['mp3', 'wav', 'ogg', 'm4a', 'aac']);
-    }
-
-    public function listLogoAssets(): array
-    {
-        return $this->listAssetFiles($this->getLogoAssetsDirectory(), ['png', 'jpg', 'jpeg', 'webp', 'gif', 'svg']);
-    }
-
-    public function resolveLogoAsset(string $filename): string
-    {
-        $filename = trim($filename);
-        if ($filename === '' || basename($filename) !== $filename
-            || str_contains($filename, '/') || str_contains($filename, "\\")) {
-            throw new InvalidArgumentException('Pilihan file logo tidak valid.');
-        }
-        foreach ($this->listLogoAssets() as $asset) {
-            if ($asset['name'] === $filename) {
-                return $asset['path'];
-            }
-        }
-        throw new InvalidArgumentException('File logo tidak ditemukan di folder aset. Salin file ke folder Logo lalu muat ulang halaman.');
-    }
-
-    /**
-     * Resolve an operator-selected filename strictly inside the managed audio assets folder.
-     * The database continues to store an absolute path, matching the existing schema.
-     */
-    public function resolveAudioAsset(string $filename): string
-    {
-        $filename = trim($filename);
-        if ($filename === '' || basename($filename) !== $filename
-            || str_contains($filename, '/') || str_contains($filename, "\\")) {
-            throw new InvalidArgumentException('Pilihan file audio tidak valid.');
-        }
-        foreach ($this->listAudioAssets() as $asset) {
-            if ($asset['name'] === $filename) {
-                return $asset['path'];
-            }
-        }
-        throw new InvalidArgumentException('File audio tidak ditemukan di folder aset. Salin file ke folder aset Audio lalu muat ulang halaman.');
-    }
-
-    public function getAudioStorageDirectory(): string
-    {
-        $root = getenv('APPDATA');
-        if ($root === false || trim($root) === '') {
-            $root = getenv('LOCALAPPDATA');
-        }
-        if ($root === false || trim($root) === '') {
-            throw new RuntimeException('Folder AppData/LocalAppData Windows tidak ditemukan.');
-        }
-        $directory = rtrim($root, "\\\\/") . DIRECTORY_SEPARATOR . 'BelMadrasah' . DIRECTORY_SEPARATOR . 'audio';
-        if (!is_dir($directory) && !mkdir($directory, 0770, true) && !is_dir($directory)) {
-            throw new RuntimeException('Folder audio tidak dapat dibuat.');
-        }
-        return $directory;
-    }
-
-    public function storeUploadedAudio(array $file): string
-    {
-        if (!isset($file['error'], $file['tmp_name'], $file['name'])) {
-            throw new InvalidArgumentException('Informasi unggahan audio tidak lengkap.');
-        }
-        $uploadError = (int) $file['error'];
-        if ($uploadError !== UPLOAD_ERR_OK) {
-            $uploadMessage = match ($uploadError) {
-                UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE => 'File audio melebihi batas unggahan PHP. Periksa upload_max_filesize dan post_max_size; batas aplikasi adalah 50 MB.',
-                UPLOAD_ERR_PARTIAL => 'Unggahan audio terputus sebelum selesai. Silakan coba lagi.',
-                UPLOAD_ERR_NO_FILE => 'Pilih file audio terlebih dahulu.',
-                UPLOAD_ERR_NO_TMP_DIR => 'Folder sementara unggahan PHP tidak tersedia.',
-                UPLOAD_ERR_CANT_WRITE => 'Windows gagal menulis file unggahan ke penyimpanan sementara.',
-                UPLOAD_ERR_EXTENSION => 'Unggahan audio dihentikan oleh konfigurasi ekstensi PHP.',
-                default => 'Unggahan audio gagal dengan kode ' . $uploadError . '.',
-            };
-            throw new InvalidArgumentException($uploadMessage);
-        }
-        if (!is_uploaded_file((string) $file['tmp_name'])) {
-            throw new InvalidArgumentException('Berkas audio tidak dikenali sebagai unggahan yang valid.');
-        }
-        if ((int) ($file['size'] ?? 0) <= 0 || (int) $file['size'] > 50 * 1024 * 1024) {
-            throw new InvalidArgumentException('Ukuran audio harus lebih dari 0 dan maksimal 50 MB.');
-        }
-        $original = (string) $file['name'];
-        $extension = strtolower(pathinfo($original, PATHINFO_EXTENSION));
-        $allowed = ['mp3', 'wav', 'ogg', 'm4a', 'aac'];
-        if (!in_array($extension, $allowed, true)) {
-            throw new InvalidArgumentException('Format audio yang diizinkan: MP3, WAV, OGG, M4A, atau AAC.');
-        }
-        $directory = $this->getAudioStorageDirectory();
-        $target = $directory . DIRECTORY_SEPARATOR . bin2hex(random_bytes(12)) . '.' . $extension;
-        if (!move_uploaded_file((string) $file['tmp_name'], $target)) {
-            throw new RuntimeException('File audio tidak dapat disimpan ke penyimpanan lokal.');
-        }
-        return $target;
-    }
-
-    public function getTables(): array
-    {
-        return $this->pdo->query(
-            "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' ORDER BY name"
-        )->fetchAll(PDO::FETCH_COLUMN);
-    }
-}
