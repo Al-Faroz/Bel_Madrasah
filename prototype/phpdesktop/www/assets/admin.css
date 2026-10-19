@@ -679,3 +679,85 @@ body.admin-area { color: var(--admin-text); font-size: 14px; background: var(--a
     }
 }
 
+/* Editor Jadwal — make the activation hierarchy explicit and easy to scan. */
+.admin-area .editor-workflow-guide {
+    display: grid;
+    grid-template-columns: minmax(220px, .8fr) minmax(0, 1.7fr);
+    align-items: center;
+    gap: 18px;
+    padding: 18px 20px;
+    border: 1px solid #d7e8dc;
+    border-left: 4px solid #34865b;
+    background: #f8fcf9;
+}
+.admin-area .editor-workflow-title h2 {
+    margin: 0 0 5px;
+    color: var(--admin-ink, #20362b);
+    font-size: 16px;
+    line-height: 1.35;
+}
+.admin-area .editor-workflow-title p:not(.eyebrow) {
+    margin: 0;
+    color: #637168;
+    font-size: 11px;
+    line-height: 1.55;
+}
+.admin-area .editor-workflow-steps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 9px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.admin-area .editor-workflow-steps li {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    min-width: 0;
+    padding: 11px;
+    border: 1px solid #e0ebe3;
+    border-radius: 6px;
+    background: #fff;
+}
+.admin-area .workflow-number {
+    display: grid;
+    flex: 0 0 24px;
+    width: 24px;
+    height: 24px;
+    place-items: center;
+    border-radius: 50%;
+    color: #fff;
+    background: #34865b;
+    font-size: 11px;
+    font-weight: 800;
+}
+.admin-area .editor-workflow-steps strong,
+.admin-area .editor-workflow-steps small { display: block; }
+.admin-area .editor-workflow-steps strong { margin: 1px 0 4px; color: #2d4336; font-size: 11px; }
+.admin-area .editor-workflow-steps small { color: #68766e; font-size: 10px; line-height: 1.5; }
+.admin-area .editor-workflow-steps small b { color: #2d6e49; }
+.admin-area .rule-form-help { padding: 10px 12px; border-radius: 5px; background: #f7faf8; line-height: 1.6; }
+.admin-area .rule-event-summary {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: flex-end;
+    color: #69766e;
+    font-size: 10px;
+    line-height: 1.35;
+}
+.admin-area .rule-event-summary strong { color: #2f8052; font-size: 12px; }
+.admin-area .day-rule-header { align-items: flex-start; }
+.admin-area .day-rule-header h3 { line-height: 1.4; }
+.admin-area .day-rule-header p { line-height: 1.5; }
+.admin-area .editor-rules-list .schedule-day-filter { max-width: 300px; }
+@media (max-width: 900px) {
+    .admin-area .editor-workflow-guide { grid-template-columns: 1fr; }
+}
+@media (max-width: 620px) {
+    .admin-area .editor-workflow-steps { grid-template-columns: 1fr; }
+    .admin-area .editor-workflow-steps li { padding: 9px 10px; }
+    .admin-area .editor-workflow-guide { padding: 15px; }
+    .admin-area .rule-event-summary { align-items: flex-start; }
+}
