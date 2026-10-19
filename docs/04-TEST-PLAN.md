@@ -43,6 +43,11 @@ Pengujian harus dilakukan pada runtime **PHP Desktop Chrome 130.1 + PHP 8.3 di W
 - [ ] Restart tidak menghilangkan perubahan.
 
 ### Editor Jadwal
+- [ ] Panduan status menerangkan tiga tingkat: paket aktif, aturan hari aktif, dan kegiatan bel aktif.
+- [ ] Setiap kartu aturan menampilkan status aturan serta jumlah kegiatan aktif dibanding total kegiatan.
+- [ ] Kolom tabel menjelaskan dengan tegas nama kegiatan, file audio, dan status kegiatan.
+- [ ] Filter hari membantu menemukan kartu aturan yang sedang diedit tanpa mencampur hari lain.
+- [ ] Uji bahwa jadwal yang diaktifkan pada paket, aturan, dan kegiatan tampil sesuai pada Publik.
 - [ ] Pilih paket/hari; aturan yang tampil cocok.
 - [ ] Tambah/edit/nonaktifkan/hapus kegiatan sesuai dukungan fitur.
 - [ ] Kolom waktu di Editor Jadwal menampilkan format 24 jam `HH:MM` (tanpa AM/PM) dan menolak nilai di luar `00:00–23:59`.
