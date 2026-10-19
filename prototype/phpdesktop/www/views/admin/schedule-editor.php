@@ -175,7 +175,7 @@
                             <?php if ($ruleEvents !== []): ?>
                                 <div class="bell-events-table-wrap">
                                     <table class="bell-events-table">
-                                        <thead><tr><th>Jam</th><th>Nama kegiatan bel</th><th>Urutan</th><th>Audio</th><th>Status</th><th>Aksi</th></tr></thead>
+                                        <thead><tr><th>Jam</th><th>Nama kegiatan bel</th><th>Urutan</th><th>File audio</th><th>Status kegiatan</th><th>Aksi</th></tr></thead>
                                         <tbody>
                                         <?php foreach ($ruleEvents as $event): ?>
                                             <?php
