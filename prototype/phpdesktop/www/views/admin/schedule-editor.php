@@ -20,6 +20,19 @@
         </form>
     </section>
 
+    <section class="panel editor-workflow-guide" aria-label="Panduan status jadwal">
+        <div class="editor-workflow-title">
+            <p class="eyebrow">SEBELUM JADWAL TAMPIL DI PUBLIK</p>
+            <h2>Periksa 3 tingkat status</h2>
+            <p>Jadwal hanya tampil jika paket, aturan hari, dan kegiatan bel sama-sama sesuai dan aktif.</p>
+        </div>
+        <ol class="editor-workflow-steps">
+            <li><span class="workflow-number">1</span><div><strong>Paket jadwal</strong><small>Paket yang dipakai Publik harus berstatus <b>AKTIF</b>.</small></div></li>
+            <li><span class="workflow-number">2</span><div><strong>Aturan hari</strong><small>Pola Normal/Khusus untuk hari yang cocok harus berstatus <b>AKTIF</b>.</small></div></li>
+            <li><span class="workflow-number">3</span><div><strong>Kegiatan bel</strong><small>Setiap kegiatan yang ingin ditampilkan harus dicentang <b>Aktif</b>.</small></div></li>
+        </ol>
+    </section>
+
     <section class="panel copy-schedule-panel">
         <div class="section-heading">
             <div><p class="eyebrow">AKSI CEPAT</p><h2>Salin jadwal antarhari</h2><p class="copy-schedule-description">Pilih hari sumber dan tujuan. Seluruh pola Normal/Khusus beserta kegiatan pada hari tujuan akan diganti setelah Anda memeriksa pratinjau.</p></div>
@@ -60,7 +73,7 @@
                     <p class="copy-preview-empty"><?= h($sourceDayName) ?> memiliki aturan, tetapi belum memiliki kegiatan. Jika dilanjutkan, aturan <?= h($targetDayName) ?> akan diganti dan kegiatan yang ada di sana akan dihapus.</p>
                 <?php else: ?>
                     <div class="copy-preview-table-wrap"><table class="copy-preview-table">
-                        <thead><tr><th>Pola hari</th><th>Jam</th><th>Nama kegiatan</th><th>Audio</th><th>Status</th></tr></thead>
+                        <thead><tr><th>Pola hari</th><th>Jam</th><th>Nama kegiatan</th><th>File audio</th><th>Status kegiatan</th></tr></thead>
                         <tbody><?php foreach ($copyPreview['events'] as $copyEvent): ?>
                             <tr><td><?= h($copyEvent['rule_label']) ?></td><td><?= h(substr((string) $copyEvent['event_time'], 0, 5)) ?></td><td><?= h($copyEvent['name']) ?></td><td><?= trim((string) $copyEvent['audio_path']) !== '' ? h(basename((string) $copyEvent['audio_path'])) : 'Belum diatur' ?></td><td><?= (int) $copyEvent['is_enabled'] === 1 ? 'Aktif' : 'Nonaktif' ?></td></tr>
                         <?php endforeach; ?></tbody>
@@ -112,14 +125,14 @@
                     </label>
                 </div>
                 <label class="checkbox-line"><input type="checkbox" name="is_enabled" value="1" <?= $ruleForm['is_enabled'] === '1' ? 'checked' : '' ?>> Aturan aktif</label>
-                <p class="form-note">Untuk setiap hari, buat satu aturan Normal sebagai jadwal dasar. Aturan Khusus dapat ditambahkan lebih dari satu kali untuk atribut yang berbeda.</p>
+                <p class="form-note rule-form-help"><strong>Normal</strong> adalah jadwal dasar hari tersebut. <strong>Khusus</strong> menggantikan Normal saat pasaran atau minggu kalender cocok. Pastikan centang <strong>Aturan aktif</strong> menyala agar pola bisa dipakai.</p>
                 <div class="form-actions rule-submit-actions"><button type="submit" class="rule-submit-button"><?= $editingRuleId > 0 ? 'Simpan Perubahan Aturan' : '+ Tambah Aturan Hari' ?></button><?php if ($editingRuleId > 0): ?><a class="button-link-secondary" href="schedule-editor.php?package_id=<?= $selectedPackageId ?>">Batal Edit</a><?php endif; ?></div>
             </form>
         </section>
 
         <section class="panel editor-rules-list">
             <div class="section-heading"><div><p class="eyebrow">POLA YANG TERSIMPAN</p><h2>Aturan per hari</h2></div><span class="section-note" id="rules-count"><?= count($rules ?? []) ?> aturan</span></div>
-            <p class="form-note rules-list-help">Kegiatan bel dapat diedit langsung pada tabel di bawah. <strong>Ubah Pola Hari</strong> hanya untuk mengubah jenis pola (Normal/Khusus), atribut khusus, dan status aturan.</p>
+            <p class="form-note rules-list-help">Pilih hari untuk memfilter kartu. Status <strong>aturan</strong> berlaku untuk seluruh polanya; status <strong>kegiatan</strong> di tabel berlaku per bel. Keduanya perlu aktif agar kegiatan bisa muncul di Publik. Jam, nama, urutan, audio, dan status kegiatan dapat diubah langsung di tabel lalu tekan <strong>Simpan</strong>.</p>
             <label class="schedule-day-filter">Tampilkan data hari
                 <select id="schedule-day-filter" aria-label="Tampilkan aturan untuk hari">
                     <?php foreach ($weekdays as $dayNumber => $dayName): ?><option value="<?= $dayNumber ?>" <?= (int) $ruleForm['weekday'] === $dayNumber ? 'selected' : '' ?>><?= h($dayName) ?></option><?php endforeach; ?>
@@ -143,6 +156,7 @@
                             : ($weekOptions[(string) $rule['special_value']] ?? (string) $rule['special_value']);
                     }
                     $ruleEvents = $eventsByRule[(int) $rule['id']] ?? [];
+                    $enabledEventCount = count(array_filter($ruleEvents, static fn (array $event): bool => (int) $event['is_enabled'] === 1));
                     ?>
                     <article class="day-rule-card" data-weekday="<?= (int) $rule['weekday'] ?>">
                         <div class="day-rule-header">
@@ -152,7 +166,7 @@
                         </div>
                         <div class="rule-card-actions">
                             <form method="post" action="schedule-editor.php?package_id=<?= $selectedPackageId ?>"><input type="hidden" name="package_id" value="<?= $selectedPackageId ?>"><input type="hidden" name="editor_action" value="edit_rule"><input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>"><button type="submit" class="button-compact rule-edit-button">Ubah Pola Hari</button></form>
-                            <span class="section-note"><?= count($ruleEvents) ?> kegiatan</span>
+                            <span class="rule-event-summary"><strong><?= $enabledEventCount ?> aktif</strong><span>dari <?= count($ruleEvents) ?> kegiatan</span></span>
                         </div>
                         <?php if ($rule['rule_mode'] === 'special'): ?>
                             <p class="overlap-warning"><strong>Perhatian:</strong> aturan Khusus pada hari yang sama dapat bertumpang tindih pada tanggal tertentu. Resolver kalender sudah menandai konflik jika beberapa aturan Khusus cocok; pada konflik, pola Normal menjadi fallback. Pastikan setiap aturan Khusus memang diperlukan.</p>
@@ -161,7 +175,7 @@
                             <?php if ($ruleEvents !== []): ?>
                                 <div class="bell-events-table-wrap">
                                     <table class="bell-events-table">
-                                        <thead><tr><th>Jam</th><th>Keterangan bel</th><th>Urutan</th><th>Audio</th><th>Status</th><th>Aksi</th></tr></thead>
+                                        <thead><tr><th>Jam</th><th>Nama kegiatan bel</th><th>Urutan</th><th>Audio</th><th>Status</th><th>Aksi</th></tr></thead>
                                         <tbody>
                                         <?php foreach ($ruleEvents as $event): ?>
                                             <?php
