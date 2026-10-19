@@ -211,3 +211,12 @@ Resolver kalender Normal/Khusus → scheduler/audio dan log status → restore a
 - Inisialisasi scheduler diwajibkan POST dan status riwayat dibatasi ke tanggal hari ini ([95693ad](https://github.com/Al-Faroz/Bel_Madrasah/commit/95693ad52d6a63b8f951720418349faafcdd8626), [551b3d0](https://github.com/Al-Faroz/Bel_Madrasah/commit/551b3d0d2af9e56f2c873f08fbbae648cc6ddc7d), [1dd47f5](https://github.com/Al-Faroz/Bel_Madrasah/commit/1dd47f5c56f29edc6d8bf977f49870976d8397f6), [e27b15b](https://github.com/Al-Faroz/Bel_Madrasah/commit/e27b15b0bf074dc947068ed1c1b50fe80340f992)).
 - **Status: IMPLEMENTED — BELUM LOCAL TEST PASS.** Pemeriksaan ulang file dari repository dan pemeriksaan statis dasar dilakukan, tetapi PHP lint, fixture PHP, autoplay, audio aktual, deduplikasi pada runtime, minimize/restore, dan navigasi belum dijalankan di PHP Desktop Windows. Konfigurasi runtime pengguna tidak ada di repository, sehingga kebijakan autoplay belum dapat dipastikan.
 - Sebelum penggunaan operasional, tarik perubahan terbaru, jalankan kedua fixture PHP CLI, lalu lakukan uji audio satu menit ke depan di PHP Desktop. Jangan menganggap status `started`/UI sebagai bukti suara fisik terdengar tanpa pemeriksaan langsung.
+
+## Checkpoint Editor Jadwal — kejelasan status dan alur kerja (2026-10-19)
+
+- Menambahkan panduan visual tiga tingkat status: paket aktif, aturan hari aktif, dan kegiatan bel aktif. Panduan menegaskan bahwa ketiganya harus sesuai agar kegiatan tampil di Publik.
+- Kartu aturan kini merangkum jumlah kegiatan aktif dibanding total kegiatan, sehingga operator dapat membedakan status aturan dari status setiap bel tanpa membuka satu per satu.
+- Label tabel diperjelas menjadi “Nama kegiatan bel”, “File audio”, dan “Status kegiatan”. Teks bantuan membedakan fungsi edit pola (Normal/Khusus, atribut, status aturan) dari edit kegiatan langsung pada tabel.
+- CSS Admin ditambahkan untuk hierarki panduan dan ringkasan status, dengan breakpoint untuk jendela lebih sempit.
+- Perubahan ini adalah perbaikan keterbacaan/alur editor; tidak mengubah data SQLite, resolver, scheduler, atau status jadwal yang tersimpan.
+- Status: **KODE DIPERBARUI — BELUM DIVERIFIKASI SECARA VISUAL DI PHP DESKTOP WINDOWS**. Pemeriksaan runtime perlu memastikan layout tidak tumpang tindih pada 1366 px, 1024 px, dan jendela sempit; cek juga filter hari, penyimpanan tabel, serta status aturan/kegiatan.
