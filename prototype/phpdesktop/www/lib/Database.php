@@ -1190,3 +1190,25 @@ final class Database
             ];
         }
         usort($files, static fn (array $a, array $b): int => strnatcasecmp($a['name'], $b['name']));
+
+        return $files;
+    }
+
+    /** @return array<int, array{name:string,path:string,extension:string,size:int}> */
+    public function listAudioAssets(): array
+    {
+        return $this->listAssetFiles(
+            $this->getAudioAssetsDirectory(),
+            ['mp3', 'wav', 'ogg', 'm4a', 'aac']
+        );
+    }
+
+    /** @return array<int, array{name:string,path:string,extension:string,size:int}> */
+    public function listLogoAssets(): array
+    {
+        return $this->listAssetFiles(
+            $this->getLogoAssetsDirectory(),
+            ['png', 'jpg', 'jpeg', 'webp', 'gif', 'svg']
+        );
+    }
+}
