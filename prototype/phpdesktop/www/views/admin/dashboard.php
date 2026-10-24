@@ -90,7 +90,7 @@
             <span class="dashboard-note-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
             <div>
                 <strong>Status pengembangan</strong>
-                <p>Dashboard ini merangkum data yang tersimpan. Resolver kalender kini memilih pola Normal/Khusus untuk tanggal ini. Mesin penjadwalan dan pemutaran audio otomatis belum aktif; ringkasan ini bukan bukti bahwa bel akan berbunyi otomatis.</p>
+                <p>Dashboard ini merangkum konfigurasi yang tersimpan. Resolver menentukan pola Normal/Khusus atau hari libur mingguan untuk tanggal ini. Status pada kartu ini bukan bukti audio sudah berjalan; pantau indikator scheduler pada Dashboard Publik dan riwayat pemutaran untuk melihat hasil pemrosesan audio.</p>
             </div>
         </section>
 
