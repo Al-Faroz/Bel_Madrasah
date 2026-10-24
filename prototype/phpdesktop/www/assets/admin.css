@@ -768,3 +768,149 @@ body.admin-area { color: var(--admin-text); font-size: 14px; background: var(--a
 .admin-area .delete-event-form { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0; }
 .admin-area .delete-event-form[hidden] { display: none !important; }
 .admin-area .delete-event-confirm-text { flex-basis: 100%; color: #8f3028; font-size: 10px; line-height: 1.4; }
+
+/* Editor Jadwal: improve table readability and make single-event deletion feedback explicit. */
+.admin-area .bell-events-table {
+    border: 1px solid #e0e7e3;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #fff;
+}
+.admin-area .bell-events-table thead th {
+    padding: 11px 10px;
+    border-bottom: 1px solid #dce5df;
+    color: #4d5d54;
+    background: #f3f7f4;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .035em;
+    vertical-align: middle;
+}
+.admin-area .bell-events-table tbody tr:nth-child(even) { background: #fbfcfb; }
+.admin-area .bell-events-table tbody tr:hover { background: #f4faf6; }
+.admin-area .bell-events-table tbody td {
+    padding: 11px 9px;
+    border-bottom: 1px solid #e8eeea;
+    vertical-align: middle;
+}
+.admin-area .bell-events-table tbody tr:last-child td { border-bottom: 0; }
+.admin-area .bell-events-table td input:not([type="checkbox"]):not([type="file"]),
+.admin-area .bell-events-table td select {
+    min-height: 36px;
+    border-color: #d5dfd8;
+    background-color: #fff;
+    font-size: 11px;
+}
+.admin-area .bell-events-table td input:focus,
+.admin-area .bell-events-table td select:focus {
+    border-color: #4b906a;
+    outline: 2px solid rgba(75,144,106,.14);
+    outline-offset: 1px;
+}
+.admin-area .bell-events-table .bell-audio-input {
+    display: block;
+    margin-bottom: 5px;
+    color: #52645a;
+    font-size: 10px;
+    font-weight: 700;
+}
+.admin-area .bell-events-table .bell-audio-status {
+    display: block;
+    margin-top: 5px;
+    color: #78847d;
+    font-size: 10px;
+    line-height: 1.4;
+}
+.admin-area .bell-events-table .bell-enabled-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    font-size: 11px;
+}
+.admin-area .bell-actions-cell {
+    min-width: 150px;
+}
+.admin-area .bell-actions-cell > button,
+.admin-area .bell-actions-cell .delete-event-action > button {
+    min-height: 32px;
+    padding: 6px 10px;
+    font-size: 11px;
+}
+.admin-area .bell-actions-cell .button-compact {
+    border: 1px solid #d4dfd7;
+    border-radius: 5px;
+    color: #345b44;
+    background: #fff;
+}
+.admin-area .bell-actions-cell .button-compact:hover { background: #f2f7f3; }
+.admin-area .delete-event-action {
+    display: flex;
+    align-items: flex-start;
+    margin-top: 7px;
+}
+.admin-area .delete-event-action > .text-danger { min-height: 32px; }
+.admin-area .delete-event-form {
+    display: block;
+    width: 100%;
+    padding: 0;
+}
+.admin-area .delete-event-confirm-panel {
+    display: grid;
+    gap: 6px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid #efc9c4;
+    border-radius: 6px;
+    background: #fff7f6;
+}
+.admin-area .delete-event-confirm-panel > strong {
+    color: #8f3028;
+    font-size: 11px;
+    line-height: 1.4;
+}
+.admin-area .delete-event-confirm-panel > span {
+    color: #6f5552;
+    font-size: 10px;
+    line-height: 1.5;
+}
+.admin-area .delete-event-confirm-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 2px;
+}
+.admin-area .delete-event-confirm-buttons .text-danger {
+    min-height: 32px;
+    padding: 6px 9px;
+    color: #fff;
+    border-color: #a13a2f;
+    background: #a13a2f;
+    font-size: 10px;
+}
+.admin-area .delete-event-confirm-buttons .text-danger:hover { background: #852d25; }
+.admin-area .delete-event-confirm-buttons .button-compact {
+    min-height: 32px;
+    padding: 6px 9px;
+    font-size: 10px;
+}
+.admin-area .action-feedback.success {
+    padding: 13px 16px;
+    border: 1px solid #c8e2d0;
+    border-left: 4px solid #34865b;
+    border-radius: 6px;
+    color: #245d3d;
+    background: #f3faf5;
+    line-height: 1.6;
+}
+.admin-area .action-feedback.error {
+    padding: 13px 16px;
+    border-left: 4px solid #b84439;
+    border-radius: 6px;
+    line-height: 1.6;
+}
+@media (max-width: 760px) {
+    .admin-area .bell-events-table tbody td { padding: 9px 7px; }
+    .admin-area .bell-actions-cell { min-width: 145px; }
+}
