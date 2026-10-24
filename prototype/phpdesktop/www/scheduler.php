@@ -231,10 +231,14 @@ try {
     $latestLog = $db->getLatestPlaybackLog($now->format('Y-m-d'));
     schedulerRespond([
         'ok' => true,
-        'state' => (bool) $resolution['conflict'] ? 'conflict' : 'waiting',
+        'state' => (bool) $resolution['conflict']
+            ? 'conflict'
+            : ((string) $resolution['mode'] === 'off_day' ? 'off_day' : 'waiting'),
         'message' => (bool) $resolution['conflict']
             ? 'Konflik aturan Khusus terdeteksi. Resolver memakai pola Normal sebagai fallback.'
-            : 'Menunggu jadwal berikutnya.',
+            : ((string) $resolution['mode'] === 'off_day'
+                ? 'Hari libur mingguan. Scheduler tidak menjalankan kegiatan bel hari ini.'
+                : 'Menunggu jadwal berikutnya.'),
         'conflict' => (bool) $resolution['conflict'],
         'volume' => $volume,
         'last_log' => $latestLog === null ? null : [
