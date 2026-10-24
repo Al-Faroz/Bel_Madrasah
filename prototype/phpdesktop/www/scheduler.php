@@ -150,21 +150,59 @@ try {
         }
 
         if (!is_file($audioPath) || !is_readable($audioPath)) {
-            $db->recordPlaybackLogIfMissing(
-                $packageId,
-                $eventId,
-                $scheduledFor,
-                'failed',
-                'File audio tidak ditemukan atau tidak dapat dibaca: ' . basename($audioPath)
-            );
+            $message = 'File audio tidak ditemukan atau tidak dapat dibaca: ' . basename($audioPath);
+            $db->recordPlaybackLogIfMissing($packageId, $eventId, $scheduledFor, 'failed', $message);
             schedulerRespond([
                 'ok' => true,
                 'state' => 'failed',
-                'message' => 'Audio untuk ' . (string) $event['name'] . ' tidak ditemukan atau tidak dapat dibaca.',
+                'message' => 'Audio untuk ' . (string) $event['name'] . ' gagal: file tidak ditemukan atau tidak dapat dibaca.',
                 'conflict' => (bool) $resolution['conflict'],
                 'volume' => $volume,
             ]);
         }
+
+        $extension = strtolower(pathinfo($audioPath, PATHINFO_EXTENSION));
+        $supportedExtensions = ['mp3', 'wav', 'ogg', 'm4a', 'aac'];
+        if (!in_array($extension, $supportedExtensions, true)) {
+            $message = 'Format audio tidak didukung (' . ($extension !== '' ? strtoupper($extension) : 'tanpa ekstensi') . '). Gunakan MP3 atau WAV yang didukung aplikasi.';
+            $db->recordPlaybackLogIfMissing($packageId, $eventId, $scheduledFor, 'failed', $message);
+            schedulerRespond([
+                'ok' => true,
+                'state' => 'failed',
+                'message' => 'Audio untuk ' . (string) $event['name'] . ' gagal: ' . $message,
+                'conflict' => (bool) $resolution['conflict'],
+                'volume' => $volume,
+            ]);
+        }
+
+        clearstatcache(true, $audioPath);
+        $audioSize = @filesize($audioPath);
+        if ($audioSize === false || $audioSize <= 0) {
+            $message = 'File audio kosong atau ukurannya tidak dapat dibaca: ' . basename($audioPath);
+            $db->recordPlaybackLogIfMissing($packageId, $eventId, $scheduledFor, 'failed', $message);
+            schedulerRespond([
+                'ok' => true,
+                'state' => 'failed',
+                'message' => 'Audio untuk ' . (string) $event['name'] . ' gagal: file kosong atau tidak dapat dibaca.',
+                'conflict' => (bool) $resolution['conflict'],
+                'volume' => $volume,
+            ]);
+        }
+
+        // is_readable() is not sufficient on Windows if the file is locked or cannot be opened.
+        $audioHandle = @fopen($audioPath, 'rb');
+        if ($audioHandle === false) {
+            $message = 'Windows tidak dapat membuka file audio: ' . basename($audioPath);
+            $db->recordPlaybackLogIfMissing($packageId, $eventId, $scheduledFor, 'failed', $message);
+            schedulerRespond([
+                'ok' => true,
+                'state' => 'failed',
+                'message' => 'Audio untuk ' . (string) $event['name'] . ' gagal: file tidak dapat dibuka oleh Windows.',
+                'conflict' => (bool) $resolution['conflict'],
+                'volume' => $volume,
+            ]);
+        }
+        fclose($audioHandle);
 
         $runId = $db->recordPlaybackLogIfMissing(
             $packageId,
