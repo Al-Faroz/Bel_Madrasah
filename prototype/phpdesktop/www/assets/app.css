@@ -1255,3 +1255,141 @@ footer { color: #68786d; font-size: 11px; }
         padding-bottom: 7px;
     }
 }
+
+
+/* PUB-2 — compact public timeline and readable scheduler status */
+@media (min-width: 1000px) and (min-height: 650px) {
+    .public-live-indicator {
+        flex: 0 1 auto;
+        min-width: 0;
+        max-width: min(34vw, 340px);
+        gap: 7px;
+        padding: 8px 11px;
+        font-size: 10px;
+    }
+
+    .public-live-indicator > span:last-child {
+        display: block;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .public-shell > main:has(.public-overview-grid) .public-event {
+        grid-template-columns: 64px 12px minmax(0, 1fr) auto;
+        gap: 8px;
+        min-height: 0;
+        padding: 6px 9px;
+    }
+
+    .public-shell > main:has(.public-overview-grid) .public-event-time {
+        font-size: 16px;
+    }
+
+    .public-shell > main:has(.public-overview-grid) .public-event-marker {
+        width: 9px;
+        height: 9px;
+    }
+
+    .public-shell > main:has(.public-overview-grid) .public-event-copy {
+        min-width: 0;
+        gap: 1px;
+    }
+
+    .public-shell > main:has(.public-overview-grid) .public-event-copy strong {
+        font-size: 12px;
+        line-height: 1.2;
+    }
+
+    .public-shell > main:has(.public-overview-grid) .public-event-copy span {
+        font-size: 8px;
+        line-height: 1.2;
+    }
+
+    .public-shell > main:has(.public-overview-grid) .public-next-badge {
+        padding: 4px 6px;
+        font-size: 7px;
+        letter-spacing: .04em;
+    }
+
+    .public-shell > main:has(.public-overview-grid) .public-overview-card {
+        padding: 11px 12px;
+    }
+
+    .public-shell > main:has(.public-overview-grid) .public-overview-card > strong {
+        overflow-wrap: anywhere;
+    }
+
+    .public-shell > main:has(.public-overview-grid) .public-alert p {
+        font-size: 10px;
+        line-height: 1.4;
+    }
+}
+
+@media (min-width: 1000px) and (min-height: 650px) and (max-height: 820px) {
+    .public-shell > main:has(.public-overview-grid) > .public-schedule-panel {
+        padding: 11px 14px;
+    }
+
+    .public-shell > main:has(.public-overview-grid) .public-section-heading {
+        margin-bottom: 5px;
+    }
+
+    .public-shell > main:has(.public-overview-grid) .public-section-heading h2 {
+        font-size: 20px;
+    }
+
+    .public-shell > main:has(.public-overview-grid) .public-event {
+        padding-top: 4px;
+        padding-bottom: 4px;
+    }
+
+    .public-shell > main:has(.public-overview-grid) .public-timeline {
+        scrollbar-width: thin;
+    }
+
+    .public-shell > main:has(.public-overview-grid) .public-overview-grid {
+        gap: 7px;
+    }
+
+    .public-shell > main:has(.public-overview-grid) .public-overview-card {
+        padding-top: 9px;
+        padding-bottom: 9px;
+    }
+}
+
+@media (min-width: 1000px) and (min-height: 650px) and (max-height: 720px) {
+    .public-shell {
+        padding-top: 8px;
+        padding-bottom: 4px;
+    }
+
+    .public-header {
+        margin-bottom: 6px;
+    }
+
+    .public-shell > main:has(.public-overview-grid) {
+        gap: 6px 12px;
+    }
+
+    .public-shell > main:has(.public-overview-grid) .public-overview-card {
+        grid-template-columns: 30px minmax(0, 1fr);
+        column-gap: 8px;
+        padding: 7px 9px;
+    }
+
+    .public-shell > main:has(.public-overview-grid) .public-card-icon {
+        width: 29px;
+        height: 29px;
+    }
+
+    .public-shell > main:has(.public-overview-grid) .public-event {
+        padding-top: 3px;
+        padding-bottom: 3px;
+    }
+
+    .public-shell > main:has(.public-overview-grid) .public-event-time {
+        font-size: 15px;
+    }
+}
