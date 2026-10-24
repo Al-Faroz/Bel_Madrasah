@@ -175,6 +175,7 @@
                             <?php if ($ruleEvents !== []): ?>
                                 <div class="bell-events-table-wrap">
                                     <table class="bell-events-table">
+                                        <caption class="sr-only">Daftar kegiatan bel untuk pola <?= h($weekdayName . ' · ' . ($rule['rule_mode'] === 'normal' ? 'Normal' : 'Khusus')) ?></caption>
                                         <thead><tr><th>Jam</th><th>Nama kegiatan bel</th><th>Urutan</th><th>File audio</th><th>Status kegiatan</th><th>Aksi</th></tr></thead>
                                         <tbody>
                                         <?php foreach ($ruleEvents as $event): ?>
@@ -228,9 +229,14 @@
                                                             <input type="hidden" name="editor_action" value="delete_event">
                                                             <input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>">
                                                             <input type="hidden" name="event_id" value="<?= (int) $event['id'] ?>">
-                                                            <span class="delete-event-confirm-text">Hapus “<?= h((string) $event['name']) ?>” saja?</span>
-                                                            <button type="submit" class="text-danger">Ya, hapus</button>
-                                                            <button type="button" class="button-compact" onclick="this.closest('.delete-event-action').querySelector('.text-danger').hidden=false; this.closest('form').hidden=true;">Batal</button>
+                                                            <div class="delete-event-confirm-panel">
+                                                                <strong>Hapus satu kegiatan ini?</strong>
+                                                                <span>“<?= h((string) $event['name']) ?>” akan dihapus. Pola hari dan bel lain tetap ada.</span>
+                                                                <div class="delete-event-confirm-buttons">
+                                                                    <button type="submit" class="text-danger">Ya, hapus</button>
+                                                                    <button type="button" class="button-compact" onclick="this.closest('.delete-event-action').querySelector(':scope > .text-danger').hidden=false; this.closest('form').hidden=true;">Batal</button>
+                                                                </div>
+                                                            </div>
                                                         </form>
                                                     </div>
                                                 </td>
