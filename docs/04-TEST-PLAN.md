@@ -209,3 +209,15 @@ Catatan: butir di atas adalah kriteria uji; belum dianggap lulus hanya karena pe
 - [ ] Uji sleep/wake dan restart; kejadian yang melewati toleransi dicatat `missed`, bukan diputar terlambat.
 - [ ] Cocokkan pesan status UI dengan status dan pesan pada database `playback_log`.
 - [ ] Semua hasil di atas harus diverifikasi di PHP Desktop Windows; kode dan dokumen bukan bukti runtime lulus.
+
+
+## Audit waktu dan pergantian tanggal (2026-10-24)
+
+- [ ] Jam pada Dashboard Publik menampilkan WIB (Asia/Jakarta) meskipun zona waktu tampilan Windows berbeda.
+- [ ] Jam tetap bertambah setiap detik tanpa drift yang terlihat selama pengamatan operasional.
+- [ ] Saat tanggal WIB berganti tengah malam, Dashboard Publik memuat ulang data tanggal, pasaran, aturan khusus, dan daftar kegiatan.
+- [ ] Mengubah tanggal/jam Windows ke tanggal lain lalu kembali diuji; UI tidak terus menampilkan tanggal/pasaran yang lama.
+- [ ] Scheduler backend memproses waktu berdasarkan zona waktu aplikasi Asia/Jakarta, bukan zona waktu browser.
+- [ ] Jadwal yang sudah melewati toleransi tetap tercatat `missed` setelah aplikasi tidur atau dibuka kembali; tidak dimainkan terlambat.
+- [ ] Uji tanggal yang cocok dengan aturan pasaran dan aturan minggu ke-bulan; cocokkan hasil resolver, Editor Jadwal, Dashboard Publik, dan log.
+- [ ] Verifikasi pada PHP Desktop Windows. Pemeriksaan kode tidak membuktikan jam perangkat atau pemutaran aktual lulus.
