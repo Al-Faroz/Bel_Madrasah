@@ -408,6 +408,17 @@ body.admin-area { color: var(--admin-text); font-size: 14px; background: var(--a
 .admin-area .storage-path code { overflow-wrap: anywhere; word-break: break-word; color: #4f5e68; font-size: 11px; }
 .admin-area .restore-confirm-form { padding: 16px; border: 1px solid #eadfbe; border-radius: 6px; background: #fffdf7; }
 .admin-area .copy-preview-warning { border-radius: 5px; }
+.admin-area .copy-preview-warning.is-error {
+    border-color: #e0b9b5;
+    color: #9d3027;
+    background: #fff6f5;
+}
+.admin-area .copy-preview-warning ul { margin: 7px 0; padding-left: 19px; }
+.admin-area .copy-schedule-button:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+    filter: grayscale(.15);
+}
 .admin-area .backup-result { border-color: #d5e8db; background: #f5faf6; }
 
 /* D7 — diagnostics cards distinguish reported runtime state without oversized decoration. */

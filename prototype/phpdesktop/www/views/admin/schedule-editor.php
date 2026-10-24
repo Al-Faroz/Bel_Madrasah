@@ -82,14 +82,26 @@
                         <?php endforeach; ?></tbody>
                     </table></div>
                 <?php endif; ?>
-                <div class="copy-preview-warning"><strong>Perhatian:</strong> seluruh aturan dan kegiatan pada hari tujuan akan diganti, termasuk aturan Khusus. Referensi audio disalin tanpa menggandakan file. Hari sumber, paket lain, dan hari lain tidak berubah.</div>
+                <?php if (($copyPreview['duplicate_source_times'] ?? []) !== []): ?>
+                    <div class="copy-preview-warning is-error" role="alert">
+                        <strong>Salin diblokir: sumber memiliki waktu duplikat.</strong>
+                        <ul>
+                            <?php foreach ($copyPreview['duplicate_source_times'] as $duplicateSource): ?>
+                                <li><?= h($duplicateSource['label']) ?>: <?= h(implode(', ', $duplicateSource['times'])) ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                        Perbaiki waktu pada pola sumber sebelum menyalin. Hari tujuan belum diubah.
+                    </div>
+                <?php else: ?>
+                    <div class="copy-preview-warning"><strong>Perhatian:</strong> seluruh aturan dan kegiatan pada hari tujuan akan diganti, termasuk aturan Khusus. Referensi audio disalin tanpa menggandakan file. Hari sumber, paket lain, dan hari lain tidak berubah.</div>
+                <?php endif; ?>
                 <div class="copy-preview-actions">
                     <form id="copy-confirm-form" method="post" action="schedule-editor.php?package_id=<?= $selectedPackageId ?>">
                         <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>">
                         <input type="hidden" name="editor_action" value="confirm_copy_schedule">
                         <input type="hidden" name="source_weekday" value="<?= (int) $copyPreview['source_weekday'] ?>">
                         <input type="hidden" name="target_weekday" value="<?= (int) $copyPreview['target_weekday'] ?>">
-                        <button type="button" class="copy-schedule-button is-confirm" onclick="document.getElementById('copy-confirm-form').submit();">Ya, Ganti Seluruh Jadwal <?= h($targetDayName) ?></button>
+                        <button type="button" class="copy-schedule-button is-confirm" <?= ($copyPreview['duplicate_source_times'] ?? []) !== [] ? 'disabled' : '' ?> onclick="document.getElementById('copy-confirm-form').submit();">Ya, Ganti Seluruh Jadwal <?= h($targetDayName) ?></button>
                     </form>
                     <a class="button-link-secondary" href="schedule-editor.php?package_id=<?= $selectedPackageId ?>">Batal</a>
                 </div>

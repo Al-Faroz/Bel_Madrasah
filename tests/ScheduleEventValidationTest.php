@@ -62,6 +62,42 @@ try {
         'Waktu sama pada aturan hari yang berbeda harus tetap diizinkan.'
     );
 
+    $targetRuleId = $db->saveDayRule(null, $packageId, 2, 'normal', null, null, true);
+    $db->saveBellEvent(null, $targetRuleId, 'Bel target', '08:00', '', true, 1);
+
+    // Simulate legacy data written before duplicate-time validation existed.
+    $legacyInsert = $db->getPdo()->prepare(
+        'INSERT INTO bell_events (day_rule_id, name, event_time, audio_path, is_enabled, sort_order, created_at, updated_at)
+         VALUES (:day_rule_id, :name, :event_time, :audio_path, :is_enabled, :sort_order, :created_at, :updated_at)'
+    );
+    $now = date('Y-m-d H:i:s');
+    $legacyInsert->execute([
+        ':day_rule_id' => $ruleId,
+        ':name' => 'Kegiatan lama duplikat',
+        ':event_time' => '07:00',
+        ':audio_path' => '',
+        ':is_enabled' => 1,
+        ':sort_order' => 3,
+        ':created_at' => $now,
+        ':updated_at' => $now,
+    ]);
+
+    $copyError = '';
+    try {
+        $db->replaceWeekdayScheduleFromSource($packageId, 1, 2);
+    } catch (InvalidArgumentException $exception) {
+        $copyError = $exception->getMessage();
+    }
+    $targetRulesAfterCopy = $db->getDayRules($packageId, 2);
+    $targetEventsAfterCopy = $db->getBellEvents($targetRuleId);
+    expectScheduleEventValidation(
+        str_contains($copyError, 'waktu duplikat')
+            && count($targetRulesAfterCopy) === 1
+            && count($targetEventsAfterCopy) === 1
+            && $targetEventsAfterCopy[0]['name'] === 'Bel target',
+        'Salin dari sumber legacy yang duplikat harus diblokir sebelum mengubah hari tujuan.'
+    );
+
     $firstRunId = $db->recordPlaybackLogIfMissing(
         $packageId,
         $firstEventId,

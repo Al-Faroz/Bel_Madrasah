@@ -837,6 +837,17 @@ final class Database
             $eventCount = 0;
             foreach ($sourceRules as $sourceRule) {
                 $events = $this->getBellEvents((int) $sourceRule['id']);
+                $seenEventTimes = [];
+                foreach ($events as $event) {
+                    $eventTime = substr(trim((string) ($event['event_time'] ?? '')), 0, 5);
+                    if (isset($seenEventTimes[$eventTime])) {
+                        throw new InvalidArgumentException(
+                            'Hari sumber memiliki waktu duplikat ' . $eventTime
+                            . ' dalam satu pola. Perbaiki jadwal sumber sebelum menyalin; hari tujuan tidak diubah.'
+                        );
+                    }
+                    $seenEventTimes[$eventTime] = true;
+                }
                 $sourceRulesWithEvents[] = ['rule' => $sourceRule, 'events' => $events];
                 $eventCount += count($events);
             }

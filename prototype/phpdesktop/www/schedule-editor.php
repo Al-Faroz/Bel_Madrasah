@@ -67,6 +67,7 @@ try {
 
             $sourceRulePreview = [];
             $sourceEvents = [];
+            $sourceDuplicateWarnings = [];
             $targetEventCount = 0;
             foreach ($sourceRules as $sourceRule) {
                 $specialLabel = '';
@@ -77,6 +78,23 @@ try {
                 }
                 $ruleLabel = $sourceRule['rule_mode'] === 'normal' ? 'Normal' : 'Khusus · ' . $specialLabel;
                 $events = $db->getBellEvents((int) $sourceRule['id']);
+                $sourceTimeCounts = [];
+                foreach ($events as $sourceEvent) {
+                    $sourceEventTime = substr(trim((string) ($sourceEvent['event_time'] ?? '')), 0, 5);
+                    $sourceTimeCounts[$sourceEventTime] = ($sourceTimeCounts[$sourceEventTime] ?? 0) + 1;
+                }
+                $duplicateSourceTimes = [];
+                foreach ($sourceTimeCounts as $sourceEventTime => $countAtTime) {
+                    if ($countAtTime > 1) {
+                        $duplicateSourceTimes[] = (string) $sourceEventTime;
+                    }
+                }
+                if ($duplicateSourceTimes !== []) {
+                    $sourceDuplicateWarnings[] = [
+                        'label' => $ruleLabel,
+                        'times' => $duplicateSourceTimes,
+                    ];
+                }
                 $sourceRulePreview[] = [
                     'label' => $ruleLabel,
                     'is_enabled' => (int) $sourceRule['is_enabled'],
@@ -99,6 +117,7 @@ try {
                 'target_rule_count' => count($targetRules),
                 'events' => $sourceEvents,
                 'target_count' => $targetEventCount,
+                'duplicate_source_times' => $sourceDuplicateWarnings,
             ];
         } elseif ($action === 'confirm_copy_schedule') {
             $sourceWeekday = $copySourceWeekday;
