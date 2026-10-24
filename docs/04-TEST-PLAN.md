@@ -206,7 +206,7 @@ Catatan: butir di atas adalah kriteria uji; belum dianggap lulus hanya karena pe
 - [ ] Jika klien menutup halaman ketika audio berjalan, log direkonsiliasi menjadi `failed`; tidak boleh tertinggal sebagai `started`.
 - [ ] Setelah aplikasi dibuka kembali, log `started` dari sesi sebelumnya ditutup sebagai `failed`; jadwal kemarin tidak diputar ulang.
 - [ ] Setelah audio selesai, log menjadi `completed` tepat satu kali; refresh tidak membuat log duplikat.
-- [ ] Konfigurasi baru dengan waktu duplikat dalam satu pola ditolak; jika database lama masih berisi duplikasi, Editor menandai waktu tersebut untuk koreksi tanpa menghapus data otomatis.
+- [ ] Konfigurasi baru dengan waktu duplikat dalam satu pola ditolak; jika database lama masih berisi duplikasi, Editor menandai waktu tersebut dan scheduler mencatat kejadian duplikat sebagai `failed` tanpa memutar audio. Data tidak dihapus otomatis.
 - [ ] Minimize/restore jendela saat menunggu dan saat audio diputar; catat apakah waktu bel tetap tepat dan apakah audio terputus.
 - [ ] Uji navigasi Publik → Admin → Publik; tidak boleh ada dua pemutar aktif atau pemutaran ganda.
 - [ ] Uji sleep/wake dan restart; kejadian yang melewati toleransi dicatat `missed`, bukan diputar terlambat.
