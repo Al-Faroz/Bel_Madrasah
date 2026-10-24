@@ -117,6 +117,7 @@ final class ScheduleResolver
             'rules' => $selectedRules,
             'matching_special_rules' => $matchingSpecialRules,
             'conflict' => $conflict,
+            'is_weekly_off_day' => false,
         ];
     }
 
