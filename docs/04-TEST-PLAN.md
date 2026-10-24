@@ -98,6 +98,7 @@ Pengujian harus dilakukan pada runtime **PHP Desktop Chrome 130.1 + PHP 8.3 di W
 
 - [ ] Jalankan `php tests/ScheduleResolverTest.php`; seluruh fixture kalender dan urutan kegiatan harus PASS.
 - [ ] Jalankan `php tests/SchedulerPlaybackLogTest.php`; deduplikasi log dan transisi status harus PASS.
+- [ ] Jalankan `php tests/ScheduleEventValidationTest.php`; tambah/edit dengan waktu duplikat harus ditolak tanpa mengubah data lama, sedangkan kejadian pada waktu berbeda tetap dapat dicatat setelah kegagalan.
 - [ ] Zona waktu Windows pada komputer target sesuai WIB/Asia/Jakarta; jam Public, waktu scheduler, dan waktu log harus selaras.
 - [ ] Audio mulai pada waktu uji dan keluar melalui perangkat audio yang diharapkan.
 - [ ] Editor menandai data lama yang memiliki waktu duplikat dalam satu pola; data tidak dihapus otomatis dan harus diperbaiki sebelum jadwal dipakai.
