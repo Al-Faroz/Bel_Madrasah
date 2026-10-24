@@ -58,6 +58,7 @@
         isPlaying = false;
         player.pause();
 
+        let logUpdateError = '';
         try {
             await postForm({
                 action: 'finish',
@@ -66,13 +67,25 @@
                 message: message || (status === 'completed' ? 'Audio selesai diputar.' : 'Audio gagal diputar.')
             });
         } catch (error) {
-            setStatus('Audio ' + statusLabels[status] + ', tetapi status log belum dapat diperbarui: ' + error.message, 'failed');
+            // The stream endpoint may already have closed the log with a more specific
+            // file/format error. Do not overwrite that diagnostic with a generic message.
+            logUpdateError = error.message || 'Status log belum dapat diperbarui.';
         }
 
         if (status === 'completed') {
-            setStatus('Audio selesai diputar. Memeriksa jadwal berikutnya…', 'completed');
+            setStatus(
+                logUpdateError
+                    ? 'Audio selesai, tetapi pembaruan riwayat perlu diperiksa: ' + logUpdateError
+                    : 'Audio selesai diputar. Memeriksa jadwal berikutnya…',
+                logUpdateError ? 'error' : 'completed'
+            );
         } else {
-            setStatus('Pemutaran audio gagal: ' + (message || 'Periksa file audio dan kebijakan autoplay.'), 'failed');
+            const detail = message || 'Periksa file audio dan kebijakan autoplay.';
+            setStatus(
+                'Pemutaran audio gagal: ' + detail
+                    + (logUpdateError ? ' (status riwayat: ' + logUpdateError + ')' : ''),
+                'failed'
+            );
         }
         poll();
     }
@@ -106,9 +119,17 @@
     player.addEventListener('error', function () {
         if (!activeRunId) return;
         const mediaError = player.error;
-        const reason = mediaError
-            ? 'Elemen audio gagal membaca file (kode media ' + mediaError.code + ').'
-            : 'Elemen audio gagal membaca file.';
+        let reason = 'Elemen audio gagal membaca file.';
+        if (mediaError) {
+            const mediaReasons = {
+                1: 'Pemutaran audio dibatalkan sebelum selesai.',
+                2: 'Koneksi/penyaluran file audio terputus.',
+                3: 'Browser gagal mendekode audio. File mungkin rusak atau codec tidak didukung.',
+                4: 'Format atau codec audio tidak didukung. Coba gunakan MP3 atau WAV yang valid.'
+            };
+            reason = (mediaReasons[mediaError.code] || 'Elemen audio gagal membaca file.')
+                + ' (kode media ' + mediaError.code + ').';
+        }
         finishPlayback('failed', reason);
     });
 
