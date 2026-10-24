@@ -18,7 +18,7 @@ function h(mixed $value): string
 
 $weekdays = [1 => 'Senin', 2 => 'Selasa', 3 => 'Rabu', 4 => 'Kamis', 5 => 'Jumat', 6 => 'Sabtu', 7 => 'Minggu'];
 $pasarans = ['Legi', 'Pahing', 'Pon', 'Wage', 'Kliwon'];
-$weekOptions = ['1' => 'Minggu ke-1', '2' => 'Minggu ke-2', '3' => 'Minggu ke-3', '4' => 'Minggu ke-4', '5' => 'Minggu ke-5', 'last' => 'Minggu terakhir'];
+$weekOptions = ['1' => 'Minggu ke-1', '2' => 'Minggu ke-2', '3' => 'Minggu ke-3', '4' => 'Minggu ke-4', '5' => 'Minggu ke-5', 'last' => 'Kemunculan terakhir dalam bulan'];
 $db = null;
 $error = '';
 $message = '';
