@@ -44,7 +44,7 @@ final class ScheduleResolver
     /**
      * @return array{
      *   date:string,weekday:int,pasaran:string,month_week:string,month_week_label:string,
-     *   mode:string,rules:array,matching_special_rules:array,conflict:bool
+     *   mode:string,rules:array,matching_special_rules:array,conflict:bool,is_weekly_off_day?:bool
      * }
      */
     public static function resolve(Database $db, int $packageId, DateTimeImmutable $date): array
@@ -52,6 +52,26 @@ final class ScheduleResolver
         $weekday = (int) $date->format('N');
         $pasaran = self::getPasaran($date);
         $monthWeek = self::getMonthWeek($date);
+        $package = $db->getSchedulePackage($packageId);
+        $offDays = array_map('intval', explode(',', (string) ($package['off_days'] ?? '6,7')));
+
+        // A package's weekly holiday is authoritative: do not dispatch any bell,
+        // even if older rules still exist for that weekday after editing off_days.
+        if (in_array($weekday, $offDays, true)) {
+            return [
+                'date' => $date->format('Y-m-d'),
+                'weekday' => $weekday,
+                'pasaran' => $pasaran,
+                'month_week' => $monthWeek['value'],
+                'month_week_label' => $monthWeek['label'],
+                'mode' => 'off_day',
+                'rules' => [],
+                'matching_special_rules' => [],
+                'conflict' => false,
+                'is_weekly_off_day' => true,
+            ];
+        }
+
         $normalRules = [];
         $matchingSpecialRules = [];
 
