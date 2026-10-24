@@ -231,3 +231,13 @@ Resolver kalender Normal/Khusus → scheduler/audio dan log status → restore a
 - Fixture regresi tidak lagi menganggap beberapa kegiatan pada menit yang sama sebagai konfigurasi yang didukung. Tes mencakup penolakan waktu duplikat saat tambah/edit, tetap mengizinkan edit baris dengan waktunya sendiri, dan pemrosesan jadwal berbeda waktu setelah kegagalan.
 - Status implementasi dan status uji runtime dicatat terpisah. Pemeriksaan kode tidak menggantikan pengujian PHP Desktop Windows oleh pengguna.
 - Implementasi Tahap 2: validasi waktu unik berlaku saat tambah/edit, salin sumber duplikat diblokir sebelum target disentuh, dan scheduler mencatat kegiatan aktif yang duplikat sebagai `failed` tanpa memutar audio. Jalur antrean menit-sama lama dihapus dari runtime dan fixture regresi.
+
+### Hasil implementasi Tahap 2 — 2026-10-24
+
+- Commit validasi Database, peringatan Editor, dan fixture awal: [ce62008](https://github.com/Al-Faroz/Bel_Madrasah/commit/ce62008b898beadfbec78fc348f9c0e52dd4645d).
+- Commit proteksi Salin Jadwal dan pratinjau sumber duplikat: [e9fddb9](https://github.com/Al-Faroz/Bel_Madrasah/commit/e9fddb9385d68f115060f69ce40f32435eca3949).
+- Commit deteksi waktu duplikat pada resolver/scheduler dan penghapusan jalur antrean menit-sama: [7ef01dd](https://github.com/Al-Faroz/Bel_Madrasah/commit/7ef01dd75004018f63be2318b9813a44144f3c01).
+- Fixture `tests/ScheduleEventValidationTest.php` memeriksa penolakan duplikat saat tambah/edit, tetap mengizinkan waktu sama pada pola Normal/Khusus yang berbeda, dan memastikan salin dari sumber lama yang duplikat tidak mengubah hari tujuan.
+- Pemeriksaan statis setelah commit memastikan referensi jalur antrean lama sudah tidak ada pada file yang diperiksa dan kurung kurawal CSS seimbang. **PHP lint dan fixture belum dijalankan**: lingkungan pemeriksaan ini tidak menyediakan PDO SQLite, dan runtime PHP Desktop Windows pengguna tidak dapat diuji dari sini.
+- Sebelum status batch dinyatakan PASS, jalankan `php tests/ScheduleEventValidationTest.php`, `php tests/ScheduleResolverTest.php`, dan `php tests/SchedulerPlaybackLogTest.php` dengan PHP CLI yang memiliki PDO SQLite; kemudian uji Editor, Salin Jadwal, serta status scheduler di PHP Desktop Windows. Status penerimaan pengguna tetap belum PASS sampai hasil aktual dilaporkan.
+
