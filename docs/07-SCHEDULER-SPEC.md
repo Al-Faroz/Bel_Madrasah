@@ -75,3 +75,13 @@ Konfigurasi runtime PHP Desktop yang dipakai pengguna tidak tersimpan di reposit
 ## 8. Batas klaim
 
 Kode resolver kalender yang ada hanya menentukan pola dan daftar kegiatan. Sampai scheduler, dispatch audio, log, serta pengujian Windows di atas tersedia, status fitur tetap **BELUM LOCAL TEST PASS**.
+
+
+## 9. Penanganan kegagalan audio — implementasi lanjutan (2026-10-24)
+
+- Sebelum kejadian diklaim `started`, scheduler memeriksa ekstensi, keberadaan file, izin baca, ukuran nonnol, dan apakah file dapat dibuka oleh PHP/Windows.
+- Ekstensi yang diizinkan endpoint saat ini: MP3, WAV, OGG, M4A, AAC. MP3/WAV tetap format rekomendasi untuk uji operasional; ekstensi yang valid tidak menjamin isi file/codec dapat didekode.
+- Editor Jadwal menampilkan indikator untuk referensi kosong, file hilang/tidak dapat dibaca, file kosong, ekstensi tidak didukung, dan file yang tersedia. Status tersedia bukan jaminan codec valid; uji putar tetap diperlukan.
+- Jika Chromium gagal memuat atau mendekode audio, status scheduler membedakan pembatalan, kegagalan penyaluran, kegagalan decode, dan format/codec yang tidak didukung.
+- Status backend yang sudah ditutup dengan alasan spesifik tidak boleh ditimpa diam-diam oleh pesan UI yang lebih umum.
+- Status: **KODE DIIMPLEMENTASIKAN; BELUM LOCAL TEST PASS** sampai skenario negatif dijalankan di PHP Desktop Windows.
