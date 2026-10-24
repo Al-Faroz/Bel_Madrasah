@@ -146,3 +146,13 @@ Untuk setiap bug, catat:
 6. Apakah data berubah atau rusak.
 
 Jangan menyimpulkan penyebab hanya dari screenshot; reproduksi dan audit kode diperlukan sebelum mengubah backend.
+## Audit Editor Jadwal → Publik (2026-10-24)
+
+- [ ] Panduan Editor Jadwal menyatakan dengan benar bahwa scheduler memeriksa jadwal aktif secara berkala dan memakai pemutar audio internal.
+- [ ] Jika tidak ada paket aktif, Publik menampilkan `Belum ada paket jadwal aktif`.
+- [ ] Jika paket aktif tetapi tidak ada kegiatan aktif untuk tanggal tersebut, Publik menampilkan `Tidak ada kegiatan aktif untuk tanggal ini`.
+- [ ] Jika kegiatan hari ini sudah habis, Publik menampilkan `Tidak ada kegiatan tersisa hari ini` dan tidak menyebut pola Normal secara keliru.
+- [ ] Setelah mengubah nama, jam, audio, atau status satu kegiatan di Editor dan menyimpan, Publik mencerminkan perubahan setelah dimuat ulang.
+- [ ] Periksa paket aktif dan pemilihan Normal/Khusus pada tanggal yang sesuai; jangan mengubah atau menghapus data jadwal lain saat pengujian.
+
+Catatan: butir di atas adalah kriteria uji; belum dianggap lulus hanya karena perubahan kode sudah dibuat. Validasi akhir dilakukan di PHP Desktop Windows.
