@@ -121,6 +121,32 @@ final class ScheduleResolver
         ];
     }
 
+    /**
+     * Find duplicate HH:MM values among the supplied events.
+     *
+     * @param array<int, array<string, mixed>> $events
+     * @return array<int, string>
+     */
+    public static function getDuplicateEventTimes(array $events): array
+    {
+        $counts = [];
+        foreach ($events as $event) {
+            $time = substr(trim((string) ($event['event_time'] ?? '')), 0, 5);
+            if (!preg_match('/^(?:[01][0-9]|2[0-3]):[0-5][0-9]$/', $time)) {
+                continue;
+            }
+            $counts[$time] = ($counts[$time] ?? 0) + 1;
+        }
+
+        $duplicates = [];
+        foreach ($counts as $time => $count) {
+            if ($count > 1) {
+                $duplicates[] = (string) $time;
+            }
+        }
+        return $duplicates;
+    }
+
     /** @return array<int, array<string, mixed>> */
     public static function getEnabledEvents(Database $db, array $resolution): array
     {

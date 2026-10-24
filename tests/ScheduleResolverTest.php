@@ -67,6 +67,17 @@ try {
         'Kegiatan dengan waktu unik harus disusun menurut jam secara kronologis.'
     );
 
+    $duplicateTimes = ScheduleResolver::getDuplicateEventTimes([
+        ['event_time' => '07:00'],
+        ['event_time' => '07:05'],
+        ['event_time' => '07:00'],
+        ['event_time' => '07:10'],
+    ]);
+    expectResolver(
+        $duplicateTimes === ['07:00'],
+        'Resolver harus mengenali waktu duplikat pada kegiatan aktif agar scheduler tidak memutarnya.'
+    );
+
     unset($db);
     echo "PASS: ScheduleResolver calendar fixtures\n";
 } finally {

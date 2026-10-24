@@ -53,11 +53,6 @@ try {
     );
     $completedLog = $db->getPlaybackLog($firstRunId);
     expectSchedulerLog($completedLog !== null && $completedLog['status'] === 'completed', 'Status completed harus persisten.');
-    expectSchedulerLog(
-        $db->hasPlaybackStartedForScheduledTime($packageId, $scheduledFor),
-        'Kejadian yang sudah diproses harus dikenali pada waktu jadwalnya agar tidak diklaim ulang.'
-    );
-
     $missedEventId = $db->saveBellEvent(null, $ruleId, 'Tes terlewat', '07:10', '', true, 2);
     $db->recordPlaybackLogIfMissing($packageId, $missedEventId, '2026-10-19 07:10', 'missed', 'Fixture terlewat.');
     expectSchedulerLog(

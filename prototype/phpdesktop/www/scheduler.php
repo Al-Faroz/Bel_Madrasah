@@ -83,10 +83,12 @@ try {
     $packageId = (int) $package['id'];
     $resolution = ScheduleResolver::resolve($db, $packageId, $now);
     $events = ScheduleResolver::getEnabledEvents($db, $resolution);
+    $duplicateEventTimes = ScheduleResolver::getDuplicateEventTimes($events);
     $volumeInput = filter_var($db->getSetting('default_volume', '80'), FILTER_VALIDATE_INT);
     $volume = $volumeInput === false ? 80 : max(0, min(100, $volumeInput));
     $graceSeconds = 30;
     $dueEvents = [];
+    $duplicateTimeFailures = [];
 
     foreach ($events as $event) {
         $eventTime = substr(trim((string) ($event['event_time'] ?? '')), 0, 5);
@@ -109,10 +111,15 @@ try {
             continue;
         }
 
-        // Once a same-minute batch has started, finish its events sequentially even
-        // if a previous long audio takes more than the initial dispatch grace window.
-        $batchAlreadyStarted = $db->hasPlaybackStartedForScheduledTime($packageId, $scheduledFor);
-        if ($delaySeconds > $graceSeconds && !$batchAlreadyStarted) {
+        if (in_array($eventTime, $duplicateEventTimes, true)) {
+            $message = 'Waktu ' . $eventTime
+                . ' digunakan oleh lebih dari satu kegiatan aktif dalam pola hari. Bel tidak diputar; perbaiki waktu duplikat di Editor Jadwal.';
+            $db->recordPlaybackLogIfMissing($packageId, (int) $event['id'], $scheduledFor, 'failed', $message);
+            $duplicateTimeFailures[] = $eventTime;
+            continue;
+        }
+
+        if ($delaySeconds > $graceSeconds) {
             $db->recordPlaybackLogIfMissing(
                 $packageId,
                 (int) $event['id'],
@@ -229,16 +236,26 @@ try {
     }
 
     $latestLog = $db->getLatestPlaybackLog($now->format('Y-m-d'));
+    $duplicateTimeFailures = array_values(array_unique($duplicateTimeFailures));
+    $hasDuplicateTimeFailures = $duplicateTimeFailures !== [];
+    $duplicateTimeFailureMessage = $hasDuplicateTimeFailures
+        ? 'Waktu duplikat terdeteksi (' . implode(', ', $duplicateTimeFailures)
+            . '). Tidak ada bel yang diputar pada waktu tersebut. Perbaiki pola di Editor Jadwal.'
+        : '';
     schedulerRespond([
         'ok' => true,
-        'state' => (bool) $resolution['conflict']
-            ? 'conflict'
-            : ((string) $resolution['mode'] === 'off_day' ? 'off_day' : 'waiting'),
-        'message' => (bool) $resolution['conflict']
-            ? 'Konflik aturan Khusus terdeteksi. Resolver memakai pola Normal sebagai fallback.'
-            : ((string) $resolution['mode'] === 'off_day'
-                ? 'Hari libur mingguan. Scheduler tidak menjalankan kegiatan bel hari ini.'
-                : 'Menunggu jadwal berikutnya.'),
+        'state' => $hasDuplicateTimeFailures
+            ? 'failed'
+            : ((bool) $resolution['conflict']
+                ? 'conflict'
+                : ((string) $resolution['mode'] === 'off_day' ? 'off_day' : 'waiting')),
+        'message' => $hasDuplicateTimeFailures
+            ? $duplicateTimeFailureMessage
+            : ((bool) $resolution['conflict']
+                ? 'Konflik aturan Khusus terdeteksi. Resolver memakai pola Normal sebagai fallback.'
+                : ((string) $resolution['mode'] === 'off_day'
+                    ? 'Hari libur mingguan. Scheduler tidak menjalankan kegiatan bel hari ini.'
+                    : 'Menunggu jadwal berikutnya.')),
         'conflict' => (bool) $resolution['conflict'],
         'volume' => $volume,
         'last_log' => $latestLog === null ? null : [
