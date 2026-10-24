@@ -151,6 +151,8 @@
                 setStatus(data.message || 'Konflik aturan jadwal; pola Normal digunakan.', 'conflict');
             } else if (data.state === 'idle') {
                 setStatus(data.message || 'Belum ada paket jadwal aktif.', 'idle');
+            } else if (data.state === 'off_day') {
+                setStatus(data.message || 'Hari libur mingguan; bel tidak dijalankan.', 'off_day');
             } else if (data.last_log && ['failed', 'missed', 'skipped'].includes(data.last_log.status)) {
                 const statusText = statusLabels[data.last_log.status] || data.last_log.status;
                 setStatus(
