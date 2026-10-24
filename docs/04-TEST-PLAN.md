@@ -170,3 +170,12 @@ Catatan: butir di atas adalah kriteria uji; belum dianggap lulus hanya karena pe
 - [ ] Pada lebar tablet/ponsel, tata letak kembali menjadi satu kolom dan semua kontrol tetap dapat dijangkau.
 - [ ] Uji juga kondisi tanpa paket aktif, tanpa kegiatan hari ini, dan konflik aturan khusus.
 - [ ] Simpan screenshot runtime PHP Desktop Windows untuk ukuran layar target; pemeriksaan kode saja bukan bukti lulus visual.
+
+
+## Perapian lanjutan Dashboard Publik (2026-10-24)
+
+- [ ] Pada 1366×768, cek apakah 12 kegiatan contoh terlihat sekaligus tanpa scroll di daftar.
+- [ ] Status scheduler di header tetap ringkas, tidak menabrak tombol Dashboard Admin, dan tidak memotong layout.
+- [ ] Nama kegiatan panjang tetap terbaca atau terpotong secara aman tanpa merusak kolom.
+- [ ] Ukuran teks jadwal masih terbaca setelah pemadatan baris.
+- [ ] Pada resolusi lebih rendah, scroll internal daftar tetap tersedia jika semua kegiatan tidak muat.
