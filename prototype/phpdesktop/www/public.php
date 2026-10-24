@@ -68,7 +68,7 @@ $schoolLogoDataUri = getLocalImageDataUri($schoolLogoPath);
     <link rel="stylesheet" href="assets/app.css">
 </head>
 <body class="public-dashboard-body">
-<div class="public-shell">
+<div class="public-shell" data-public-date="<?= h($now->format('Y-m-d')) ?>">
     <header class="public-header">
         <div class="public-brand-mark<?= $schoolLogoDataUri !== '' ? ' has-logo' : '' ?>" aria-hidden="true"><?php if ($schoolLogoDataUri !== ''): ?><img src="<?= h($schoolLogoDataUri) ?>" alt=""><?php else: ?>BM<?php endif; ?></div>
         <div class="public-brand-copy">
@@ -160,12 +160,33 @@ $schoolLogoDataUri = getLocalImageDataUri($schoolLogoPath);
 (function () {
     const clock = document.getElementById('public-clock');
     if (!clock) return;
+    const publicShell = document.querySelector('.public-shell[data-public-date]');
+    const jakartaClock = new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Asia/Jakarta',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hourCycle: 'h23'
+    });
+    const jakartaDate = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'Asia/Jakarta',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    });
     function updateClock() {
         const now = new Date();
-        clock.textContent = [now.getHours(), now.getMinutes(), now.getSeconds()].map(function (part) {
-            return String(part).padStart(2, '0');
-        }).join(':');
-        const current = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+        const parts = {};
+        jakartaClock.formatToParts(now).forEach(function (part) {
+            if (part.type !== 'literal') parts[part.type] = part.value;
+        });
+        clock.textContent = parts.hour + ':' + parts.minute + ':' + parts.second;
+        const current = parts.hour + ':' + parts.minute;
+        const currentDate = jakartaDate.format(now);
+        if (publicShell && currentDate !== publicShell.dataset.publicDate) {
+            window.location.reload();
+            return;
+        }
         const rows = Array.from(document.querySelectorAll('.public-event[data-event-time]'));
         let next = null;
         rows.forEach(function (row) {
