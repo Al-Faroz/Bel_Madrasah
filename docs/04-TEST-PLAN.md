@@ -179,3 +179,18 @@ Catatan: butir di atas adalah kriteria uji; belum dianggap lulus hanya karena pe
 - [ ] Nama kegiatan panjang tetap terbaca atau terpotong secara aman tanpa merusak kolom.
 - [ ] Ukuran teks jadwal masih terbaca setelah pemadatan baris.
 - [ ] Pada resolusi lebih rendah, scroll internal daftar tetap tersedia jika semua kegiatan tidak muat.
+
+
+## Audit penanganan kegagalan audio (2026-10-24)
+
+- [ ] Di Editor Jadwal, referensi kosong ditandai "Belum ada audio".
+- [ ] Referensi file hilang atau tidak dapat dibaca diberi indikator masalah yang jelas.
+- [ ] File audio berukuran nol/ukuran tidak dapat dibaca diberi indikator masalah.
+- [ ] Ekstensi yang tidak didukung ditolak saat scheduler akan menjalankan kegiatan; tidak dicatat sebagai sedang diputar.
+- [ ] File MP3/WAV yang valid menampilkan status file tersedia, tetapi UI tidak mengklaim codec pasti valid sebelum uji putar.
+- [ ] Pada waktu uji, file hilang/tidak terbaca, file kosong, format tidak didukung, dan file tidak dapat dibuka dicatat sebagai `failed` dengan alasan yang sesuai.
+- [ ] Kegiatan tanpa referensi audio dicatat sebagai `skipped`, bukan `completed`.
+- [ ] File yang rusak/codec tidak didukung menghasilkan pesan decode/format yang bisa ditindaklanjuti.
+- [ ] Gagal memutar satu kegiatan tidak membuat aplikasi crash; scheduler tetap memeriksa kegiatan berikutnya.
+- [ ] Pastikan log dan status header/Public cocok setelah satu kegagalan, lalu pulihkan file uji sebelum jadwal operasional.
+- [ ] Jalankan pengujian di PHP Desktop Windows; pemeriksaan kode saja bukan bukti audio benar-benar terdengar.
