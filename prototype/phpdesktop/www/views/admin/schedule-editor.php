@@ -221,7 +221,18 @@
                                                 </td>
                                                 <td class="bell-actions-cell">
                                                         <button type="submit" form="event-form-<?= (int) $event['id'] ?>" class="button-compact">Simpan</button>
-                                                    <form method="post" action="schedule-editor.php?package_id=<?= $selectedPackageId ?>" class="delete-event-form" onsubmit="return confirm('Hapus hanya kegiatan bel &quot;<?= h((string) $event['name']) ?>&quot; ini? Tindakan ini tidak dapat dibatalkan.')"><input type="hidden" name="package_id" value="<?= $selectedPackageId ?>"><input type="hidden" name="editor_action" value="delete_event"><input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>"><input type="hidden" name="event_id" value="<?= (int) $event['id'] ?>"><button type="submit" class="text-danger">Hapus</button></form>
+                                                    <div class="delete-event-action">
+                                                        <button type="button" class="text-danger" onclick="this.hidden=true; this.nextElementSibling.hidden=false;">Hapus</button>
+                                                        <form method="post" action="schedule-editor.php?package_id=<?= $selectedPackageId ?>" class="delete-event-form" hidden>
+                                                            <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>">
+                                                            <input type="hidden" name="editor_action" value="delete_event">
+                                                            <input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>">
+                                                            <input type="hidden" name="event_id" value="<?= (int) $event['id'] ?>">
+                                                            <span class="delete-event-confirm-text">Hapus “<?= h((string) $event['name']) ?>” saja?</span>
+                                                            <button type="submit" class="text-danger">Ya, hapus</button>
+                                                            <button type="button" class="button-compact" onclick="this.closest('.delete-event-action').querySelector('.text-danger').hidden=false; this.closest('form').hidden=true;">Batal</button>
+                                                        </form>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
