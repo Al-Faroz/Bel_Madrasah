@@ -85,3 +85,11 @@ Kode resolver kalender yang ada hanya menentukan pola dan daftar kegiatan. Sampa
 - Jika Chromium gagal memuat atau mendekode audio, status scheduler membedakan pembatalan, kegagalan penyaluran, kegagalan decode, dan format/codec yang tidak didukung.
 - Status backend yang sudah ditutup dengan alasan spesifik tidak boleh ditimpa diam-diam oleh pesan UI yang lebih umum.
 - Status: **KODE DIIMPLEMENTASIKAN; BELUM LOCAL TEST PASS** sampai skenario negatif dijalankan di PHP Desktop Windows.
+
+
+## 10. Konsistensi log saat penyaluran audio (2026-10-24)
+
+- Jika endpoint penyaluran mengalami exception setelah ID run diketahui, endpoint mencoba menutup log tersebut sebagai `failed`; kegagalan pencatatan tidak boleh menutupi pesan kegagalan utama.
+- Jika pembacaan file berhenti sebelum seluruh byte terkirim dan bukan karena klien memutus koneksi, log ditutup sebagai `failed` dengan alasan penyaluran terhenti.
+- Jika klien memutus koneksi, lifecycle halaman/player bertanggung jawab menyelesaikan status run; saat halaman dimuat kembali, run `started` yang tersisa direkonsiliasi menjadi `failed`.
+- Kriteria ini mencegah riwayat pemutaran menggantung pada status `started`. Tetap perlu uji Windows untuk memastikan jalur exception dan pemutusan koneksi benar-benar terjadi seperti yang diharapkan.
