@@ -46,6 +46,21 @@ try {
         $pasaranLabel = (string) $resolution['pasaran'];
         $monthWeekLabel = (string) $resolution['month_week_label'];
         $events = ScheduleResolver::getEnabledEvents($db, $resolution);
+        $specialRuleLabels = [];
+        foreach (($resolution['matching_special_rules'] ?? []) as $matchedRule) {
+            if ((string) ($matchedRule['special_type'] ?? '') === 'pasaran') {
+                $specialRuleLabels[] = 'Pasaran ' . (string) $matchedRule['special_value'];
+            } elseif ((string) ($matchedRule['special_type'] ?? '') === 'month_week') {
+                $specialRuleLabels[] = $weekOptions[(string) $matchedRule['special_value']]
+                    ?? ('Minggu ke-' . (string) $matchedRule['special_value']);
+            }
+        }
+        $resolvedPatternLabel = $resolvedMode === 'special'
+            ? 'Khusus · ' . ($specialRuleLabels[0] ?? 'Aturan khusus')
+            : ($resolvedMode === 'normal_fallback' ? 'Normal · fallback konflik' : 'Normal');
+        $resolutionMessage = $resolverConflict
+            ? 'Konflik aturan khusus: ' . implode(', ', $specialRuleLabels) . '. Jadwal Normal digunakan sebagai fallback.'
+            : '';
     }
     foreach ($events as $event) {
         if ((string) $event['event_time'] >= $now->format('H:i')) {
@@ -68,7 +83,7 @@ $schoolLogoDataUri = getLocalImageDataUri($schoolLogoPath);
     <link rel="stylesheet" href="assets/app.css">
 </head>
 <body class="public-dashboard-body">
-<div class="public-shell" data-public-date="<?= h($now->format('Y-m-d')) ?>">
+<div class="public-shell" data-public-date="<?= h($now->format('Y-m-d')) ?>" data-active-package-id="<?= h((string) ($activePackage['id'] ?? '')) ?>" data-resolved-mode="<?= h($resolvedMode) ?>">
     <header class="public-header">
         <div class="public-brand-mark<?= $schoolLogoDataUri !== '' ? ' has-logo' : '' ?>" aria-hidden="true"><?php if ($schoolLogoDataUri !== ''): ?><img src="<?= h($schoolLogoDataUri) ?>" alt=""><?php else: ?>BM<?php endif; ?></div>
         <div class="public-brand-copy">
