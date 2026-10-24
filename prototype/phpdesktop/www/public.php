@@ -53,7 +53,7 @@ try {
             } elseif ((string) ($matchedRule['special_type'] ?? '') === 'month_week') {
                 $specialValue = (string) $matchedRule['special_value'];
                 $specialRuleLabels[] = $specialValue === 'last'
-                    ? 'Minggu terakhir'
+                    ? 'Kemunculan terakhir dalam bulan'
                     : 'Minggu ke-' . $specialValue;
             }
         }
