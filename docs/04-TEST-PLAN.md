@@ -50,6 +50,10 @@ Pengujian harus dilakukan pada runtime **PHP Desktop Chrome 130.1 + PHP 8.3 di W
 - [ ] Uji bahwa jadwal yang diaktifkan pada paket, aturan, dan kegiatan tampil sesuai pada Publik.
 - [ ] Pilih paket/hari; aturan yang tampil cocok.
 - [ ] Tambah/edit/nonaktifkan/hapus kegiatan sesuai dukungan fitur.
+- [ ] Tombol Hapus menampilkan konfirmasi inline di dalam tabel tanpa `window.confirm()`; tombol Batal tidak mengubah data.
+- [ ] Konfirmasi hapus menyebut nama kegiatan, dan setelah berhasil pesan menyebut nama kegiatan serta hari/pola yang sesuai.
+- [ ] Setelah hapus satu kegiatan, hanya baris tersebut yang hilang; aturan hari dan kegiatan lain tetap tersimpan.
+- [ ] Tabel kegiatan terbaca pada ukuran jendela target; input, status, tombol, dan panel konfirmasi tidak saling bertumpuk.
 - [ ] Kolom waktu di Editor Jadwal menampilkan format 24 jam `HH:MM` (tanpa AM/PM) dan menolak nilai di luar `00:00–23:59`.
 - [ ] Waktu dan urutan divalidasi.
 - [ ] Setelah menyimpan atau menghapus kegiatan, filter tetap menampilkan hari yang sedang diedit; pola tidak tampak hilang hanya karena filter kembali ke Senin.
