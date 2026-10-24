@@ -220,3 +220,13 @@ Resolver kalender Normal/Khusus → scheduler/audio dan log status → restore a
 - CSS Admin ditambahkan untuk hierarki panduan dan ringkasan status, dengan breakpoint untuk jendela lebih sempit.
 - Perubahan ini adalah perbaikan keterbacaan/alur editor; tidak mengubah data SQLite, resolver, scheduler, atau status jadwal yang tersimpan.
 - Status: **KODE DIPERBARUI — BELUM DIVERIFIKASI SECARA VISUAL DI PHP DESKTOP WINDOWS**. Pemeriksaan runtime perlu memastikan layout tidak tumpang tindih pada 1366 px, 1024 px, dan jendela sempit; cek juga filter hari, penyimpanan tabel, serta status aturan/kegiatan.
+
+## Tahap 2 — Editor Jadwal: waktu unik, perapihan UI, dan regresi (2026-10-24)
+
+- Kontrak waktu kegiatan menggunakan format 24 jam `HH:MM`; satu aturan hari hanya boleh memiliki satu kegiatan pada tiap menit. Validasi berada di lapisan Database agar berlaku untuk tambah maupun edit, bukan hanya mengandalkan form HTML.
+- Saat mengedit kegiatan, waktu yang sudah dipakai oleh baris itu sendiri tetap boleh disimpan. Waktu yang dipakai kegiatan lain pada aturan yang sama ditolak dengan pesan yang jelas.
+- Data lama tidak dihapus atau diubah otomatis. Jika database sudah memiliki duplikasi waktu, Editor perlu menandainya agar operator dapat memperbaiki satu per satu sebelum mengandalkan jadwal tersebut.
+- Form pola hari bertanggung jawab pada Normal/Khusus, atribut khusus, dan status aturan. Tabel kegiatan bertanggung jawab pada nama, waktu, urutan tampilan, audio, dan status kegiatan; kedua alur ini tetap dipisahkan.
+- Daftar aturan tetap menggunakan lebar konten penuh dan tabel kegiatan dapat digulir horizontal pada jendela sempit. Perubahan CSS harus terscope ke Admin agar tampilan Publik tidak berubah.
+- Fixture regresi tidak lagi menganggap beberapa kegiatan pada menit yang sama sebagai konfigurasi yang didukung. Tes mencakup penolakan waktu duplikat saat tambah/edit, tetap mengizinkan edit baris dengan waktunya sendiri, dan pemrosesan jadwal berbeda waktu setelah kegagalan.
+- Status implementasi dan status uji runtime dicatat terpisah. Pemeriksaan kode tidak menggantikan pengujian PHP Desktop Windows oleh pengguna.

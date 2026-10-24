@@ -13,7 +13,7 @@ Scheduler hanya bekerja selama aplikasi Bel Madrasah terbuka dan runtime PHP Des
 - Tanggal dan hari diselesaikan oleh `ScheduleResolver`, termasuk pasaran Jawa dan Model A (minggu kalender).
 - Hanya aturan dan kegiatan berstatus aktif yang boleh dijalankan.
 - Aturan Khusus yang cocok tunggal menggantikan Normal. Jika beberapa aturan Khusus cocok, resolver menggunakan Normal sebagai fallback dan status konflik harus ditampilkan; scheduler tidak boleh menggabungkan aturan yang konflik.
-- `bell_events.event_time` memakai format 24 jam `HH:MM`. Urutan kegiatan pada waktu yang sama mengikuti `sort_order`, lalu ID kegiatan.
+- `bell_events.event_time` memakai format 24 jam `HH:MM`. Dalam satu aturan hari (`day_rule_id`), setiap waktu harus unik; validasi Database menolak waktu yang sudah digunakan kegiatan lain pada aturan yang sama. `sort_order` tetap disimpan untuk pengaturan tampilan dan data lama.
 - `audio_path` adalah referensi file lokal. Path lama tetap didukung. Scheduler tidak memindah, mengganti nama, atau menghapus file.
 
 ## 3. Kontrak kejadian
@@ -22,8 +22,8 @@ Setiap kejadian memiliki kunci logis `event_id + scheduled_for`, dengan `schedul
 
 1. Scheduler memeriksa jadwal secara berkala dengan interval pendek dan menghitung tanggal/waktu aktual setiap pemeriksaan; jangan hanya mengandalkan penghitung interval.
 2. Kejadian hanya boleh diklaim satu kali untuk satu `event_id + scheduled_for`, termasuk setelah halaman di-refresh atau navigasi Public/Admin.
-3. Kegiatan yang jatuh pada menit yang sama diputar satu per satu sesuai urutan, bukan ditumpuk secara bersamaan.
-4. Toleransi awal untuk memulai satu batch adalah **maksimal 30 detik**. Jika aplikasi kembali aktif setelah batas itu, jangan memutar bel lama secara terlambat; catat sebagai `missed`. Setelah satu kegiatan pada menit tertentu sudah dimulai, kegiatan lain pada menit yang sama tetap boleh antre berurutan sampai selesai, meskipun audio sebelumnya melewati 30 detik. Batas ini perlu diuji ketika aplikasi diminimalkan dan setelah sleep/wake.
+3. Konfigurasi normal tidak boleh memiliki dua kegiatan pada menit yang sama dalam satu aturan hari. Validasi saat tambah/edit menolak duplikasi; waktu kegiatan lain pada pola Normal/Khusus yang berbeda tidak dicampur karena resolver hanya memilih pola yang cocok.
+4. Toleransi untuk memulai setiap kejadian adalah **maksimal 30 detik**. Jika aplikasi kembali aktif setelah batas itu, jangan memutar bel lama secara terlambat; catat sebagai `missed`. Jika database lama masih berisi duplikasi waktu, Editor harus memberi peringatan dan operator perlu memperbaikinya. Penanganan antrean baris lama bukan konfigurasi jadwal yang didukung; data tidak dihapus otomatis.
 5. Kejadian dari tanggal sebelumnya tidak boleh diputar ketika aplikasi dibuka kembali.
 6. Kegiatan aktif tanpa path audio ditandai `skipped` dengan alasan yang jelas. Referensi audio yang tidak ditemukan atau gagal dibaca ditandai `failed`; jangan menampilkan status seolah audio berhasil diputar.
 7. Setelah media benar-benar selesai, catat `completed`. Jika pemutaran gagal, ditolak oleh kebijakan autoplay, atau dihentikan sebelum selesai, catat `failed` dengan pesan yang relevan.
@@ -46,7 +46,7 @@ Riwayat tidak boleh dipakai sebagai satu-satunya bukti bahwa speaker Windows men
 - File audio harus disalurkan melalui endpoint lokal yang memeriksa ID kegiatan terhadap database, lalu membaca hanya path yang berasal dari database. Endpoint tidak boleh menerima path file arbitrer dari query string.
 - Script scheduler dijalankan pada Public dan Admin agar pergantian halaman tidak mematikan scheduler secara permanen.
 - Saat halaman berpindah atau dimuat ulang ketika media sedang berjalan, kejadian aktif harus direkonsiliasi sebagai terhenti/gagal; jangan memutar kejadian yang sama dua kali.
-- Setelah event selesai/gagal, lanjutkan antrean kejadian yang masih jatuh dalam toleransi waktu.
+- Kegagalan satu kejadian tidak boleh menghentikan polling jadwal pada waktu berikutnya. Data lama yang memiliki waktu duplikat perlu ditandai dan diperbaiki; jangan menganggap antrean beberapa kegiatan pada menit yang sama sebagai konfigurasi yang didukung.
 - Tidak boleh memakai CDN, service internet, atau pemutar eksternal.
 
 ## 6. Prasyarat runtime dan risiko
@@ -62,7 +62,7 @@ Konfigurasi runtime PHP Desktop yang dipakai pengguna tidak tersimpan di reposit
 ## 7. Kriteria penerimaan Windows
 
 - [ ] Bel satu menit ke depan terdengar pada waktu yang benar.
-- [ ] Kegiatan dengan waktu sama diputar berurutan sesuai urutan yang tersimpan.
+- [ ] Waktu duplikat dalam satu aturan hari ditolak saat tambah/edit; data lama yang sudah duplikat ditandai di Editor dan tidak dihapus otomatis.
 - [ ] Kegiatan nonaktif tidak diputar.
 - [ ] Paket aktif dan aturan Normal/Khusus sesuai tanggal yang diuji.
 - [ ] Tidak ada pemutaran ganda setelah refresh/navigasi.

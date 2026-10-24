@@ -55,8 +55,9 @@ Pengujian harus dilakukan pada runtime **PHP Desktop Chrome 130.1 + PHP 8.3 di W
 - [ ] Setelah hapus satu kegiatan, hanya baris tersebut yang hilang; aturan hari dan kegiatan lain tetap tersimpan.
 - [ ] Tabel kegiatan terbaca pada ukuran jendela target; input, status, tombol, dan panel konfirmasi tidak saling bertumpuk.
 - [ ] Kolom waktu di Editor Jadwal menampilkan format 24 jam `HH:MM` (tanpa AM/PM) dan menolak nilai di luar `00:00–23:59`.
-- [ ] Waktu dan urutan divalidasi.
+- [ ] Waktu memakai format 24 jam `HH:MM`; waktu duplikat dalam satu pola hari ditolak saat tambah maupun edit, sedangkan menyimpan waktu baris itu sendiri tetap diizinkan.
 - [ ] Setelah menyimpan atau menghapus kegiatan, filter tetap menampilkan hari yang sedang diedit; pola tidak tampak hilang hanya karena filter kembali ke Senin.
+- [ ] Jika database lama memiliki waktu duplikat pada satu pola, Editor menampilkan peringatan di kartu pola dan operator dapat menemukan baris yang perlu diperbaiki.
 - [ ] Jika validasi simpan kegiatan gagal, pesan kesalahan tampil dan filter tetap pada hari yang sedang diedit.
 - [ ] File audio tersimpan pada lokasi aplikasi yang benar.
 - [ ] Edit tanpa memilih file audio baru mempertahankan file lama.
@@ -99,7 +100,7 @@ Pengujian harus dilakukan pada runtime **PHP Desktop Chrome 130.1 + PHP 8.3 di W
 - [ ] Jalankan `php tests/SchedulerPlaybackLogTest.php`; deduplikasi log dan transisi status harus PASS.
 - [ ] Zona waktu Windows pada komputer target sesuai WIB/Asia/Jakarta; jam Public, waktu scheduler, dan waktu log harus selaras.
 - [ ] Audio mulai pada waktu uji dan keluar melalui perangkat audio yang diharapkan.
-- [ ] Dua kegiatan pada waktu sama diputar berurutan sesuai `sort_order`, tidak tumpang tindih.
+- [ ] Editor menandai data lama yang memiliki waktu duplikat dalam satu pola; data tidak dihapus otomatis dan harus diperbaiki sebelum jadwal dipakai.
 - [ ] Satu kejadian tidak diputar dua kali setelah refresh atau navigasi Public/Admin.
 - [ ] Audio panjang selesai tanpa dipotong.
 - [ ] Kejadian lebih lambat dari toleransi 30 detik dicatat `missed` dan tidak diputar terlambat.

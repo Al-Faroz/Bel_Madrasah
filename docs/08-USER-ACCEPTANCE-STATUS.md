@@ -33,14 +33,14 @@ Dokumen ini mencatat hasil yang dilaporkan langsung oleh pengguna. Status ini bu
 
 ## 2. Belum diuji oleh pengguna
 
-- [ ] Dua atau lebih kegiatan dengan waktu sama diputar berurutan sesuai urutan yang ditentukan.
+- [ ] Validasi Editor menolak waktu duplikat dalam satu pola hari; data lama yang sudah memiliki duplikasi ditandai untuk koreksi tanpa penghapusan otomatis.
 - [ ] Penanganan file audio yang referensinya hilang atau tidak dapat dibaca.
 
 ## 3. Tindak lanjut Batch 1
 
 1. Audit sumber scheduler, audio-stream, JavaScript player, database playback log, dan resolver.
-2. Tambahkan tes otomatis khusus kelanjutan antrean waktu-sama dan deduplikasi.
-3. Periksa perilaku ketika audio pertama gagal, agar kegiatan berikutnya pada menit yang sama tetap diproses.
+2. Tambahkan tes otomatis untuk penolakan waktu duplikat saat tambah/edit, serta deduplikasi kejadian pada waktu yang sama untuk satu kegiatan.
+3. Periksa perilaku ketika satu audio gagal, agar scheduler tetap berjalan dan kegiatan pada waktu berikutnya tetap diproses.
 4. Rencanakan uji file hilang/tidak terbaca tanpa merusak jadwal produksi.
 5. Minta pengguna menguji hanya skenario yang belum terkonfirmasi di PHP Desktop Windows.
 
