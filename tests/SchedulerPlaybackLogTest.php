@@ -55,7 +55,7 @@ try {
     expectSchedulerLog($completedLog !== null && $completedLog['status'] === 'completed', 'Status completed harus persisten.');
     expectSchedulerLog(
         $db->hasPlaybackStartedForScheduledTime($packageId, $scheduledFor),
-        'Kejadian berikutnya pada menit yang sama harus tetap bisa antre setelah audio sebelumnya selesai.'
+        'Kejadian yang sudah diproses harus dikenali pada waktu jadwalnya agar tidak diklaim ulang.'
     );
 
     $missedEventId = $db->saveBellEvent(null, $ruleId, 'Tes terlewat', '07:10', '', true, 2);

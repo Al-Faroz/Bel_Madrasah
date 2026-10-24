@@ -135,7 +135,7 @@
 
         <section class="panel editor-rules-list">
             <div class="section-heading"><div><p class="eyebrow">POLA YANG TERSIMPAN</p><h2>Aturan per hari</h2></div><span class="section-note" id="rules-count"><?= count($rules ?? []) ?> aturan</span></div>
-            <p class="form-note rules-list-help">Pilih hari untuk memfilter kartu. Status <strong>aturan</strong> berlaku untuk seluruh polanya; status <strong>kegiatan</strong> di tabel berlaku per bel. Keduanya perlu aktif agar kegiatan bisa muncul di Publik. Jam, nama, urutan, audio, dan status kegiatan dapat diubah langsung di tabel lalu tekan <strong>Simpan</strong>.</p>
+            <p class="form-note rules-list-help">Pilih hari untuk memfilter kartu. Status <strong>aturan</strong> berlaku untuk seluruh polanya; status <strong>kegiatan</strong> di tabel berlaku per bel. Keduanya perlu aktif agar kegiatan bisa muncul di Publik. Jam, nama, urutan, audio, dan status kegiatan dapat diubah langsung di tabel lalu tekan <strong>Simpan</strong>. Setiap pola hanya boleh memiliki satu kegiatan pada satu jam-menit; waktu duplikat ditolak.</p>
             <label class="schedule-day-filter">Tampilkan data hari
                 <select id="schedule-day-filter" aria-label="Tampilkan aturan untuk hari">
                     <?php foreach ($weekdays as $dayNumber => $dayName): ?><option value="<?= $dayNumber ?>" <?= (int) $ruleForm['weekday'] === $dayNumber ? 'selected' : '' ?>><?= h($dayName) ?></option><?php endforeach; ?>
@@ -160,6 +160,17 @@
                     }
                     $ruleEvents = $eventsByRule[(int) $rule['id']] ?? [];
                     $enabledEventCount = count(array_filter($ruleEvents, static fn (array $event): bool => (int) $event['is_enabled'] === 1));
+                    $seenEventTimes = [];
+                    $duplicateTimes = [];
+                    foreach ($ruleEvents as $ruleEvent) {
+                        $ruleEventTime = substr((string) ($ruleEvent['event_time'] ?? ''), 0, 5);
+                        if (isset($seenEventTimes[$ruleEventTime])) {
+                            $duplicateTimes[$ruleEventTime] = true;
+                        } else {
+                            $seenEventTimes[$ruleEventTime] = true;
+                        }
+                    }
+                    $duplicateTimeLabels = array_keys($duplicateTimes);
                     ?>
                     <article class="day-rule-card" data-weekday="<?= (int) $rule['weekday'] ?>">
                         <div class="day-rule-header">
@@ -167,6 +178,13 @@
                                 <p><?= $rule['rule_mode'] === 'special' ? h(($rule['special_type'] === 'pasaran' ? 'Pasaran Jawa: ' : 'Minggu kalender: ') . $specialLabel) : 'Pola dasar untuk hari ini' ?></p></div>
                             <span class="package-badge <?= (int) $rule['is_enabled'] === 1 ? 'active' : '' ?>"><?= (int) $rule['is_enabled'] === 1 ? 'AKTIF' : 'NONAKTIF' ?></span>
                         </div>
+                        <?php if ($duplicateTimeLabels !== []): ?>
+                            <p class="event-time-duplicate-warning" role="alert">
+                                <strong>Waktu duplikat ditemukan.</strong>
+                                Jam <?= h(implode(', ', $duplicateTimeLabels)) ?> dipakai oleh lebih dari satu kegiatan pada pola ini.
+                                Pilih waktu berbeda dan simpan baris yang perlu diperbaiki. Data lama tidak dihapus otomatis.
+                            </p>
+                        <?php endif; ?>
                         <div class="rule-card-actions">
                             <form method="post" action="schedule-editor.php?package_id=<?= $selectedPackageId ?>"><input type="hidden" name="package_id" value="<?= $selectedPackageId ?>"><input type="hidden" name="editor_action" value="edit_rule"><input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>"><button type="submit" class="button-compact rule-edit-button">Ubah Pola Hari</button></form>
                             <span class="rule-event-summary"><strong><?= $enabledEventCount ?> aktif</strong><span>dari <?= count($ruleEvents) ?> kegiatan</span></span>
@@ -183,6 +201,8 @@
                                         <tbody>
                                         <?php foreach ($ruleEvents as $event): ?>
                                             <?php
+                                            $currentEventTime = substr((string) ($event['event_time'] ?? ''), 0, 5);
+                                            $isDuplicateTime = isset($duplicateTimes[$currentEventTime]);
                                             $currentAudioPath = trim((string) $event['audio_path']);
                                             $currentAudioRealPath = $currentAudioPath !== '' ? realpath($currentAudioPath) : false;
                                             $currentAudioIsManaged = false;
@@ -221,7 +241,7 @@
                                                         <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>"><input type="hidden" name="editor_action" value="save_event"><input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>"><input type="hidden" name="event_id" value="<?= (int) $event['id'] ?>">
                                                     </form>
                                                     <label class="sr-only" for="event-time-<?= (int) $event['id'] ?>">Jam</label>
-                                                    <input form="event-form-<?= (int) $event['id'] ?>" id="event-time-<?= (int) $event['id'] ?>" type="text" name="event_time" inputmode="numeric" autocomplete="off" spellcheck="false" pattern="([01][0-9]|2[0-3]):[0-5][0-9]" maxlength="5" placeholder="HH:MM" title="Gunakan format 24 jam, misalnya 07:05" required value="<?= h(substr((string) $event['event_time'], 0, 5)) ?>">
+                                                    <input form="event-form-<?= (int) $event['id'] ?>" id="event-time-<?= (int) $event['id'] ?>" type="text" name="event_time" inputmode="numeric" autocomplete="off" spellcheck="false" pattern="([01][0-9]|2[0-3]):[0-5][0-9]" maxlength="5" placeholder="HH:MM" title="<?= $isDuplicateTime ? 'Waktu ini duplikat pada pola hari; pilih waktu berbeda.' : 'Gunakan format 24 jam, misalnya 07:05' ?>"<?= $isDuplicateTime ? ' class="has-duplicate-time" aria-invalid="true"' : '' ?> required value="<?= h($currentEventTime) ?>">
                                                 </td>
                                                 <td>
                                                     <label class="sr-only" for="event-name-<?= (int) $event['id'] ?>">Keterangan bel</label>
@@ -278,7 +298,7 @@
                                     <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>"><input type="hidden" name="editor_action" value="save_event"><input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>"><input type="hidden" name="event_id" value="0">
                                     <div class="event-form-grid">
                                         <label>Nama kegiatan<input name="event_name" maxlength="100" required placeholder="Contoh: Bel masuk"></label>
-                                        <label>Waktu<input type="text" name="event_time" inputmode="numeric" autocomplete="off" spellcheck="false" pattern="([01][0-9]|2[0-3]):[0-5][0-9]" maxlength="5" placeholder="HH:MM" title="Gunakan format 24 jam, misalnya 07:05" required value="07:00"><small>Format 24 jam: 00:00 sampai 23:59.</small></label>
+                                        <label>Waktu<input type="text" name="event_time" inputmode="numeric" autocomplete="off" spellcheck="false" pattern="([01][0-9]|2[0-3]):[0-5][0-9]" maxlength="5" placeholder="HH:MM" title="Gunakan format 24 jam, misalnya 07:05" required value="07:00"><small>Format 24 jam: 00:00–23:59. Waktu harus unik pada pola hari ini.</small></label>
                                         <label>Urutan<input type="number" name="sort_order" min="0" max="9999" required value="<?= count($ruleEvents) + 1 ?>"></label>
                                         <label class="audio-upload-label">Audio dari folder aset
                                             <select name="audio_asset">

@@ -940,6 +940,31 @@ final class Database
         if ($this->getDayRule($dayRuleId) === null) {
             throw new InvalidArgumentException('Aturan hari untuk kegiatan ini tidak ditemukan.');
         }
+
+        // Validate the target row before checking uniqueness. Editing a row at its
+        // existing time is allowed; another row in the same rule may not use it.
+        if ($id !== null) {
+            $existing = $this->getBellEvent($id);
+            if ($existing === null || (int) $existing['day_rule_id'] !== $dayRuleId) {
+                throw new InvalidArgumentException('Kegiatan yang akan diubah tidak ditemukan pada aturan hari ini.');
+            }
+        }
+
+        $duplicateSql = 'SELECT id FROM bell_events WHERE day_rule_id = :day_rule_id AND event_time = :event_time';
+        $duplicateParams = [':day_rule_id' => $dayRuleId, ':event_time' => $time];
+        if ($id !== null) {
+            $duplicateSql .= ' AND id <> :id';
+            $duplicateParams[':id'] = $id;
+        }
+        $duplicateStatement = $this->pdo->prepare($duplicateSql . ' LIMIT 1');
+        $duplicateStatement->execute($duplicateParams);
+        if ($duplicateStatement->fetchColumn() !== false) {
+            throw new InvalidArgumentException(
+                'Waktu ' . $time . ' sudah dipakai kegiatan lain pada pola hari ini. Pilih waktu berbeda.'
+            );
+        }
+
+        $now = date('Y-m-d H:i:s');
         if ($id === null) {
             $statement = $this->pdo->prepare(
                 'INSERT INTO bell_events (day_rule_id, name, event_time, audio_path, is_enabled, sort_order, created_at, updated_at)
@@ -948,14 +973,11 @@ final class Database
             $statement->execute([
                 ':day_rule_id' => $dayRuleId, ':name' => $name, ':event_time' => $time,
                 ':audio_path' => $audioPath, ':is_enabled' => $enabled ? 1 : 0,
-                ':sort_order' => $sortOrder, ':created_at' => date('Y-m-d H:i:s'), ':updated_at' => date('Y-m-d H:i:s'),
+                ':sort_order' => $sortOrder, ':created_at' => $now, ':updated_at' => $now,
             ]);
             return (int) $this->pdo->lastInsertId();
         }
-        $existing = $this->getBellEvent($id);
-        if ($existing === null || (int) $existing['day_rule_id'] !== $dayRuleId) {
-            throw new InvalidArgumentException('Kegiatan yang akan diubah tidak ditemukan pada aturan hari ini.');
-        }
+
         $statement = $this->pdo->prepare(
             'UPDATE bell_events SET name = :name, event_time = :event_time, audio_path = :audio_path,
              is_enabled = :is_enabled, sort_order = :sort_order, updated_at = :updated_at WHERE id = :id'
@@ -963,7 +985,7 @@ final class Database
         $statement->execute([
             ':name' => $name, ':event_time' => $time, ':audio_path' => $audioPath,
             ':is_enabled' => $enabled ? 1 : 0, ':sort_order' => $sortOrder,
-            ':updated_at' => date('Y-m-d H:i:s'), ':id' => $id,
+            ':updated_at' => $now, ':id' => $id,
         ]);
         return $id;
     }

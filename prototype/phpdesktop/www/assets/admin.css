@@ -629,6 +629,29 @@ body.admin-area { color: var(--admin-text); font-size: 14px; background: var(--a
     font-variant-numeric: tabular-nums;
     letter-spacing: .02em;
 }
+
+.admin-area .event-time-duplicate-warning {
+    margin: 12px 0;
+    padding: 11px 13px;
+    border: 1px solid #ead1a0;
+    border-radius: 6px;
+    color: #77551b;
+    background: #fffaf0;
+    font-size: 11px;
+    line-height: 1.55;
+}
+.admin-area .bell-events-table .bell-time-cell input.has-duplicate-time {
+    border-color: #b23a32 !important;
+    background: #fff5f4;
+    box-shadow: 0 0 0 1px rgba(178,58,50,.12);
+}
+.admin-area .day-rule-card,
+.admin-area .day-rule-card .event-list,
+.admin-area .day-rule-card .bell-events-table-wrap {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+}
 .admin-area .bell-audio-input select {
     box-sizing: border-box;
     width: 100%;

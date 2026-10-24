@@ -55,15 +55,16 @@ try {
 
     $orderPackageId = $db->saveSchedulePackage(null, 'Resolver Event Order Test', 'Fixture test', '6,7');
     $orderRuleId = $db->saveDayRule(null, $orderPackageId, 1, 'normal', null, null, true);
-    $db->saveBellEvent(null, $orderRuleId, 'Urutan kedua', '07:00', '', true, 2);
-    $db->saveBellEvent(null, $orderRuleId, 'Urutan pertama', '07:00', '', true, 1);
+    // Insert out of chronological order: the resolver must display unique times chronologically.
+    $db->saveBellEvent(null, $orderRuleId, 'Bel jam 07:05', '07:05', '', true, 1);
+    $db->saveBellEvent(null, $orderRuleId, 'Bel jam 07:00', '07:00', '', true, 2);
     $orderResolution = ScheduleResolver::resolve($db, $orderPackageId, new DateTimeImmutable('2026-10-19'));
     $orderedEvents = ScheduleResolver::getEnabledEvents($db, $orderResolution);
     expectResolver(
         count($orderedEvents) === 2
-            && $orderedEvents[0]['name'] === 'Urutan pertama'
-            && $orderedEvents[1]['name'] === 'Urutan kedua',
-        'Kegiatan pada waktu sama harus mengikuti sort_order sebelum ID.'
+            && substr((string) $orderedEvents[0]['event_time'], 0, 5) === '07:00'
+            && substr((string) $orderedEvents[1]['event_time'], 0, 5) === '07:05',
+        'Kegiatan dengan waktu unik harus disusun menurut jam secara kronologis.'
     );
 
     unset($db);

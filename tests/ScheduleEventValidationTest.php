@@ -1,0 +1,102 @@
+<?php
+declare(strict_types=1);
+
+require_once __DIR__ . '/../prototype/phpdesktop/www/lib/Database.php';
+require_once __DIR__ . '/../prototype/phpdesktop/www/lib/ScheduleResolver.php';
+
+function expectScheduleEventValidation(bool $condition, string $message): void
+{
+    if (!$condition) {
+        throw new RuntimeException('FAIL: ' . $message);
+    }
+}
+
+$temporaryRoot = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'BelMadrasahScheduleEventValidation-' . bin2hex(random_bytes(4));
+if (!mkdir($temporaryRoot, 0770, true) && !is_dir($temporaryRoot)) {
+    throw new RuntimeException('Folder test sementara tidak dapat dibuat.');
+}
+putenv('APPDATA=' . $temporaryRoot);
+
+try {
+    $db = new Database();
+    $packageId = $db->saveSchedulePackage(null, 'Schedule Time Validation Test', 'Fixture test waktu unik', '6,7');
+    $ruleId = $db->saveDayRule(null, $packageId, 1, 'normal', null, null, true);
+
+    $firstEventId = $db->saveBellEvent(null, $ruleId, 'Bel masuk', '07:00', '', true, 1);
+    expectScheduleEventValidation(
+        $db->saveBellEvent($firstEventId, $ruleId, 'Bel masuk', '07:00', '', true, 1) === $firstEventId,
+        'Menyimpan ulang kegiatan pada waktu miliknya sendiri harus diizinkan.'
+    );
+
+    $duplicateCreateMessage = '';
+    try {
+        $db->saveBellEvent(null, $ruleId, 'Bel duplikat', '07:00', '', true, 2);
+    } catch (InvalidArgumentException $exception) {
+        $duplicateCreateMessage = $exception->getMessage();
+    }
+    expectScheduleEventValidation(
+        str_contains($duplicateCreateMessage, 'Waktu 07:00 sudah dipakai'),
+        'Tambah kegiatan pada waktu yang sudah dipakai dalam pola yang sama harus ditolak.'
+    );
+
+    $secondEventId = $db->saveBellEvent(null, $ruleId, 'Bel berikutnya', '07:05', '', true, 2);
+    $duplicateUpdateMessage = '';
+    try {
+        $db->saveBellEvent($secondEventId, $ruleId, 'Bel berikutnya', '07:00', '', true, 2);
+    } catch (InvalidArgumentException $exception) {
+        $duplicateUpdateMessage = $exception->getMessage();
+    }
+    $secondEvent = $db->getBellEvent($secondEventId);
+    expectScheduleEventValidation(
+        str_contains($duplicateUpdateMessage, 'Waktu 07:00 sudah dipakai')
+            && $secondEvent !== null
+            && substr((string) $secondEvent['event_time'], 0, 5) === '07:05',
+        'Edit ke waktu duplikat harus ditolak dan waktu lama tetap tersimpan.'
+    );
+
+    // A different rule can use the same time because Normal/Khusus are resolved as alternatives.
+    $specialRuleId = $db->saveDayRule(null, $packageId, 1, 'special', 'pasaran', 'Legi', true);
+    $specialEventId = $db->saveBellEvent(null, $specialRuleId, 'Bel khusus', '07:00', '', true, 1);
+    expectScheduleEventValidation(
+        $specialEventId > 0,
+        'Waktu sama pada aturan hari yang berbeda harus tetap diizinkan.'
+    );
+
+    $firstRunId = $db->recordPlaybackLogIfMissing(
+        $packageId,
+        $firstEventId,
+        '2026-10-19 07:00',
+        'failed',
+        'Fixture: audio kegiatan pertama gagal.'
+    );
+    $nextRunId = $db->recordPlaybackLogIfMissing(
+        $packageId,
+        $secondEventId,
+        '2026-10-19 07:05',
+        'started',
+        'Fixture: kegiatan pada waktu berikutnya mulai diproses.'
+    );
+    expectScheduleEventValidation(
+        is_int($firstRunId) && is_int($nextRunId),
+        'Kegagalan pada satu waktu tidak boleh mencegah pencatatan kegiatan pada waktu berikutnya.'
+    );
+
+    unset($db);
+    echo "PASS: unique schedule times, safe edits, and later-event logging after failure\n";
+} finally {
+    if (isset($db)) {
+        unset($db);
+    }
+    $iterator = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($temporaryRoot, FilesystemIterator::SKIP_DOTS),
+        RecursiveIteratorIterator::CHILD_FIRST
+    );
+    foreach ($iterator as $entry) {
+        if ($entry->isDir()) {
+            @rmdir($entry->getPathname());
+        } else {
+            @unlink($entry->getPathname());
+        }
+    }
+    @rmdir($temporaryRoot);
+}
