@@ -108,7 +108,7 @@ $schoolLogoDataUri = getLocalImageDataUri($schoolLogoPath);
                     <span class="public-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
                     <span class="public-card-label">Kegiatan berikutnya</span>
                     <strong id="public-next-time"><?= $nextEvent !== null ? h(substr((string) $nextEvent['event_time'], 0, 5)) : '—' ?></strong>
-                    <small id="public-next-name"><?= $nextEvent !== null ? h((string) $nextEvent['name']) : 'Tidak ada kegiatan aktif tersimpan berikutnya' ?></small>
+                    <small id="public-next-name"><?= $nextEvent !== null ? h((string) $nextEvent['name']) : ($activePackage === null ? 'Belum ada paket jadwal aktif' : (count($events) === 0 ? 'Tidak ada kegiatan aktif untuk tanggal ini' : 'Tidak ada kegiatan tersisa hari ini')) ?></small>
                 </article>
                 <article class="public-overview-card">
                     <span class="public-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>
@@ -179,7 +179,7 @@ $schoolLogoDataUri = getLocalImageDataUri($schoolLogoPath);
         const nextName = document.getElementById('public-next-name');
         if (nextTime && nextName) {
             nextTime.textContent = next ? next.dataset.eventTime : '—';
-            nextName.textContent = next ? next.dataset.eventName : 'Tidak ada kegiatan Normal tersimpan berikutnya';
+            nextName.textContent = next ? next.dataset.eventName : 'Tidak ada kegiatan tersisa hari ini';
         }
     }
     updateClock();
