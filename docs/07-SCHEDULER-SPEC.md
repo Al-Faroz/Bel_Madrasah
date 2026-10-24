@@ -109,3 +109,12 @@ Kode resolver kalender yang ada hanya menentukan pola dan daftar kegiatan. Sampa
 - Dashboard Publik menampilkan label aturan Khusus yang cocok; saat konflik, pesan menyebut aturan yang terdeteksi dan menjelaskan fallback ke pola Normal.
 - Status kode: label dan pesan diperbarui di repository; pemeriksaan runtime dan tanggal batas tetap perlu dilakukan di PHP Desktop Windows.
 - Matriks uji kalender lokal: periksa batas tanggal 7/8, 14/15, 21/22, 28/29; Februari tahun kabisat/nonkabisat; bulan 30 dan 31 hari; pasaran yang berlanjut lintas bulan/tahun; satu aturan Khusus yang menggantikan Normal; serta kombinasi `Minggu ke-4/5` dengan `Kemunculan terakhir dalam bulan` yang harus memunculkan konflik dan memakai Normal sebagai fallback.
+
+## 13. Hari libur mingguan sebagai aturan operasional (2026-10-24)
+
+- `off_days` pada paket aktif bukan sekadar label atau template saat paket dibuat. Resolver bersama memeriksa hari dalam minggu dan menghentikan daftar kegiatan jika tanggal tersebut termasuk hari libur paket.
+- Pada hari libur mingguan, Dashboard Publik menampilkan pemberitahuan, Dashboard Admin menjelaskan bahwa bel tidak dijalankan, dan scheduler mengirim status `off_day` tanpa memulai audio.
+- Aturan dan kegiatan yang sudah tersimpan pada hari libur tidak dihapus. Jika operator mengubah pilihan hari libur pada paket lama, aturan hari itu tetap tersimpan tetapi tidak dijalankan sampai hari tersebut tidak lagi ditetapkan sebagai hari libur.
+- Perubahan ini berlaku juga untuk aturan Khusus: hari libur mingguan menjadi prioritas lebih tinggi daripada aturan Normal maupun Khusus.
+- Uji lokal: untuk tiap pilihan Jumat, Minggu, dan Sabtu–Minggu, pastikan scheduler tidak memutar audio pada hari libur walaupun aturan aktif masih tersimpan; pastikan hari sekolah tetap memakai resolver Normal/Khusus seperti biasa; ubah pilihan libur pada paket yang sudah memiliki aturan dan pastikan aturan tidak hilang.
+- Status: implementasi kode di repository; **belum local test pass** sampai diuji di PHP Desktop Windows.
