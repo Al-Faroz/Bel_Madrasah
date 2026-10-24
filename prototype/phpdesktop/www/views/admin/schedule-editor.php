@@ -282,7 +282,7 @@
             <li>Hari Normal adalah pola dasar. Aturan Khusus dimaksudkan untuk menggantikan pola Normal ketika atribut tanggalnya cocok; bukan memutar keduanya.</li>
             <li>Pasaran Jawa dan minggu kalender merupakan dua jenis atribut yang terpisah. Satu aturan Khusus hanya boleh memakai salah satunya.</li>
             <li>Jika beberapa aturan Khusus cocok pada tanggal yang sama, resolver menandai konflik dan menggunakan pola Normal sebagai fallback; jadwal Khusus tidak digabung secara diam-diam.</li>
-            <li>Audio dipilih dari daftar file pada folder aset lokal; aplikasi menyimpan referensi path tanpa mengunggah atau menggandakan file. Referensi audio lama tetap dipertahankan jika file belum dipindahkan. Resolver saat ini menyuplai informasi jadwal; scheduler/pemutaran otomatis belum aktif.</li>
+            <li>Audio dipilih dari daftar file pada folder aset lokal; aplikasi menyimpan referensi path tanpa mengunggah atau menggandakan file. Referensi audio lama tetap dipertahankan jika file belum dipindahkan. Scheduler memeriksa jadwal aktif secara berkala dan menggunakan pemutar audio internal. Status pemutaran aktual ditampilkan pada panel Publik; jika audio gagal, periksa status scheduler, referensi file, dan log pemutaran.</li>
         </ul>
     </section>
 
