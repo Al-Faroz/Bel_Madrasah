@@ -183,6 +183,28 @@
                                             $currentAudioPath = trim((string) $event['audio_path']);
                                             $currentAudioRealPath = $currentAudioPath !== '' ? realpath($currentAudioPath) : false;
                                             $currentAudioIsManaged = false;
+                                            $currentAudioStatus = 'none';
+                                            $currentAudioStatusText = 'Belum ada audio';
+                                            if ($currentAudioPath !== '') {
+                                                $currentAudioExtension = strtolower(pathinfo($currentAudioPath, PATHINFO_EXTENSION));
+                                                if (!is_file($currentAudioPath) || !is_readable($currentAudioPath)) {
+                                                    $currentAudioStatus = 'missing';
+                                                    $currentAudioStatusText = 'File tidak ditemukan atau tidak dapat dibaca';
+                                                } elseif (!in_array($currentAudioExtension, ['mp3', 'wav', 'ogg', 'm4a', 'aac'], true)) {
+                                                    $currentAudioStatus = 'unsupported';
+                                                    $currentAudioStatusText = 'Format tidak didukung; gunakan MP3/WAV';
+                                                } else {
+                                                    clearstatcache(true, $currentAudioPath);
+                                                    $currentAudioSize = @filesize($currentAudioPath);
+                                                    if ($currentAudioSize === false || $currentAudioSize <= 0) {
+                                                        $currentAudioStatus = 'empty';
+                                                        $currentAudioStatusText = 'File kosong atau ukuran tidak dapat dibaca';
+                                                    } else {
+                                                        $currentAudioStatus = 'available';
+                                                        $currentAudioStatusText = 'File tersedia · ' . number_format($currentAudioSize / 1048576, 2, ',', '.') . ' MB; codec perlu diuji putar';
+                                                    }
+                                                }
+                                            }
                                             foreach ($audioAssets as $audioAsset) {
                                                 if ($currentAudioRealPath !== false && $audioAsset['path'] === $currentAudioRealPath) {
                                                     $currentAudioIsManaged = true;
@@ -215,7 +237,7 @@
                                                                 <option value="<?= h((string) $audioAsset['name']) ?>" <?= $currentAudioRealPath !== false && $audioAsset['path'] === $currentAudioRealPath ? 'selected' : '' ?>><?= h((string) $audioAsset['name']) ?></option>
                                                             <?php endforeach; ?>
                                                         </select>
-                                                        <small class="bell-audio-status"><?php if ($currentAudioPath === ''): ?>Belum ada audio<?php elseif (is_file($currentAudioPath)): ?>Referensi saat ini: <?= h(basename($currentAudioPath)) ?><?php else: ?>File tidak ditemukan: <?= h(basename($currentAudioPath)) ?><?php endif; ?></small>
+                                                        <small class="bell-audio-status" data-audio-health="<?= h($currentAudioStatus) ?>"><?= h($currentAudioStatusText) ?><?php if ($currentAudioPath !== ''): ?> · <?= h(basename($currentAudioPath)) ?><?php endif; ?></small>
                                                 </td>
                                                 <td>
                                                         <label class="checkbox-line bell-enabled-toggle"><input form="event-form-<?= (int) $event['id'] ?>" type="checkbox" name="event_enabled" value="1" <?= (int) $event['is_enabled'] === 1 ? 'checked' : '' ?>> Aktif</label>
