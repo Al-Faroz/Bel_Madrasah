@@ -73,6 +73,8 @@
                 <?php if ($nextEvent !== null): ?>
                     <p class="next-event-name"><?= h((string) $nextEvent['name']) ?></p>
                     <p class="dashboard-description">Waktu berikutnya dari pola kalender yang berlaku hari ini. Ini adalah informasi konfigurasi, bukan bukti bahwa audio otomatis sedang berjalan.</p>
+                <?php elseif ($resolvedMode === 'off_day'): ?>
+                    <p class="dashboard-description">Paket aktif menetapkan hari ini sebagai hari libur mingguan. Bel tidak dijalankan, meskipun aturan lama masih tersimpan untuk hari ini.</p>
                 <?php elseif ($resolverConflict): ?>
                     <p class="dashboard-description">Lebih dari satu aturan Khusus cocok. Untuk mencegah jadwal ambigu, dashboard memakai pola Normal sebagai fallback. Periksa Editor Jadwal.</p>
                 <?php elseif ($resolvedMode === 'special'): ?>
