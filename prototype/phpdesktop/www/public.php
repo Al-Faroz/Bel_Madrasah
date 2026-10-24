@@ -168,7 +168,7 @@ $schoolLogoDataUri = getLocalImageDataUri($schoolLogoPath);
         second: '2-digit',
         hourCycle: 'h23'
     });
-    const jakartaDate = new Intl.DateTimeFormat('en-CA', {
+    const jakartaDate = new Intl.DateTimeFormat('en-GB', {
         timeZone: 'Asia/Jakarta',
         year: 'numeric',
         month: '2-digit',
@@ -182,7 +182,11 @@ $schoolLogoDataUri = getLocalImageDataUri($schoolLogoPath);
         });
         clock.textContent = parts.hour + ':' + parts.minute + ':' + parts.second;
         const current = parts.hour + ':' + parts.minute;
-        const currentDate = jakartaDate.format(now);
+        const dateParts = {};
+        jakartaDate.formatToParts(now).forEach(function (part) {
+            if (part.type !== 'literal') dateParts[part.type] = part.value;
+        });
+        const currentDate = dateParts.year + '-' + dateParts.month + '-' + dateParts.day;
         if (publicShell && currentDate !== publicShell.dataset.publicDate) {
             window.location.reload();
             return;
