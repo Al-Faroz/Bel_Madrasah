@@ -65,6 +65,7 @@ Pengujian harus dilakukan pada runtime **PHP Desktop Chrome 130.1 + PHP 8.3 di W
 - [ ] Konfirmasi menyatakan data tujuan yang akan diganti.
 - [ ] Setelah salin, data tujuan cocok dengan preview; hari lain tidak berubah.
 - [ ] Tidak ada perubahan jadwal yang terjadi sebelum konfirmasi.
+- [ ] Jika sumber Salin Jadwal mengandung waktu duplikat dalam satu pola, pratinjau memberi peringatan dan salin diblokir; aturan/kegiatan hari tujuan tetap tidak berubah.
 
 ### Konfigurasi dan backup
 - [ ] Nama madrasah/operator dan volume tersimpan setelah restart.
