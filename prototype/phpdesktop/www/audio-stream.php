@@ -25,6 +25,7 @@ if ($origin !== '') {
     }
 }
 
+$runId = 0;
 try {
     $runId = filter_var($_GET['run_id'] ?? 0, FILTER_VALIDATE_INT);
     if ($runId === false || $runId < 1) {
@@ -126,19 +127,40 @@ try {
     }
 
     $remaining = $end - $start + 1;
+    $streamFailure = '';
     while ($remaining > 0 && !feof($handle)) {
         $chunk = fread($handle, min(8192, $remaining));
         if ($chunk === false || $chunk === '') {
+            if ($remaining > 0 && !connection_aborted()) {
+                $streamFailure = 'Pembacaan audio berhenti sebelum seluruh data terkirim.';
+            }
             break;
         }
         echo $chunk;
         $remaining -= strlen($chunk);
         flush();
         if (connection_aborted()) {
+            // The client closed the stream; the player will reconcile its run on pagehide/error.
             break;
         }
     }
     fclose($handle);
+
+    if ($streamFailure !== '') {
+        $db->updatePlaybackLogStatus((int) $runId, 'failed', $streamFailure);
+    }
 } catch (Throwable $exception) {
+    if (is_int($runId) && $runId > 0) {
+        try {
+            $dbForFailure = $db ?? new Database();
+            $dbForFailure->updatePlaybackLogStatus(
+                $runId,
+                'failed',
+                'Audio tidak dapat disalurkan: ' . $exception->getMessage()
+            );
+        } catch (Throwable $ignored) {
+            // Preserve the original streaming error response if logging also fails.
+        }
+    }
     audioStreamError('Audio tidak dapat disalurkan: ' . $exception->getMessage(), 500);
 }
