@@ -138,12 +138,12 @@ $schoolLogoDataUri = getLocalImageDataUri($schoolLogoPath);
             <?php if ($resolverConflict): ?>
                 <section class="public-alert is-warning">
                     <strong>Konflik aturan khusus</strong>
-                    <p>Lebih dari satu aturan Khusus cocok untuk tanggal ini. Untuk mencegah jadwal ambigu, aplikasi memakai pola Normal sebagai fallback. Periksa aturan hari ini pada Editor Jadwal.</p>
+                    <p><?= h($resolutionMessage) ?> Periksa aturan hari ini pada Editor Jadwal.</p>
                 </section>
             <?php elseif ($resolvedMode === 'special'): ?>
                 <section class="public-alert">
                     <strong>Jadwal khusus berlaku</strong>
-                    <p>Aturan Khusus yang cocok dengan kalender menggantikan pola Normal untuk hari ini.</p>
+                    <p><?= h($resolvedPatternLabel) ?> menggantikan pola Normal untuk hari ini.</p>
                 </section>
             <?php endif; ?>
 
