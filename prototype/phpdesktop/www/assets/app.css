@@ -823,6 +823,8 @@ footer { color: #68786d; font-size: 11px; }
 .public-live-indicator[data-scheduler-state="playing"] > span:first-child{background:#d99b25}
 .public-live-indicator[data-scheduler-state="failed"] > span:first-child,.public-live-indicator[data-scheduler-state="error"] > span:first-child,.public-live-indicator[data-scheduler-state="conflict"] > span:first-child{background:#c43d3d}
 .public-live-indicator[data-scheduler-state="completed"] > span:first-child{background:#2f8a57}
+.public-live-indicator[data-scheduler-state="off_day"] > span:first-child{background:#8b98a7}
+.public-live-indicator[data-scheduler-state="off_day"]{border-color:#d9e0e7;color:#526171}
 .public-live-indicator[data-scheduler-state="failed"],.public-live-indicator[data-scheduler-state="error"],.public-live-indicator[data-scheduler-state="conflict"]{border-color:#eccaca;color:#a33838}
 .public-live-indicator [data-scheduler-status-text]{width:auto;height:auto;overflow:hidden;border-radius:0;background:transparent;text-overflow:ellipsis;white-space:nowrap}
 .public-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,310px);align-items:center;gap:24px;padding:clamp(24px,4vw,42px);border:1px solid #d7e7db;border-radius:28px;background:linear-gradient(120deg,#fff 0%,#eaf6ee 100%);box-shadow:var(--elevation-1)}
