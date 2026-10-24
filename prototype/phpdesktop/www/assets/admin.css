@@ -914,3 +914,22 @@ body.admin-area { color: var(--admin-text); font-size: 14px; background: var(--a
     .admin-area .bell-events-table tbody td { padding: 9px 7px; }
     .admin-area .bell-actions-cell { min-width: 145px; }
 }
+
+
+/* Audio asset health in the schedule editor */
+.admin-area .bell-audio-status {
+    display: block;
+    margin-top: 5px;
+    font-size: 10px;
+    line-height: 1.4;
+    color: var(--muted, #66756a);
+}
+.admin-area .bell-audio-status[data-audio-health="available"] {
+    color: #267247;
+}
+.admin-area .bell-audio-status[data-audio-health="missing"],
+.admin-area .bell-audio-status[data-audio-health="empty"],
+.admin-area .bell-audio-status[data-audio-health="unsupported"] {
+    color: #a83232;
+    font-weight: 600;
+}
