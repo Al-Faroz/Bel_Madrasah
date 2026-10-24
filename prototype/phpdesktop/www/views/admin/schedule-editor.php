@@ -221,7 +221,7 @@
                                                 </td>
                                                 <td class="bell-actions-cell">
                                                         <button type="submit" form="event-form-<?= (int) $event['id'] ?>" class="button-compact">Simpan</button>
-                                                    <form method="post" action="schedule-editor.php" class="delete-event-form" onsubmit="return confirm('Hapus kegiatan bel ini?')"><input type="hidden" name="package_id" value="<?= $selectedPackageId ?>"><input type="hidden" name="editor_action" value="delete_event"><input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>"><input type="hidden" name="event_id" value="<?= (int) $event['id'] ?>"><button type="submit" class="text-danger">Hapus</button></form>
+                                                    <form method="post" action="schedule-editor.php?package_id=<?= $selectedPackageId ?>" class="delete-event-form" onsubmit="return confirm('Hapus hanya kegiatan bel &quot;<?= h((string) $event['name']) ?>&quot; ini? Tindakan ini tidak dapat dibatalkan.')"><input type="hidden" name="package_id" value="<?= $selectedPackageId ?>"><input type="hidden" name="editor_action" value="delete_event"><input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>"><input type="hidden" name="event_id" value="<?= (int) $event['id'] ?>"><button type="submit" class="text-danger">Hapus</button></form>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
