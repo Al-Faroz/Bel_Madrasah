@@ -93,3 +93,10 @@ Kode resolver kalender yang ada hanya menentukan pola dan daftar kegiatan. Sampa
 - Jika pembacaan file berhenti sebelum seluruh byte terkirim dan bukan karena klien memutus koneksi, log ditutup sebagai `failed` dengan alasan penyaluran terhenti.
 - Jika klien memutus koneksi, lifecycle halaman/player bertanggung jawab menyelesaikan status run; saat halaman dimuat kembali, run `started` yang tersisa direkonsiliasi menjadi `failed`.
 - Kriteria ini mencegah riwayat pemutaran menggantung pada status `started`. Tetap perlu uji Windows untuk memastikan jalur exception dan pemutusan koneksi benar-benar terjadi seperti yang diharapkan.
+
+
+## 11. Waktu tampilan dan pergantian tanggal (2026-10-24)
+
+- Jam pada Dashboard Publik diformat secara eksplisit memakai zona waktu `Asia/Jakarta`, bukan zona waktu lokal Chromium. Ini menyamakan tampilan dengan timezone backend yang ditetapkan di `Database.php`.
+- Tanggal publik yang dirender PHP disimpan sebagai tanggal acuan. Ketika tanggal WIB pada browser berbeda dari tanggal acuan, halaman dimuat ulang agar tanggal, pasaran, aturan khusus, dan daftar kegiatan tidak tertinggal setelah tengah malam atau perubahan jam/tanggal.
+- Mengubah jam sistem secara manual dan perilaku timer saat sleep/wake tetap harus diuji di PHP Desktop Windows; sinkronisasi tampilan tidak menjamin Windows memiliki waktu yang benar.
