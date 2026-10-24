@@ -37,7 +37,7 @@ final class ScheduleResolver
             'value' => $isLastOccurrence ? 'last' : (string) $ordinal,
             'ordinal' => $ordinal,
             'is_last' => $isLastOccurrence,
-            'label' => $isLastOccurrence ? 'Minggu terakhir' : 'Minggu ke-' . $ordinal,
+            'label' => $isLastOccurrence ? 'Kemunculan terakhir dalam bulan' : 'Minggu ke-' . $ordinal,
         ];
     }
 
