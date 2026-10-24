@@ -206,10 +206,23 @@ try {
             if ($rule === null || (int) $rule['package_id'] !== $selectedPackageId) {
                 throw new InvalidArgumentException('Aturan hari untuk kegiatan tidak ditemukan.');
             }
-            // Setelah hapus, tetap tampilkan hari yang berisi aturan terkait.
+            // Ambil identitas kegiatan sebelum dihapus agar pesan hasilnya spesifik.
             $ruleForm['weekday'] = (string) $rule['weekday'];
-            $db->deleteBellEvent((int) ($_POST['event_id'] ?? 0), $ruleId);
-            $message = 'Kegiatan bel berhasil dihapus.';
+            $eventId = (int) ($_POST['event_id'] ?? 0);
+            $event = $db->getBellEvent($eventId);
+            if ($event === null || (int) $event['day_rule_id'] !== $ruleId) {
+                throw new InvalidArgumentException('Kegiatan yang akan dihapus tidak ditemukan pada pola hari ini.');
+            }
+            $eventName = trim((string) $event['name']);
+            $weekdayName = $weekdays[(int) $rule['weekday']] ?? 'hari terpilih';
+            $patternName = $rule['rule_mode'] === 'normal'
+                ? 'Normal'
+                : 'Khusus · ' . ($rule['special_type'] === 'pasaran'
+                    ? (string) $rule['special_value']
+                    : (($weekOptions[(string) $rule['special_value']] ?? (string) $rule['special_value'])));
+            $db->deleteBellEvent($eventId, $ruleId);
+            $message = 'Berhasil menghapus kegiatan bel “' . $eventName . '” dari ' . $weekdayName . ' · ' . $patternName
+                . '. Hanya kegiatan ini yang dihapus; pola hari dan kegiatan bel lainnya tetap tersimpan.';
         } else {
             throw new InvalidArgumentException('Aksi editor jadwal tidak dikenali.');
         }
