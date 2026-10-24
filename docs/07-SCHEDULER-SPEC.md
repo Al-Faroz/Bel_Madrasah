@@ -100,3 +100,11 @@ Kode resolver kalender yang ada hanya menentukan pola dan daftar kegiatan. Sampa
 - Jam pada Dashboard Publik diformat secara eksplisit memakai zona waktu `Asia/Jakarta`, bukan zona waktu lokal Chromium. Ini menyamakan tampilan dengan timezone backend yang ditetapkan di `Database.php`.
 - Tanggal publik yang dirender PHP disimpan sebagai tanggal acuan. Ketika tanggal WIB pada browser berbeda dari tanggal acuan, halaman dimuat ulang agar tanggal, pasaran, aturan khusus, dan daftar kegiatan tidak tertinggal setelah tengah malam atau perubahan jam/tanggal.
 - Mengubah jam sistem secara manual dan perilaku timer saat sleep/wake tetap harus diuji di PHP Desktop Windows; sinkronisasi tampilan tidak menjamin Windows memiliki waktu yang benar.
+
+## 12. Klarifikasi aturan kalender (2026-10-24)
+
+- `Minggu ke-1` sampai `Minggu ke-5` dihitung sebagai blok tanggal dalam bulan: tanggal 1–7, 8–14, 15–21, 22–28, dan 29 sampai akhir bulan. Ini bukan nomor minggu ISO.
+- Opsi `Kemunculan terakhir dalam bulan` berarti kemunculan terakhir dari hari yang dipilih dalam bulan tersebut (misalnya Jumat terakhir), bukan seluruh blok kalender terakhir. Label ini dibuat eksplisit di Editor Jadwal, resolver, dan Dashboard Publik agar tidak tertukar dengan `Minggu ke-4/5`.
+- Kedua jenis aturan dapat bertumpang tindih untuk tanggal tertentu. Jika lebih dari satu aturan Khusus aktif cocok pada hari yang sama, resolver tidak menggabungkannya: pola Normal dipakai sebagai fallback dan konflik ditampilkan. Operator perlu menghindari kombinasi aturan yang bertumpang tindih pada hari yang sama.
+- Dashboard Publik menampilkan label aturan Khusus yang cocok; saat konflik, pesan menyebut aturan yang terdeteksi dan menjelaskan fallback ke pola Normal.
+- Status kode: label dan pesan diperbarui di repository; pemeriksaan runtime dan tanggal batas tetap perlu dilakukan di PHP Desktop Windows.
