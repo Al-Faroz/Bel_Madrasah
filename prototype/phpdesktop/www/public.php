@@ -59,7 +59,8 @@ try {
         }
         $resolvedPatternLabel = $resolvedMode === 'special'
             ? 'Khusus · ' . ($specialRuleLabels[0] ?? 'Aturan khusus')
-            : ($resolvedMode === 'normal_fallback' ? 'Normal · fallback konflik' : 'Normal');
+            : ($resolvedMode === 'normal_fallback' ? 'Normal · fallback konflik'
+                : ($resolvedMode === 'off_day' ? 'Hari libur mingguan' : 'Normal'));
         $resolutionMessage = $resolverConflict
             ? 'Konflik aturan khusus: ' . implode(', ', $specialRuleLabels) . '. Jadwal Normal digunakan sebagai fallback.'
             : '';
@@ -144,6 +145,11 @@ $schoolLogoDataUri = getLocalImageDataUri($schoolLogoPath);
                 <section class="public-alert">
                     <strong>Jadwal khusus berlaku</strong>
                     <p><?= h($resolvedPatternLabel) ?> menggantikan pola Normal untuk hari ini.</p>
+                </section>
+            <?php elseif ($resolvedMode === 'off_day'): ?>
+                <section class="public-alert">
+                    <strong>Hari libur mingguan</strong>
+                    <p>Paket aktif menetapkan hari ini sebagai hari libur. Tidak ada kegiatan bel yang dijalankan, meskipun aturan lama masih tersimpan untuk hari ini.</p>
                 </section>
             <?php endif; ?>
 
