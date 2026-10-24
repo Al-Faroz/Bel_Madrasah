@@ -156,3 +156,17 @@ Jangan menyimpulkan penyebab hanya dari screenshot; reproduksi dan audit kode di
 - [ ] Periksa paket aktif dan pemilihan Normal/Khusus pada tanggal yang sesuai; jangan mengubah atau menghapus data jadwal lain saat pengujian.
 
 Catatan: butir di atas adalah kriteria uji; belum dianggap lulus hanya karena perubahan kode sudah dibuat. Validasi akhir dilakukan di PHP Desktop Windows.
+
+
+## Tata letak Publik satu layar (2026-10-24)
+
+- [ ] Pada layar desktop 1366×768 dan 1920×1080, halaman Publik tidak menimbulkan scroll halaman utama.
+- [ ] Header tetap terbaca dan tombol Dashboard Admin tidak bertumpuk dengan indikator scheduler.
+- [ ] Kartu tanggal/jam serta tiga kartu ringkasan tersusun vertikal di kolom kiri (sekitar 1/3 lebar).
+- [ ] Panel Jadwal bel hari ini berada di kolom kanan (sekitar 2/3 lebar) dan menggunakan tinggi ruang yang tersedia.
+- [ ] Jadwal berikutnya tetap disorot dan jam tetap diperbarui setiap detik.
+- [ ] Jika daftar kegiatan lebih panjang daripada ruang panel, hanya daftar jadwal yang dapat digulir; header, ringkasan, dan footer tetap di tempat.
+- [ ] Peringatan aturan khusus tetap terlihat tanpa menimpa kartu ringkasan atau panel jadwal.
+- [ ] Pada lebar tablet/ponsel, tata letak kembali menjadi satu kolom dan semua kontrol tetap dapat dijangkau.
+- [ ] Uji juga kondisi tanpa paket aktif, tanpa kegiatan hari ini, dan konflik aturan khusus.
+- [ ] Simpan screenshot runtime PHP Desktop Windows untuk ukuran layar target; pemeriksaan kode saja bukan bukti lulus visual.
