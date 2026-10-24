@@ -194,3 +194,18 @@ Catatan: butir di atas adalah kriteria uji; belum dianggap lulus hanya karena pe
 - [ ] Gagal memutar satu kegiatan tidak membuat aplikasi crash; scheduler tetap memeriksa kegiatan berikutnya.
 - [ ] Pastikan log dan status header/Public cocok setelah satu kegagalan, lalu pulihkan file uji sebelum jadwal operasional.
 - [ ] Jalankan pengujian di PHP Desktop Windows; pemeriksaan kode saja bukan bukti audio benar-benar terdengar.
+
+
+## Audit konsistensi log dan siklus hidup scheduler (2026-10-24)
+
+- [ ] Jika endpoint audio gagal membuka atau membaca file setelah status `started`, log akhir menjadi `failed` dengan alasan yang berguna.
+- [ ] Jika penyaluran file berhenti sebelum semua byte terkirim tanpa pemutusan dari klien, log tidak dibiarkan sebagai `started`.
+- [ ] Jika klien menutup halaman ketika audio berjalan, log direkonsiliasi menjadi `failed`; tidak boleh tertinggal sebagai `started`.
+- [ ] Setelah aplikasi dibuka kembali, log `started` dari sesi sebelumnya ditutup sebagai `failed`; jadwal kemarin tidak diputar ulang.
+- [ ] Setelah audio selesai, log menjadi `completed` tepat satu kali; refresh tidak membuat log duplikat.
+- [ ] Uji beberapa kegiatan pada menit yang sama: semua kegiatan yang aktif diproses berurutan, termasuk jika kegiatan pertama dilewati atau gagal.
+- [ ] Minimize/restore jendela saat menunggu dan saat audio diputar; catat apakah waktu bel tetap tepat dan apakah audio terputus.
+- [ ] Uji navigasi Publik → Admin → Publik; tidak boleh ada dua pemutar aktif atau pemutaran ganda.
+- [ ] Uji sleep/wake dan restart; kejadian yang melewati toleransi dicatat `missed`, bukan diputar terlambat.
+- [ ] Cocokkan pesan status UI dengan status dan pesan pada database `playback_log`.
+- [ ] Semua hasil di atas harus diverifikasi di PHP Desktop Windows; kode dan dokumen bukan bukti runtime lulus.
