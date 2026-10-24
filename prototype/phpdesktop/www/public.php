@@ -51,8 +51,10 @@ try {
             if ((string) ($matchedRule['special_type'] ?? '') === 'pasaran') {
                 $specialRuleLabels[] = 'Pasaran ' . (string) $matchedRule['special_value'];
             } elseif ((string) ($matchedRule['special_type'] ?? '') === 'month_week') {
-                $specialRuleLabels[] = $weekOptions[(string) $matchedRule['special_value']]
-                    ?? ('Minggu ke-' . (string) $matchedRule['special_value']);
+                $specialValue = (string) $matchedRule['special_value'];
+                $specialRuleLabels[] = $specialValue === 'last'
+                    ? 'Minggu terakhir'
+                    : 'Minggu ke-' . $specialValue;
             }
         }
         $resolvedPatternLabel = $resolvedMode === 'special'
