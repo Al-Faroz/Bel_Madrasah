@@ -761,3 +761,10 @@ body.admin-area { color: var(--admin-text); font-size: 14px; background: var(--a
     .admin-area .editor-workflow-guide { padding: 15px; }
     .admin-area .rule-event-summary { align-items: flex-start; }
 }
+
+/* Editor Jadwal: inline delete confirmation avoids suppressed window.confirm dialogs in PHP Desktop. */
+.admin-area .delete-event-action { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.admin-area .delete-event-action [hidden] { display: none !important; }
+.admin-area .delete-event-form { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0; }
+.admin-area .delete-event-form[hidden] { display: none !important; }
+.admin-area .delete-event-confirm-text { flex-basis: 100%; color: #8f3028; font-size: 10px; line-height: 1.4; }
