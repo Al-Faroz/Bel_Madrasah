@@ -18,6 +18,9 @@
             </select>
             <noscript><button type="submit" class="button-compact">Pilih paket</button></noscript>
         </form>
+        <?php if ($selectedPackage !== null): ?>
+            <p class="form-note">Hari libur mingguan paket ini: <strong><?= h((string) ($selectedPackage['off_days'] ?? '6,7') === '5' ? 'Jumat' : ((string) ($selectedPackage['off_days'] ?? '6,7') === '7' ? 'Minggu' : 'Sabtu–Minggu')) ?></strong>. Pada hari tersebut scheduler tidak menjalankan bel. Aturan lama tetap tersimpan dan dapat diedit, tetapi tidak dijalankan selama hari itu ditetapkan sebagai libur.</p>
+        <?php endif; ?>
     </section>
 
     <section class="panel editor-workflow-guide" aria-label="Panduan status jadwal">
