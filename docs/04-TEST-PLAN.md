@@ -234,3 +234,5 @@ Catatan: butir di atas adalah kriteria uji; belum dianggap lulus hanya karena pe
 - [ ] Kegagalan pada pemeriksaan tabel dibedakan dari kegagalan koneksi/penulisan SQLite; pesan error tidak menyebut database gagal hanya karena metode diagnostik tidak tersedia.
 - [ ] Buka Dashboard, Editor Jadwal, Konfigurasi, Backup & Restore, Publik, lalu Pemeriksaan; pastikan seluruh halaman tetap dapat menginisialisasi kelas `Database` dan data jadwal tidak berubah.
 - [ ] Setelah pemeriksaan database lolos, uji autoplay secara terpisah pada runtime PHP Desktop yang benar-benar dipakai. Jangan menandai uji audio lulus hanya karena endpoint scheduler mengembalikan respons; suara dan log akhir harus diverifikasi.
+
+**Tes CLI yang ditambahkan:** jalankan `php .\\tests\\DatabaseTablesTest.php` dari root repository. Setelah itu, salin source terbaru ke folder `www` runtime yang benar-benar dipakai, buka Pemeriksaan, dan pastikan tabel inti terdaftar tanpa error. Tes CLI tidak menggantikan pemeriksaan PHP Desktop Windows.
