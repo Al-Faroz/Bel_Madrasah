@@ -263,3 +263,10 @@ Resolver kalender Normal/Khusus → scheduler/audio dan log status → restore a
 - Commit kode: [fe564d6](https://github.com/Al-Faroz/Bel_Madrasah/commit/fe564d6cec3a6c29756acfe85c4cca3ae84eae41); spesifikasi diperbarui pada [8eaa021](https://github.com/Al-Faroz/Bel_Madrasah/commit/8eaa021bb40f4a13894514e56472526beca374b3).
 - Status: **IMPLEMENTED; belum diuji di PHP Desktop Windows**. Perlu uji negatif file hilang, file kosong, format tak didukung, dan stream terputus; pastikan pesan UI sesuai dengan alasan yang tersimpan di riwayat dan scheduler tetap memeriksa jadwal berikutnya.
 
+## Regresi — detail kegagalan playback tidak boleh tertimpa (2026-10-26)
+
+- Fixture `tests/SchedulerPlaybackLogTest.php` kini membuat satu run yang berakhir `failed` dengan alasan spesifik, mencoba menutupnya kembali sebagai `completed`, lalu memverifikasi bahwa status dan pesan kegagalan awal tetap persis tersimpan.
+- Urutan fixture dijaga unik agar skenario baru tidak menambah ambiguitas pada daftar kegiatan.
+- Commit tes: [53f6ede](https://github.com/Al-Faroz/Bel_Madrasah/commit/53f6edee72fe3af7281e8ba863c8e6a1963a67ae) dan [e482952](https://github.com/Al-Faroz/Bel_Madrasah/commit/e48295201b7329ab5e0dc304c24f0887ca2a0c6f). Kriteria penerimaan ditambahkan ke [rencana tes](https://github.com/Al-Faroz/Bel_Madrasah/blob/main/docs/04-TEST-PLAN.md).
+- Status: **TES DITAMBAHKAN; BELUM DIEKSEKUSI**. Jalankan `php tests/SchedulerPlaybackLogTest.php` pada PHP CLI dengan PDO SQLite, lalu tetap lakukan uji kegagalan audio di PHP Desktop Windows.
+
