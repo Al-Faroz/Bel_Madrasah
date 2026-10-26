@@ -120,3 +120,13 @@ Kode resolver kalender yang ada hanya menentukan pola dan daftar kegiatan. Sampa
 - Perubahan ini berlaku juga untuk aturan Khusus: hari libur mingguan menjadi prioritas lebih tinggi daripada aturan Normal maupun Khusus.
 - Uji lokal: untuk tiap pilihan Jumat, Minggu, dan Sabtu–Minggu, pastikan scheduler tidak memutar audio pada hari libur walaupun aturan aktif masih tersimpan; pastikan hari sekolah tetap memakai resolver Normal/Khusus seperti biasa; ubah pilihan libur pada paket yang sudah memiliki aturan dan pastikan aturan tidak hilang.
 - Status: implementasi kode di repository; **belum local test pass** sampai diuji di PHP Desktop Windows.
+
+
+## 14. Validator audio bersama dan pesan riwayat otoritatif — 2026-10-26
+
+- `lib/AudioAsset.php` menjadi satu pemeriksa referensi audio untuk scheduler dan endpoint stream. Pemeriksaan mencakup referensi kosong, ekstensi, keberadaan file, tipe file biasa, keterbacaan, ukuran nonnol, dan kemampuan membuka file.
+- Scheduler memeriksa aset sebelum mencatat status `started`. Referensi kosong menjadi `skipped`; file hilang, kosong, tidak dapat dibaca/dibuka, atau format tak didukung menjadi `failed` dengan alasan yang dapat ditindaklanjuti.
+- Endpoint stream menjalankan pemeriksaan yang sama sekali lagi karena file dapat berubah setelah scheduler mengklaim kejadian.
+- Respons ketika log sudah ditutup menyediakan `status` dan `stored_message` terstruktur. UI memakai status/pesan tersimpan sebagai sumber kebenaran agar callback media yang datang belakangan tidak mengganti kegagalan spesifik dengan pesan generik.
+- `tests/AudioAssetValidationTest.php` menguji cabang validasi file tanpa membutuhkan database SQLite. Tes ini tidak membuktikan codec MP3/WAV dapat didekode; itu tetap harus diuji pada PHP Desktop Windows.
+- Status batch: **KODE DIIMPLEMENTASIKAN; BELUM DIVERIFIKASI PADA CHECKOUT PENGGUNA ATAU RUNTIME WINDOWS**. Jalankan checklist baru di `docs/04-TEST-PLAN.md` sebelum menyatakan batch ini PASS.
