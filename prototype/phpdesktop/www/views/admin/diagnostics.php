@@ -84,6 +84,7 @@
             <?php endif; ?>
 
             <form class="storage-actions" method="post">
+<input type="hidden" name="_csrf_token" value="<?= h($csrfToken) ?>">
                 <button type="submit" name="storage_action" value="save">Simpan data uji</button>
                 <button type="submit" name="storage_action" value="read" class="button-secondary">Baca data tersimpan</button>
             </form>
