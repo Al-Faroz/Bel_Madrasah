@@ -163,3 +163,24 @@ Kirimkan:
 - Hasil tes MP3 dan WAV (jika keduanya tersedia).
 - Perkiraan penggunaan RAM/CPU dari Task Manager saat jendela diam selama beberapa menit.
 - Screenshot jika ada tampilan kosong atau pesan error.
+
+
+## Catatan runtime terbaru: scheduler dan kebijakan autoplay (2026-10-26)
+
+Bagian Tahap 5 di atas adalah catatan historis untuk uji pemutaran manual; fitur scheduler otomatis kini berada pada `www/scheduler.php`, `www/audio-stream.php`, dan `www/assets/scheduler.js`. Paket PHP Desktop yang dipakai untuk menjalankan aplikasi **tidak disimpan di repository**, jadi konfigurasi `settings.json` pada folder runtime harus diperiksa tersendiri.
+
+Untuk aplikasi bel yang memang harus memutar audio sesuai jadwal tanpa klik operator, bagian `chrome` pada `settings.json` runtime harus memuat switch berikut. Gabungkan ke konfigurasi yang sudah ada; jangan mengganti seluruh file atau menghapus switch lain:
+
+```json
+{
+  "chrome": {
+    "command_line_switches": {
+      "autoplay-policy": "no-user-gesture-required"
+    }
+  }
+}
+``
+
+Jika `chrome` atau `command_line_switches` sudah ada, tambahkan hanya pasangan kunci `"autoplay-policy": "no-user-gesture-required"` pada objek `command_line_switches`. Nama switch tidak memakai awalan tanda hubung. Tutup seluruh proses PHP Desktop lalu buka ulang setelah perubahan. Switch ini mengubah kebijakan autoplay untuk jendela PHP Desktop aplikasi, bukan pengaturan browser Chrome eksternal. Tetap verifikasi bahwa suara terdengar dan log pemutaran berakhir dengan status yang sesuai.
+
+**Peringatan:** jangan menghapus atau membuat ulang `%APPDATA%\\BelMadrasah` untuk mengatasi masalah autoplay. Kebijakan autoplay tidak memerlukan perubahan atau penghapusan database maupun file audio.
