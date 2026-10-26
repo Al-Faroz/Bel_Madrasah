@@ -41,7 +41,7 @@
         if (!status) return;
 
         if (activeButton === button && activeAudio && !activeAudio.paused) {
-            resetActivePreview('Pratinjau dijeda.');
+            resetActivePreview('Pratinjau dihentikan.');
             return;
         }
 
