@@ -50,3 +50,64 @@ function enforceCsrfForPost(): string
 
     return $token;
 }
+
+
+/**
+ * Validate browser same-origin metadata for internal scheduler requests.
+ *
+ * Unlike a hostname-only comparison, this treats scheme and port as part of
+ * the origin. Requests without Origin are accepted only when Fetch Metadata
+ * explicitly identifies them as same-origin.
+ *
+ * @param array<string, mixed> $server Server variables (injectable for tests).
+ */
+function isSameOriginRequest(array $server): bool
+{
+    $fetchSite = strtolower(trim((string) ($server['HTTP_SEC_FETCH_SITE'] ?? '')));
+    if ($fetchSite !== '' && $fetchSite !== 'same-origin') {
+        return false;
+    }
+
+    $origin = trim((string) ($server['HTTP_ORIGIN'] ?? ''));
+    if ($origin === '') {
+        return $fetchSite === 'same-origin';
+    }
+
+    $requestHost = trim((string) ($server['HTTP_HOST'] ?? ''));
+    if ($requestHost === '') {
+        return false;
+    }
+
+    $requestScheme = (!empty($server['HTTPS']) && strtolower((string) $server['HTTPS']) !== 'off')
+        ? 'https'
+        : 'http';
+    $originParts = parse_url($origin);
+    $requestParts = parse_url($requestScheme . '://' . $requestHost);
+
+    if (!is_array($originParts) || !is_array($requestParts)
+        || !isset($originParts['scheme'], $originParts['host'], $requestParts['scheme'], $requestParts['host'])
+        || isset($originParts['user']) || isset($originParts['pass'])
+        || isset($originParts['query']) || isset($originParts['fragment'])
+        || (isset($originParts['path']) && $originParts['path'] !== '' && $originParts['path'] !== '/')) {
+        return false;
+    }
+
+    $originScheme = strtolower((string) $originParts['scheme']);
+    $originHost = strtolower((string) $originParts['host']);
+    $requestHostName = strtolower((string) $requestParts['host']);
+    if (!in_array($originScheme, ['http', 'https'], true)
+        || $originScheme !== strtolower((string) $requestParts['scheme'])
+        || $originHost !== $requestHostName) {
+        return false;
+    }
+
+    $defaultPort = static fn (string $scheme): int => strtolower($scheme) === 'https' ? 443 : 80;
+    $originPort = isset($originParts['port'])
+        ? (int) $originParts['port']
+        : $defaultPort($originScheme);
+    $requestPort = isset($requestParts['port'])
+        ? (int) $requestParts['port']
+        : $defaultPort((string) $requestParts['scheme']);
+
+    return $originPort === $requestPort;
+}
