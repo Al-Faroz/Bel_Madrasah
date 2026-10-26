@@ -1230,7 +1230,7 @@ final class Database
     public function resolveAudioAsset(string $name): string
     {
         $name = trim($name);
-        if ($name === '' || basename($name) !== $name || str_contains($name, '/') || str_contains($name, '\\\\')) {
+        if ($name === '' || basename($name) !== $name || str_contains($name, '/') || str_contains($name, '\\')) {
             throw new InvalidArgumentException('Pilihan file audio tidak valid. Pilih ulang dari folder aset audio.');
         }
 
@@ -1261,7 +1261,7 @@ final class Database
     public function resolveLogoAsset(string $name): string
     {
         $name = trim($name);
-        if ($name === '' || basename($name) !== $name || str_contains($name, '/') || str_contains($name, '\\\\')) {
+        if ($name === '' || basename($name) !== $name || str_contains($name, '/') || str_contains($name, '\\')) {
             throw new InvalidArgumentException('Pilihan file logo tidak valid. Pilih ulang dari folder aset logo.');
         }
 
