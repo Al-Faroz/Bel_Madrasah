@@ -257,3 +257,12 @@ Catatan: butir di atas adalah kriteria uji; belum dianggap lulus hanya karena pe
 - Token CSRF telah dipasang pada semua formulir POST yang teridentifikasi di view Pemeriksaan, Paket Jadwal, Editor Jadwal, Konfigurasi, dan Backup & Restore.
 - Tes helper terpisah pernah diperiksa dengan PHP CLI 8.4; tetap jalankan `php .\\tests\\CsrfProtectionTest.php` dan `php .\\tests\\ApplicationTimezoneTest.php` dari root checkout aktual sebelum memberi status PASS pada repository.
 - Jangan menandai alur POST atau runtime Windows PASS sebelum semua formulir normal diuji pada PHP Desktop yang digunakan.
+
+
+## Regresi keamanan same-origin scheduler — 2026-10-26
+
+- [ ] Origin same-origin dengan host dan port sama diterima.
+- [ ] Host berbeda, port berbeda, skema berbeda, `Sec-Fetch-Site: cross-site`, dan nilai Fetch Metadata selain `same-origin` ditolak.
+- [ ] Jika `Origin` tidak tersedia, permintaan hanya diterima ketika `Sec-Fetch-Site: same-origin`; header yang hilang seluruhnya ditolak.
+- [ ] Jalankan `php .\\tests\\SchedulerSameOriginTest.php`.
+- [ ] Pada PHP Desktop Chrome 130.1, pastikan polling `tick`, inisialisasi `page_start`, penyelesaian `finish`, dan `sendBeacon` saat halaman ditutup tetap berjalan. Pemeriksaan helper tidak menggantikan smoke test runtime.
