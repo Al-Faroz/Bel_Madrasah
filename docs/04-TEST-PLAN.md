@@ -312,16 +312,16 @@ Perubahan terbaru:
 - Respons `scheduler.php` kini menyertakan status serta pesan log yang telah ditutup sebagai field terstruktur. `assets/scheduler.js` memakai status/pesan tersimpan tersebut sebagai sumber kebenaran saat callback player datang terlambat.
 - Tes `SchedulerResolverTest.php`, `ScheduleEventValidationTest.php`, dan `SchedulerPlaybackLogTest.php` sudah dilaporkan **PASS oleh pengguna** pada checkout lokal sebelumnya. Hasil itu tidak membuktikan file audio/codec benar-benar dapat diputar pada runtime Windows.
 
-### Checklist verifikasi berikutnya
-- [ ] Jalankan `php -l .\\prototype\\phpdesktop\\www\\lib\\AudioAsset.php`.
-- [ ] Jalankan `php -l .\\prototype\\phpdesktop\\www\\scheduler.php`.
-- [ ] Jalankan `php -l .\\prototype\\phpdesktop\\www\\audio-stream.php`.
-- [ ] Jalankan `php .\\tests\\AudioAssetValidationTest.php`; hasil harus `PASS`.
-- [ ] Jalankan kembali `php .\\tests\\SchedulerPlaybackLogTest.php` setelah perubahan respons log/UI.
-- [ ] Di PHP Desktop Windows, uji referensi audio kosong, file dihapus/dipindah, file kosong, ekstensi tak didukung, dan MP3/WAV valid.
-- [ ] Pastikan satu kegagalan tidak menghentikan pemeriksaan jadwal berikutnya dan riwayat tidak tertinggal sebagai `started`.
-- [ ] Pastikan kegagalan stream/decode mempertahankan alasan yang tersimpan pada riwayat dan tampil jelas pada status Publik/Admin.
-- [ ] Pastikan autoplay di runtime PHP Desktop memakai konfigurasi yang benar-benar dijalankan; suara terdengar, bukan sekadar status UI.
+### Hasil verifikasi — PASS dilaporkan pengguna
+- [x] Jalankan `php -l .\\prototype\\phpdesktop\\www\\lib\\AudioAsset.php` — PASS dilaporkan pengguna.
+- [x] Jalankan `php -l .\\prototype\\phpdesktop\\www\\scheduler.php` — PASS dilaporkan pengguna.
+- [x] Jalankan `php -l .\\prototype\\phpdesktop\\www\\audio-stream.php` — PASS dilaporkan pengguna.
+- [x] Jalankan `php .\\tests\\AudioAssetValidationTest.php`; hasil `PASS` dilaporkan pengguna.
+- [x] Jalankan kembali `php .\\tests\\SchedulerPlaybackLogTest.php` setelah perubahan respons log/UI — PASS dilaporkan pengguna.
+- [x] Di PHP Desktop Windows, uji referensi audio kosong, file dihapus/dipindah, file kosong, ekstensi tak didukung, dan MP3/WAV valid — PASS dilaporkan pengguna.
+- [x] Satu kegagalan tidak menghentikan pemeriksaan jadwal berikutnya dan riwayat tidak tertinggal sebagai `started` — PASS dilaporkan pengguna.
+- [x] Kegagalan stream/decode mempertahankan alasan yang tersimpan pada riwayat dan tampil jelas pada status Publik/Admin — PASS dilaporkan pengguna.
+- [x] Autoplay di runtime PHP Desktop memakai konfigurasi yang benar-benar dijalankan; suara terdengar, bukan sekadar status UI — PASS dilaporkan pengguna.
 
 
 ## Pratinjau audio di Editor Jadwal — 2026-10-26
