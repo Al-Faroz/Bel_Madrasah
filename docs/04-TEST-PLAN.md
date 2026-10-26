@@ -251,3 +251,9 @@ Catatan: butir di atas adalah kriteria uji; belum dianggap lulus hanya karena pe
 - [ ] Kirim POST tanpa token atau token yang salah ke setiap controller yang dilindungi; permintaan harus ditolak dengan HTTP 403 dan tidak mengubah data.
 - [ ] Pastikan aksi pratinjau/simpan tidak kehilangan pilihan paket/hari dan bahwa backup/restore tetap menampilkan pesan valid.
 - [ ] Pemeriksaan ini tidak menambahkan autentikasi dan tidak mengubah data jadwal; endpoint scheduler/audio tetap menggunakan pemeriksaan same-origin tersendiri.
+
+### Cakupan token yang telah dipasang
+
+- Token CSRF telah dipasang pada semua formulir POST yang teridentifikasi di view Pemeriksaan, Paket Jadwal, Editor Jadwal, Konfigurasi, dan Backup & Restore.
+- Tes helper terpisah pernah diperiksa dengan PHP CLI 8.4; tetap jalankan `php .\\tests\\CsrfProtectionTest.php` dan `php .\\tests\\ApplicationTimezoneTest.php` dari root checkout aktual sebelum memberi status PASS pada repository.
+- Jangan menandai alur POST atau runtime Windows PASS sebelum semua formulir normal diuji pada PHP Desktop yang digunakan.
