@@ -1223,12 +1223,56 @@ final class Database
         );
     }
 
+    /**
+     * Resolve a filename selected from the managed audio asset list.
+     * The submitted value is a filename, not an arbitrary filesystem path.
+     */
+    public function resolveAudioAsset(string $name): string
+    {
+        $name = trim($name);
+        if ($name === '' || basename($name) !== $name || str_contains($name, '/') || str_contains($name, '\\\\')) {
+            throw new InvalidArgumentException('Pilihan file audio tidak valid. Pilih ulang dari folder aset audio.');
+        }
+
+        foreach ($this->listAudioAssets() as $asset) {
+            if ($asset['name'] === $name) {
+                return $asset['path'];
+            }
+        }
+
+        throw new InvalidArgumentException(
+            'File audio "' . $name . '" tidak ditemukan di folder aset audio. Periksa folder aset lalu pilih ulang.'
+        );
+    }
+
     /** @return array<int, array{name:string,path:string,extension:string,size:int}> */
     public function listLogoAssets(): array
     {
         return $this->listAssetFiles(
             $this->getLogoAssetsDirectory(),
             ['png', 'jpg', 'jpeg', 'webp', 'gif', 'svg']
+        );
+    }
+
+    /**
+     * Resolve a filename selected from the managed logo asset list.
+     * Keeps logo configuration consistent with the audio asset reference flow.
+     */
+    public function resolveLogoAsset(string $name): string
+    {
+        $name = trim($name);
+        if ($name === '' || basename($name) !== $name || str_contains($name, '/') || str_contains($name, '\\\\')) {
+            throw new InvalidArgumentException('Pilihan file logo tidak valid. Pilih ulang dari folder aset logo.');
+        }
+
+        foreach ($this->listLogoAssets() as $asset) {
+            if ($asset['name'] === $name) {
+                return $asset['path'];
+            }
+        }
+
+        throw new InvalidArgumentException(
+            'File logo "' . $name . '" tidak ditemukan di folder aset logo. Periksa folder aset lalu pilih ulang.'
         );
     }
 }
