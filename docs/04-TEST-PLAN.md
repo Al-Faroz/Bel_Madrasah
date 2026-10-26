@@ -97,9 +97,9 @@ Pengujian harus dilakukan pada runtime **PHP Desktop Chrome 130.1 + PHP 8.3 di W
 
 ## 6. Uji scheduler dan audio otomatis
 
-- [ ] Jalankan `php tests/ScheduleResolverTest.php`; seluruh fixture kalender dan urutan kegiatan harus PASS.
-- [ ] Jalankan `php tests/SchedulerPlaybackLogTest.php`; deduplikasi log dan transisi status harus PASS.
-- [ ] Jalankan `php tests/ScheduleEventValidationTest.php`; tambah/edit dengan waktu duplikat harus ditolak tanpa mengubah data lama, sedangkan kejadian pada waktu berbeda tetap dapat dicatat setelah kegagalan.
+- [x] Jalankan `php tests/ScheduleResolverTest.php`; seluruh fixture kalender dan urutan kegiatan harus PASS. — PASS dilaporkan pengguna (CLI).
+- [x] Jalankan `php tests/SchedulerPlaybackLogTest.php`; deduplikasi log dan transisi status harus PASS. — PASS dilaporkan pengguna (CLI).
+- [x] Jalankan `php tests/ScheduleEventValidationTest.php`; tambah/edit dengan waktu duplikat harus ditolak tanpa mengubah data lama, sedangkan kejadian pada waktu berbeda tetap dapat dicatat setelah kegagalan. — PASS dilaporkan pengguna (CLI).
 - [ ] Zona waktu Windows pada komputer target sesuai WIB/Asia/Jakarta; jam Public, waktu scheduler, dan waktu log harus selaras.
 - [ ] Audio mulai pada waktu uji dan keluar melalui perangkat audio yang diharapkan.
 - [ ] Editor menandai data lama yang memiliki waktu duplikat dalam satu pola; data tidak dihapus otomatis dan harus diperbaiki sebelum jadwal dipakai.
@@ -239,14 +239,14 @@ Catatan: butir di atas adalah kriteria uji; belum dianggap lulus hanya karena pe
 
 ## Regresi zona waktu aplikasi — 2026-10-26
 
-- [ ] Jalankan `php .\\tests\\ApplicationTimezoneTest.php`; proses yang awalnya memakai zona waktu `UTC` harus beralih ke `Asia/Jakarta` setelah memuat `Database.php`.
+- [x] Jalankan `php .\\tests\\ApplicationTimezoneTest.php`; proses yang awalnya memakai zona waktu `UTC` harus beralih ke `Asia/Jakarta` setelah memuat `Database.php`. — PASS dilaporkan pengguna (CLI).
 - [ ] Pada runtime PHP Desktop Windows, cocokkan tanggal/hari/pasaran Publik dengan kalender WIB dan pastikan scheduler memicu kegiatan pada jam WIB yang dikonfigurasi.
 - [ ] Uji pergantian tanggal WIB; Publik harus memuat ulang data tanggal, pasaran, aturan khusus, dan daftar kegiatan tanpa mengubah data jadwal.
 - [ ] Tes CLI tidak menggantikan uji runtime Windows atau membuktikan audio benar-benar terdengar.
 
 ## Regresi perlindungan formulir POST — 2026-10-26
 
-- [ ] Jalankan `php .\\tests\\CsrfProtectionTest.php`; token sesi harus dibuat, token valid diterima, dan token hilang/salah ditolak.
+- [x] Jalankan `php .\\tests\\CsrfProtectionTest.php`; token sesi harus dibuat, token valid diterima, dan token hilang/salah ditolak. — PASS dilaporkan pengguna (CLI).
 - [ ] Pada PHP Desktop Windows, simpan konfigurasi, buat/edit paket, simpan pola/kegiatan, buka folder aset, buat backup, dan pratinjau restore; seluruh formulir normal harus tetap berfungsi.
 - [ ] Kirim POST tanpa token atau token yang salah ke setiap controller yang dilindungi; permintaan harus ditolak dengan HTTP 403 dan tidak mengubah data.
 - [ ] Pastikan aksi pratinjau/simpan tidak kehilangan pilihan paket/hari dan bahwa backup/restore tetap menampilkan pesan valid.
@@ -264,7 +264,7 @@ Catatan: butir di atas adalah kriteria uji; belum dianggap lulus hanya karena pe
 - [ ] Origin same-origin dengan host dan port sama diterima.
 - [ ] Host berbeda, port berbeda, skema berbeda, `Sec-Fetch-Site: cross-site`, dan nilai Fetch Metadata selain `same-origin` ditolak.
 - [ ] Jika `Origin` tidak tersedia, permintaan hanya diterima ketika `Sec-Fetch-Site: same-origin`; header yang hilang seluruhnya ditolak.
-- [ ] Jalankan `php .\\tests\\SchedulerSameOriginTest.php`.
+- [x] Jalankan `php .\\tests\\SchedulerSameOriginTest.php`. — PASS dilaporkan pengguna (CLI).
 - [ ] Pada PHP Desktop Chrome 130.1, pastikan polling `tick`, inisialisasi `page_start`, penyelesaian `finish`, dan `sendBeacon` saat halaman ditutup tetap berjalan. Pemeriksaan helper tidak menggantikan smoke test runtime.
 
 
@@ -291,14 +291,34 @@ Catatan: butir di atas adalah kriteria uji; belum dianggap lulus hanya karena pe
 
 ## Regresi keselamatan Backup & Restore — 2026-10-26
 
-- [ ] Jalankan php -l .\\tests\\BackupRestoreSafetyTest.php.
-- [ ] Jalankan php .\\tests\\BackupRestoreSafetyTest.php dan pastikan output PASS.
+- [x] Jalankan php -l .\\tests\\BackupRestoreSafetyTest.php. — PASS dilaporkan pengguna (CLI).
+- [x] Jalankan php .\\tests\\BackupRestoreSafetyTest.php dan pastikan output PASS. — PASS dilaporkan pengguna (CLI).
 - [ ] Pastikan tes berjalan dengan folder APPDATA sementara dan tidak mengubah database aktif pengguna.
 - [ ] Pada PHP Desktop Windows, lakukan smoke test hanya dengan database uji/backup uji: buat backup, pratinjau, restore, dan pastikan backup pra-pemulihan muncul. Jangan menguji restore dengan data aktif yang belum dicadangkan di media lain.
 
 
 ### Hardening tambahan yang perlu diverifikasi
 
-- [ ] Tes menolak backup dengan schema_version = 0.
-- [ ] Tes menolak backup yang lolos integrity_check tetapi memiliki foreign-key violation.
-- [ ] Tes restore valid memastikan data lama kembali dan backup pra-pemulihan tetap menyimpan data sebelum restore.
+- [x] Tes menolak backup dengan schema_version = 0. — PASS dilaporkan pengguna.
+- [x] Tes menolak backup yang lolos integrity_check tetapi memiliki foreign-key violation. — PASS dilaporkan pengguna.
+- [x] Tes restore valid memastikan data lama kembali dan backup pra-pemulihan tetap menyimpan data sebelum restore. — PASS dilaporkan pengguna.
+
+
+## Audio asset validation dan konsistensi pesan kegagalan — 2026-10-26
+
+Perubahan terbaru:
+- Pemeriksaan audio bersama di `prototype/phpdesktop/www/lib/AudioAsset.php` dipakai oleh scheduler sebelum run diklaim dan oleh endpoint stream sebelum file dikirim.
+- Fixture `tests/AudioAssetValidationTest.php` mencakup referensi kosong, file hilang, ekstensi tidak didukung, file kosong, path direktori, dan file yang dapat dibuka.
+- Respons `scheduler.php` kini menyertakan status serta pesan log yang telah ditutup sebagai field terstruktur. `assets/scheduler.js` memakai status/pesan tersimpan tersebut sebagai sumber kebenaran saat callback player datang terlambat.
+- Tes `SchedulerResolverTest.php`, `ScheduleEventValidationTest.php`, dan `SchedulerPlaybackLogTest.php` sudah dilaporkan **PASS oleh pengguna** pada checkout lokal sebelumnya. Hasil itu tidak membuktikan file audio/codec benar-benar dapat diputar pada runtime Windows.
+
+### Checklist verifikasi berikutnya
+- [ ] Jalankan `php -l .\\prototype\\phpdesktop\\www\\lib\\AudioAsset.php`.
+- [ ] Jalankan `php -l .\\prototype\\phpdesktop\\www\\scheduler.php`.
+- [ ] Jalankan `php -l .\\prototype\\phpdesktop\\www\\audio-stream.php`.
+- [ ] Jalankan `php .\\tests\\AudioAssetValidationTest.php`; hasil harus `PASS`.
+- [ ] Jalankan kembali `php .\\tests\\SchedulerPlaybackLogTest.php` setelah perubahan respons log/UI.
+- [ ] Di PHP Desktop Windows, uji referensi audio kosong, file dihapus/dipindah, file kosong, ekstensi tak didukung, dan MP3/WAV valid.
+- [ ] Pastikan satu kegagalan tidak menghentikan pemeriksaan jadwal berikutnya dan riwayat tidak tertinggal sebagai `started`.
+- [ ] Pastikan kegagalan stream/decode mempertahankan alasan yang tersimpan pada riwayat dan tampil jelas pada status Publik/Admin.
+- [ ] Pastikan autoplay di runtime PHP Desktop memakai konfigurasi yang benar-benar dijalankan; suara terdengar, bukan sekadar status UI.
