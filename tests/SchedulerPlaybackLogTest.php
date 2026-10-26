@@ -82,7 +82,7 @@ try {
 
     $missedEventId = $db->saveBellEvent(null, $ruleId, 'Tes terlewat', '07:10', '', true, 3);
     $db->recordPlaybackLogIfMissing($packageId, $missedEventId, '2026-10-19 07:10', 'missed', 'Fixture terlewat.');
-    $secondEventId = $db->saveBellEvent(null, $ruleId, 'Tes interupsi', '07:05', '', true, 2);
+    $secondEventId = $db->saveBellEvent(null, $ruleId, 'Tes interupsi', '07:05', '', true, 4);
     $secondRunId = $db->recordPlaybackLogIfMissing(
         $packageId,
         $secondEventId,
