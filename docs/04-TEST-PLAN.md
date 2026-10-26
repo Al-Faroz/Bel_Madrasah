@@ -295,3 +295,10 @@ Catatan: butir di atas adalah kriteria uji; belum dianggap lulus hanya karena pe
 - [ ] Jalankan php .\\tests\\BackupRestoreSafetyTest.php dan pastikan output PASS.
 - [ ] Pastikan tes berjalan dengan folder APPDATA sementara dan tidak mengubah database aktif pengguna.
 - [ ] Pada PHP Desktop Windows, lakukan smoke test hanya dengan database uji/backup uji: buat backup, pratinjau, restore, dan pastikan backup pra-pemulihan muncul. Jangan menguji restore dengan data aktif yang belum dicadangkan di media lain.
+
+
+### Hardening tambahan yang perlu diverifikasi
+
+- [ ] Tes menolak backup dengan schema_version = 0.
+- [ ] Tes menolak backup yang lolos integrity_check tetapi memiliki foreign-key violation.
+- [ ] Tes restore valid memastikan data lama kembali dan backup pra-pemulihan tetap menyimpan data sebelum restore.
