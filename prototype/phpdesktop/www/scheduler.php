@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/lib/Database.php';
 require_once __DIR__ . '/lib/ScheduleResolver.php';
+require_once __DIR__ . '/lib/Security.php';
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
@@ -17,18 +18,8 @@ function schedulerRespond(array $payload, int $status = 200): never
 
 function schedulerEnforceSameOrigin(): void
 {
-    $fetchSite = strtolower((string) ($_SERVER['HTTP_SEC_FETCH_SITE'] ?? ''));
-    if ($fetchSite === 'cross-site') {
-        schedulerRespond(['ok' => false, 'message' => 'Permintaan lintas situs ditolak.'], 403);
-    }
-
-    $origin = trim((string) ($_SERVER['HTTP_ORIGIN'] ?? ''));
-    if ($origin !== '') {
-        $originHost = parse_url($origin, PHP_URL_HOST);
-        $requestHost = parse_url('http://' . (string) ($_SERVER['HTTP_HOST'] ?? ''), PHP_URL_HOST);
-        if (!is_string($originHost) || !is_string($requestHost) || strcasecmp($originHost, $requestHost) !== 0) {
-            schedulerRespond(['ok' => false, 'message' => 'Origin permintaan tidak sesuai dengan aplikasi.'], 403);
-        }
+    if (!isSameOriginRequest($_SERVER)) {
+        schedulerRespond(['ok' => false, 'message' => 'Permintaan ditolak karena bukan berasal dari origin aplikasi yang sama.'], 403);
     }
 }
 
