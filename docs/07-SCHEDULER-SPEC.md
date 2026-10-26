@@ -130,3 +130,13 @@ Kode resolver kalender yang ada hanya menentukan pola dan daftar kegiatan. Sampa
 - Respons ketika log sudah ditutup menyediakan `status` dan `stored_message` terstruktur. UI memakai status/pesan tersimpan sebagai sumber kebenaran agar callback media yang datang belakangan tidak mengganti kegagalan spesifik dengan pesan generik.
 - `tests/AudioAssetValidationTest.php` menguji cabang validasi file tanpa membutuhkan database SQLite. Tes ini tidak membuktikan codec MP3/WAV dapat didekode; itu tetap harus diuji pada PHP Desktop Windows.
 - Status batch: **KODE DIIMPLEMENTASIKAN; BELUM DIVERIFIKASI PADA CHECKOUT PENGGUNA ATAU RUNTIME WINDOWS**. Jalankan checklist baru di `docs/04-TEST-PLAN.md` sebelum menyatakan batch ini PASS.
+
+
+## 15. Pratinjau manual audio dari Editor Jadwal — 2026-10-26
+
+Pratinjau manual bukan kejadian scheduler:
+- Sumber boleh berupa nama file yang diselesaikan melalui daftar aset audio terkelola atau referensi audio dari ID kegiatan tersimpan.
+- Endpoint tidak menerima parameter path filesystem bebas, tidak mengubah database jadwal, dan tidak membuat/mengubah log pemutaran scheduler.
+- Endpoint mendukung HTTP byte ranges agar pemutar Chromium dapat mencari posisi audio.
+- UI harus menggunakan dropdown terbaru, menghentikan audio pratinjau sebelumnya, dan menampilkan status kesalahan.
+- Validasi runtime harus membuktikan MP3/WAV benar-benar terdengar di PHP Desktop Windows, bukan hanya file dapat dibuka oleh PHP.
