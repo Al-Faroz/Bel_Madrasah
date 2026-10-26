@@ -148,3 +148,14 @@ Ini target migrasi, bukan perintah memindahkan semua halaman sekaligus. Pertahan
 - Database utama tetap di `%APPDATA%/BelMadrasah/data/bel-madrasah.sqlite` dengan fallback `%LOCALAPPDATA%`.
 - Jangan menghapus data/file lama saat redesign.
 - Uji restart, file hilang, nama file dengan spasi/Unicode, path lama, dan update aplikasi.
+
+
+## 12. Pratinjau audio langsung dari Editor Jadwal
+
+- Pada kolom File audio di tabel kegiatan, operator dapat menekan **Dengarkan** untuk memeriksa audio yang sedang dipilih sebelum menyimpan perubahan.
+- Pemilihan dropdown berubah → pratinjau memakai pilihan terbaru tanpa harus menyimpan baris.
+- Pratinjau memakai satu pemutar aktif; memulai pratinjau lain menghentikan pratinjau sebelumnya.
+- Status pratinjau memberi umpan balik memuat, sedang diputar, selesai, atau gagal.
+- Pratinjau tersedia pula pada formulir Tambah Kegiatan Bel.
+- Endpoint pratinjau tidak mencatat kejadian sebagai pemutaran bel terjadwal dan tidak boleh mengubah data jadwal.
+- Status: kode diimplementasikan; **belum local test PASS** sampai operator menguji pada PHP Desktop Windows.
