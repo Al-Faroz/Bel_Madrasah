@@ -225,3 +225,12 @@ Catatan: butir di atas adalah kriteria uji; belum dianggap lulus hanya karena pe
 - [ ] Jadwal yang sudah melewati toleransi tetap tercatat `missed` setelah aplikasi tidur atau dibuka kembali; tidak dimainkan terlambat.
 - [ ] Uji tanggal yang cocok dengan aturan pasaran dan aturan minggu ke-bulan; cocokkan hasil resolver, Editor Jadwal, Dashboard Publik, dan log.
 - [ ] Verifikasi pada PHP Desktop Windows. Pemeriksaan kode tidak membuktikan jam perangkat atau pemutaran aktual lulus.
+
+
+## Regresi pemeriksaan skema database — 2026-10-26
+
+- [ ] Halaman Pemeriksaan memanggil metode yang benar-benar tersedia pada `Database`; tidak ada `Call to undefined method Database::getTables()`.
+- [ ] Pemeriksaan menampilkan daftar/jumlah tabel aplikasi yang berasal dari `sqlite_master`; database utama memiliki minimal enam tabel inti setelah inisialisasi.
+- [ ] Kegagalan pada pemeriksaan tabel dibedakan dari kegagalan koneksi/penulisan SQLite; pesan error tidak menyebut database gagal hanya karena metode diagnostik tidak tersedia.
+- [ ] Buka Dashboard, Editor Jadwal, Konfigurasi, Backup & Restore, Publik, lalu Pemeriksaan; pastikan seluruh halaman tetap dapat menginisialisasi kelas `Database` dan data jadwal tidak berubah.
+- [ ] Setelah pemeriksaan database lolos, uji autoplay secara terpisah pada runtime PHP Desktop yang benar-benar dipakai. Jangan menandai uji audio lulus hanya karena endpoint scheduler mengembalikan respons; suara dan log akhir harus diverifikasi.
