@@ -333,7 +333,7 @@ Implementasi tersedia pada branch `main`:
 - Pratinjau pilihan baru memakai file yang sedang dipilih di dropdown tanpa harus menyimpan perubahan terlebih dahulu. Pratinjau tidak mengubah data jadwal atau riwayat pemutaran otomatis.
 
 ### Checklist pengguna — belum dinyatakan PASS
-- [ ] `git pull origin main` dan salin file baru `audio-preview.php`, `assets/audio-preview.js` serta file yang diperbarui sesuai daftar pada instruksi kerja.
+- [ ] `git pull origin main`, lalu salin `prototype/phpdesktop/www/audio-preview.php` ke `www/audio-preview.php`; `assets/audio-preview.js` ke `www/assets/audio-preview.js`; `assets/admin.css` ke `www/assets/admin.css`; `views/admin/schedule-editor.php` ke `www/views/admin/schedule-editor.php`; dan `layouts/admin.php` ke `www/layouts/admin.php`. Pastikan `www/lib/AudioAsset.php` dari perbaikan audio sebelumnya sudah ikut tersalin.
 - [ ] `php -l .\\prototype\\phpdesktop\\www\\audio-preview.php`.
 - [ ] Di Editor Jadwal, pilih MP3 dan tekan **Dengarkan**; pastikan audio yang terdengar sesuai file yang dipilih sebelum menekan Simpan.
 - [ ] Ubah dropdown ke file audio lain lalu Dengarkan; file baru yang diputar harus sesuai pilihan terbaru, meski belum disimpan.
