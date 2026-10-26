@@ -24,11 +24,16 @@ function csrfToken(): string
  */
 function isValidCsrfToken(mixed $submittedToken): bool
 {
-    if (!is_string($submittedToken) || $submittedToken === '') {
+    if (!is_string($submittedToken) || $submittedToken === '' || session_status() !== PHP_SESSION_ACTIVE) {
         return false;
     }
 
-    return hash_equals(csrfToken(), $submittedToken);
+    $expectedToken = $_SESSION['bel_madrasah_csrf_token'] ?? null;
+    if (!is_string($expectedToken) || !preg_match('/^[a-f0-9]{64}$/', $expectedToken)) {
+        return false;
+    }
+
+    return hash_equals($expectedToken, $submittedToken);
 }
 
 /**
@@ -41,7 +46,7 @@ function enforceCsrfForPost(): string
 
     if ($method === 'POST') {
         $submittedToken = $_POST['_csrf_token'] ?? null;
-        if (!is_string($submittedToken) || !hash_equals($token, $submittedToken)) {
+        if (!isValidCsrfToken($submittedToken)) {
             http_response_code(403);
             header('Content-Type: text/plain; charset=utf-8');
             exit('Permintaan ditolak karena token keamanan tidak valid. Muat ulang halaman lalu coba lagi.');
