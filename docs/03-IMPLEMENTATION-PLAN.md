@@ -221,6 +221,14 @@ Resolver kalender Normal/Khusus → scheduler/audio dan log status → restore a
 - Perubahan ini adalah perbaikan keterbacaan/alur editor; tidak mengubah data SQLite, resolver, scheduler, atau status jadwal yang tersimpan.
 - Status: **KODE DIPERBARUI — BELUM DIVERIFIKASI SECARA VISUAL DI PHP DESKTOP WINDOWS**. Pemeriksaan runtime perlu memastikan layout tidak tumpang tindih pada 1366 px, 1024 px, dan jendela sempit; cek juga filter hari, penyimpanan tabel, serta status aturan/kegiatan.
 
+## Perbaikan lanjutan — resolver referensi aset (2026-10-26)
+
+- Bug yang dilaporkan: `schedule-editor.php` memanggil `Database::resolveAudioAsset()`, tetapi metode itu tidak ada di kelas `Database`. Akibatnya penyimpanan kegiatan baru gagal ketika operator memilih audio dari folder aset; masalah ini bukan disebabkan hari berjalan atau penghapusan kegiatan sebelumnya.
+- `Database::resolveAudioAsset()` dan `Database::resolveLogoAsset()` dipulihkan. Keduanya mencocokkan nama file dengan daftar aset yang benar-benar tersedia, mengembalikan path penuh, dan menolak input path arbitrer.
+- Ditambahkan fixture untuk resolver audio/logo dan penolakan path traversal pada `tests/ScheduleEventValidationTest.php`.
+- Commit perbaikan: [aa6553f](https://github.com/Al-Faroz/Bel_Madrasah/commit/aa6553f2a9b6a2c79593935bcd6b4900fa61631c), [5dc5716](https://github.com/Al-Faroz/Bel_Madrasah/commit/5dc57166ddd0ddc1e86fbc39e8c7d8eec826becb), dan [569348b](https://github.com/Al-Faroz/Bel_Madrasah/commit/569348b76ad03194150be09d9436c96454725ddb).
+- Status: kode dan fixture sudah masuk ke `main`; eksekusi fixture serta verifikasi PHP Desktop Windows masih menunggu.
+
 ## Tahap 2 — Editor Jadwal: waktu unik, perapihan UI, dan regresi (2026-10-24)
 
 - Kontrak waktu kegiatan menggunakan format 24 jam `HH:MM`; satu aturan hari hanya boleh memiliki satu kegiatan pada tiap menit. Validasi berada di lapisan Database agar berlaku untuk tambah maupun edit, bukan hanya mengandalkan form HTML.
