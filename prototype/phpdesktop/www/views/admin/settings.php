@@ -28,6 +28,7 @@ foreach ($logoAssets as $logoAsset) {
         <div><p class="eyebrow">PREFERENSI APLIKASI</p><h2>Identitas dan audio</h2></div>
     </div>
     <form method="post" action="settings.php">
+<input type="hidden" name="_csrf_token" value="<?= h($csrfToken) ?>">
         <label for="school-name">Nama madrasah/sekolah
             <input id="school-name" type="text" name="school_name" maxlength="120" value="<?= h($schoolName) ?>" placeholder="Contoh: MTs Negeri ...">
         </label>
@@ -79,7 +80,8 @@ foreach ($logoAssets as $logoAsset) {
             <label for="audio-assets-path">Folder audio</label>
             <code id="audio-assets-path"><?= h($audioAssetsPath !== '' ? $audioAssetsPath : 'Folder belum tersedia') ?></code>
             <div class="asset-folder-actions">
-                <form method="post" action="settings.php"><input type="hidden" name="asset_action" value="open_audio_folder"><button type="submit" class="button-compact">Buka Folder Audio</button></form>
+                <form method="post" action="settings.php">
+<input type="hidden" name="_csrf_token" value="<?= h($csrfToken) ?>"><input type="hidden" name="asset_action" value="open_audio_folder"><button type="submit" class="button-compact">Buka Folder Audio</button></form>
                 <button type="button" class="button-compact button-secondary" data-copy-target="audio-assets-path">Salin lokasi</button>
             </div>
             <small><?= count($audioAssets) ?> file audio ditemukan (MP3, WAV, OGG, M4A, AAC).</small>
@@ -88,7 +90,8 @@ foreach ($logoAssets as $logoAsset) {
             <label for="logo-assets-path">Folder logo</label>
             <code id="logo-assets-path"><?= h($logoAssetsPath !== '' ? $logoAssetsPath : 'Folder belum tersedia') ?></code>
             <div class="asset-folder-actions">
-                <form method="post" action="settings.php"><input type="hidden" name="asset_action" value="open_logo_folder"><button type="submit" class="button-compact">Buka Folder Logo</button></form>
+                <form method="post" action="settings.php">
+<input type="hidden" name="_csrf_token" value="<?= h($csrfToken) ?>"><input type="hidden" name="asset_action" value="open_logo_folder"><button type="submit" class="button-compact">Buka Folder Logo</button></form>
                 <button type="button" class="button-compact button-secondary" data-copy-target="logo-assets-path">Salin lokasi</button>
             </div>
             <small><?= count($logoAssets) ?> file gambar ditemukan (PNG, JPG, WEBP, GIF, SVG).</small>
