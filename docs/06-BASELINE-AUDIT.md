@@ -330,3 +330,11 @@ Metode pemanggilan itu sudah ada sejak halaman `diagnostics.php` ditambahkan pad
 - Lima controller terkait memanggil `enforceCsrfForPost()` sebelum memproses permintaan. Tidak ada login baru, perubahan skema, penghapusan data, atau perubahan lokasi AppData.
 - Ditambahkan `tests/CsrfProtectionTest.php` dan `tests/ApplicationTimezoneTest.php`. Pemeriksaan statis mengonfirmasi setiap formulir POST pada view yang diaudit memiliki field token dan setiap controller memanggil helper keamanan.
 - **Status: IMPLEMENTED, menunggu tes pada checkout repo dan runtime PHP Desktop Windows.** Uji helper CSRF terisolasi pada PHP CLI 8.4 lulus, tetapi itu bukan pengganti menjalankan file test yang ada di checkout pengguna atau menguji sesi browser PHP Desktop.
+
+
+## Audit same-origin endpoint scheduler — 2026-10-26
+
+- Pemeriksaan statis menemukan `scheduler.php` sudah menolak `Sec-Fetch-Site: cross-site` dan memeriksa `Origin`, tetapi perbandingan `Origin` hanya memakai hostname.
+- Akibatnya, origin dengan hostname sama tetapi port berbeda dapat lolos pemeriksaan, walaupun port berbeda berarti origin berbeda. Pemeriksaan juga perlu menangani permintaan tanpa header Origin secara eksplisit agar hanya permintaan browser same-origin yang diterima oleh endpoint internal.
+- Endpoint scheduler bukan sekadar baca: aksi `page_start`/`finish` mengubah log pemutaran dan `tick` dapat mencatat status `missed`, `failed`, atau `skipped`. Karena itu, pemeriksaan same-origin harus ketat tanpa menambahkan autentikasi/login.
+- Tindak lanjut: pindahkan pemeriksaan ke helper murni yang bisa diuji, bandingkan skema + host + port, tolak Fetch Metadata selain `same-origin`, dan tambahkan tes regresi. Perilaku browser PHP Desktop Windows tetap perlu smoke test setelah perubahan.
