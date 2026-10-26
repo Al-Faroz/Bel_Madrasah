@@ -46,7 +46,10 @@
         });
         const payload = await response.json();
         if (!response.ok || !payload.ok) {
-            throw new Error(payload.message || 'Permintaan scheduler gagal.');
+            const error = new Error(payload.message || 'Permintaan scheduler gagal.');
+            error.payload = payload;
+            error.status = response.status;
+            throw error;
         }
         return payload;
     }
@@ -58,21 +61,29 @@
         isPlaying = false;
         player.pause();
 
+        let finalStatus = status;
+        let finalMessage = message || (status === 'completed' ? 'Audio selesai diputar.' : 'Audio gagal diputar.');
         let logUpdateError = '';
         try {
             await postForm({
                 action: 'finish',
                 run_id: String(runId),
                 status: status,
-                message: message || (status === 'completed' ? 'Audio selesai diputar.' : 'Audio gagal diputar.')
+                message: finalMessage
             });
         } catch (error) {
-            // The stream endpoint may already have closed the log with a more specific
-            // file/format error. Do not overwrite that diagnostic with a generic message.
-            logUpdateError = error.message || 'Status log belum dapat diperbarui.';
+            // The stream endpoint may already have closed the log with a specific diagnosis.
+            // Prefer the authoritative stored status/message instead of showing a generic player error.
+            const payload = error && error.payload ? error.payload : {};
+            if (payload.state === 'closed' && ['completed', 'failed'].includes(payload.status)) {
+                finalStatus = payload.status;
+                finalMessage = String(payload.stored_message || payload.message || finalMessage);
+            } else {
+                logUpdateError = error.message || 'Status log belum dapat diperbarui.';
+            }
         }
 
-        if (status === 'completed') {
+        if (finalStatus === 'completed') {
             setStatus(
                 logUpdateError
                     ? 'Audio selesai, tetapi pembaruan riwayat perlu diperiksa: ' + logUpdateError
@@ -80,11 +91,11 @@
                 logUpdateError ? 'error' : 'completed'
             );
         } else {
-            const detail = message || 'Periksa file audio dan kebijakan autoplay.';
+            const detail = finalMessage || 'Periksa file audio dan kebijakan autoplay.';
             setStatus(
                 'Pemutaran audio gagal: ' + detail
                     + (logUpdateError ? ' (status riwayat: ' + logUpdateError + ')' : ''),
-                'failed'
+                finalStatus === 'failed' ? 'failed' : 'error'
             );
         }
         poll();
