@@ -71,5 +71,6 @@ try {
     </div>
 </div>
 <script src="assets/scheduler.js" defer></script>
+<?php if (($activePage ?? '') === 'schedule-editor'): ?><script src="assets/audio-preview.js" defer></script><?php endif; ?>
 </body>
 </html>
