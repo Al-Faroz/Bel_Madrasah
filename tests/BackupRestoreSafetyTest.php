@@ -73,6 +73,37 @@ try {
     );
     unset($preRestorePdo);
 
+    $unsupportedVersionBackup = $backupDirectory . DIRECTORY_SEPARATOR . 'safety-version-zero.sqlite';
+    if (!copy($validBackup, $unsupportedVersionBackup)) {
+        throw new RuntimeException('Fixture versi skema tidak dapat disalin.');
+    }
+    $versionPdo = new PDO('sqlite:' . $unsupportedVersionBackup);
+    $versionPdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $versionPdo->exec("UPDATE app_meta SET meta_value = '0' WHERE meta_key = 'schema_version'");
+    unset($versionPdo);
+    expectBackupSafetyThrows(
+        static fn () => $db->inspectBackup($unsupportedVersionBackup),
+        'versi skema nol/tidak didukung'
+    );
+
+    $foreignKeyBackup = $backupDirectory . DIRECTORY_SEPARATOR . 'safety-foreign-key.sqlite';
+    if (!copy($validBackup, $foreignKeyBackup)) {
+        throw new RuntimeException('Fixture foreign key tidak dapat disalin.');
+    }
+    $foreignKeyPdo = new PDO('sqlite:' . $foreignKeyBackup);
+    $foreignKeyPdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $foreignKeyPdo->exec('PRAGMA foreign_keys = OFF');
+    $foreignKeyPdo->exec(
+        "INSERT INTO bell_events
+            (day_rule_id, name, event_time, audio_path, is_enabled, sort_order, created_at, updated_at)
+         VALUES (999999, 'Orphan fixture', '13:00', '', 1, 1, '2026-10-26 00:00:00', '2026-10-26 00:00:00')"
+    );
+    unset($foreignKeyPdo);
+    expectBackupSafetyThrows(
+        static fn () => $db->inspectBackup($foreignKeyBackup),
+        'backup dengan foreign-key violation'
+    );
+
     $brokenBackup = $backupDirectory . DIRECTORY_SEPARATOR . 'safety-broken.sqlite';
     if (file_put_contents($brokenBackup, 'not a SQLite database') === false) {
         throw new RuntimeException('File backup rusak untuk fixture tidak dapat dibuat.');
