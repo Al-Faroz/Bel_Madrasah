@@ -255,7 +255,7 @@ Catatan: butir di atas adalah kriteria uji; belum dianggap lulus hanya karena pe
 ### Cakupan token yang telah dipasang
 
 - Token CSRF telah dipasang pada semua formulir POST yang teridentifikasi di view Pemeriksaan, Paket Jadwal, Editor Jadwal, Konfigurasi, dan Backup & Restore.
-- Tes helper terpisah pernah diperiksa dengan PHP CLI 8.4; tetap jalankan `php .\\tests\\CsrfProtectionTest.php` dan `php .\\tests\\ApplicationTimezoneTest.php` dari root checkout aktual sebelum memberi status PASS pada repository.
+- Hasil terbaru dari checkout lokal: `CsrfProtectionTest.php` dan `ApplicationTimezoneTest.php` dilaporkan PASS oleh pengguna; jangan mengulang keduanya tanpa perubahan terkait.
 - Jangan menandai alur POST atau runtime Windows PASS sebelum semua formulir normal diuji pada PHP Desktop yang digunakan.
 
 
@@ -272,14 +272,14 @@ Catatan: butir di atas adalah kriteria uji; belum dianggap lulus hanya karena pe
 
 - [x] Lint helper keamanan dan tes CSRF pada salinan terisolasi: PASS.
 - [x] Tes validasi same-origin (scheme/host/port/Fetch Metadata) pada salinan terisolasi: PASS.
-- [ ] Jalankan tes dari checkout repository setelah `git pull`: `php .\\tests\\CsrfProtectionTest.php`, `php .\\tests\\SchedulerSameOriginTest.php`, dan `php .\\tests\\ApplicationTimezoneTest.php`.
+- [x] Tes dari checkout repository setelah `git pull`: `CsrfProtectionTest.php`, `SchedulerSameOriginTest.php`, dan `ApplicationTimezoneTest.php` — PASS dilaporkan pengguna (CLI checkout lokal).
 - [ ] Lint semua file PHP yang berubah dan lakukan smoke test pada PHP Desktop Windows. Hasil CLI terisolasi bukan pengganti pengujian checkout/runtime.
 
 
 ## Regresi urutan bootstrap timezone Diagnostik — 2026-10-26
 
 - [ ] `diagnostics.php` harus memuat `lib/Database.php` sebelum operasi `date()`/`DateTime` apa pun, sehingga timestamp diagnostik mengikuti `Asia/Jakarta`.
-- [ ] Jalankan `php .\\tests\\ApplicationTimezoneTest.php` setelah perubahan; tetap lakukan pemeriksaan runtime PHP Desktop Windows.
+- [x] `ApplicationTimezoneTest.php` setelah perubahan — PASS dilaporkan pengguna (CLI). Pemeriksaan runtime PHP Desktop Windows tetap terpisah dan belum PASS.
 
 
 ### Hasil tindak lanjut timezone Diagnostik — 2026-10-26
@@ -293,7 +293,7 @@ Catatan: butir di atas adalah kriteria uji; belum dianggap lulus hanya karena pe
 
 - [x] Jalankan php -l .\\tests\\BackupRestoreSafetyTest.php. — PASS dilaporkan pengguna (CLI).
 - [x] Jalankan php .\\tests\\BackupRestoreSafetyTest.php dan pastikan output PASS. — PASS dilaporkan pengguna (CLI).
-- [ ] Pastikan tes berjalan dengan folder APPDATA sementara dan tidak mengubah database aktif pengguna.
+- [x] Tes menggunakan folder APPDATA sementara dan tidak mengubah database aktif pengguna; cakupan ini PASS bersama `BackupRestoreSafetyTest.php` yang dilaporkan pengguna.
 - [ ] Pada PHP Desktop Windows, lakukan smoke test hanya dengan database uji/backup uji: buat backup, pratinjau, restore, dan pastikan backup pra-pemulihan muncul. Jangan menguji restore dengan data aktif yang belum dicadangkan di media lain.
 
 
