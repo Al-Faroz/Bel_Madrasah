@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/lib/Database.php';
+require_once __DIR__ . '/lib/AudioAsset.php';
 
 function audioStreamError(string $message, int $status): never
 {
@@ -49,30 +50,26 @@ try {
     }
 
     $audioPath = trim((string) ($event['audio_path'] ?? ''));
-    $extension = strtolower(pathinfo($audioPath, PATHINFO_EXTENSION));
-    $mimeTypes = [
-        'mp3' => 'audio/mpeg',
-        'wav' => 'audio/wav',
-        'ogg' => 'audio/ogg',
-        'm4a' => 'audio/mp4',
-        'aac' => 'audio/aac',
-    ];
-    if (!isset($mimeTypes[$extension])) {
-        $db->updatePlaybackLogStatus((int) $runId, 'failed', 'Format file audio tidak didukung.');
-        audioStreamError('Format file audio tidak didukung.', 415);
+    $audioCheck = AudioAsset::inspect($audioPath);
+    if (!$audioCheck['ok']) {
+        $failureMessage = (string) $audioCheck['message'];
+        $db->updatePlaybackLogStatus((int) $runId, 'failed', $failureMessage);
+        $httpStatuses = [
+            'missing_reference' => 404,
+            'unsupported_format' => 415,
+            'not_found' => 404,
+            'unreadable' => 403,
+            'size_unavailable' => 500,
+            'empty' => 422,
+            'cannot_open' => 500,
+        ];
+        $failureCode = (string) $audioCheck['code'];
+        audioStreamError($failureMessage, $httpStatuses[$failureCode] ?? 500);
     }
 
-    $realPath = realpath($audioPath);
-    if ($realPath === false || !is_file($realPath) || !is_readable($realPath)) {
-        $db->updatePlaybackLogStatus((int) $runId, 'failed', 'File audio tidak ditemukan atau tidak dapat dibaca.');
-        audioStreamError('File audio tidak ditemukan atau tidak dapat dibaca.', 404);
-    }
-
-    $size = filesize($realPath);
-    if ($size === false || $size <= 0) {
-        $db->updatePlaybackLogStatus((int) $runId, 'failed', 'File audio kosong atau ukurannya tidak dapat dibaca.');
-        audioStreamError('File audio kosong atau tidak dapat dibaca.', 422);
-    }
+    $realPath = (string) $audioCheck['path'];
+    $mimeType = (string) $audioCheck['mime_type'];
+    $size = (int) $audioCheck['size'];
 
     $start = 0;
     $end = $size - 1;
@@ -117,7 +114,7 @@ try {
     }
 
     http_response_code($partial ? 206 : 200);
-    header('Content-Type: ' . $mimeTypes[$extension]);
+    header('Content-Type: ' . $mimeType);
     header('Accept-Ranges: bytes');
     header('Content-Length: ' . ($end - $start + 1));
     header('Cache-Control: no-store, no-cache, must-revalidate');
