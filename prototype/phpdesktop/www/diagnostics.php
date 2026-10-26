@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/lib/Database.php';
 require_once __DIR__ . '/lib/Security.php';
 $csrfToken = enforceCsrfForPost();
 
@@ -109,7 +110,6 @@ $appDatabaseTables = [];
 $appDatabaseVersion = 0;
 
 try {
-    require_once __DIR__ . '/lib/Database.php';
     $appDatabase = new Database();
     $appDatabasePath = $appDatabase->getPath();
     $appDatabaseVersion = $appDatabase->getSchemaVersion();
