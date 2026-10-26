@@ -315,3 +315,10 @@ Metode pemanggilan itu sudah ada sejak halaman `diagnostics.php` ditambahkan pad
 - Tidak ada perubahan perilaku zona waktu yang diperlukan. Jangan menambahkan setelan duplikat atau mengubah tanggal/jam penyimpanan yang sudah ada.
 - Celah yang tersisa adalah tidak adanya tes CLI khusus yang mengunci kontrak ini. Tes regresi akan memulai proses dengan zona waktu `UTC`, memuat `Database.php`, lalu memastikan zona waktu aplikasi kembali menjadi `Asia/Jakarta` dan objek waktu baru menggunakan zona tersebut.
 - Tes ini hanya mengunci konfigurasi waktu pada source; uji pergantian tanggal, jam WIB, pasaran, dan pemicu bel tetap perlu dilakukan pada runtime PHP Desktop Windows.
+
+## Audit perlindungan formulir POST — 2026-10-26
+
+- Audit statis pada controller dan view `diagnostics.php`, `packages.php`, `schedule-editor.php`, `settings.php`, dan `backup.php` menemukan formulir POST yang belum membawa token CSRF. Tidak adanya login merupakan keputusan produk, tetapi tidak dengan sendirinya melindungi endpoint localhost dari pengiriman formulir lintas situs.
+- Batch hardening menambahkan token CSRF berbasis sesi untuk formulir POST pada lima modul tersebut, termasuk aksi diagnostik, aktivasi/hapus paket, edit jadwal, pengaturan aset, serta backup/restore. Ini tidak menambahkan login dan tidak mengubah skema atau lokasi database.
+- Endpoint `scheduler.php` dan `audio-stream.php` memiliki pemeriksaan `Sec-Fetch-Site`/Origin tersendiri dan tidak menggunakan formulir HTML. Perlindungan endpoint scheduler/audio tetap menjadi pemeriksaan terpisah; jangan menghapus pemeriksaan same-origin yang sudah ada.
+- Kode keamanan dan tes regresinya harus ditinjau bersama seluruh formulir POST, karena satu form yang lupa menyertakan token dapat menyebabkan aksi gagal setelah hardening.
