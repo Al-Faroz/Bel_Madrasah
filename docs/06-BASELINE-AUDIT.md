@@ -347,3 +347,10 @@ Metode pemanggilan itu sudah ada sejak halaman `diagnostics.php` ditambahkan pad
 - `tests/SchedulerSameOriginTest.php` mencakup host/port/skema berbeda, Fetch Metadata lintas situs, Origin hilang, dan Origin malformed.
 - Audit view menghitung 17 formulir POST pada Pemeriksaan, Paket Jadwal, Editor Jadwal, Konfigurasi, dan Backup & Restore; semuanya memiliki field `_csrf_token`. Form filter GET Editor Jadwal tidak memerlukan token.
 - PHP CLI 8.4.24: lint dan tes CSRF serta same-origin **PASS** pada salinan terisolasi dari source yang diperiksa. Checkout repository aktual dan runtime PHP Desktop Windows belum dieksekusi dari lingkungan audit ini; hasil tersebut belum membuktikan smoke test browser.
+
+
+## Temuan urutan bootstrap timezone — 2026-10-26
+
+- `Database.php` sudah mengunci timezone aplikasi ke `Asia/Jakarta` saat file dimuat. Namun, `diagnostics.php` sebelumnya memuat `Database.php` di tengah alur setelah pemeriksaan persistensi; aksi simpan diagnostik dapat memanggil `date()` lebih dahulu.
+- Jika timezone bawaan PHP Desktop bukan `Asia/Jakarta`, timestamp untuk data diagnostik berpotensi menggunakan zona waktu bawaan runtime. Ini bukan perubahan pada data jadwal utama, tetapi tetap inkonsisten dengan kontrak waktu aplikasi.
+- Tindak lanjut: muat `Database.php` pada awal `diagnostics.php` sebelum operasi tanggal/waktu dan tambahkan pemeriksaan urutan bootstrap. Jangan mengubah lokasi atau isi database diagnostik.
