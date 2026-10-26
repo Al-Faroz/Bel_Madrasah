@@ -32,4 +32,18 @@ expectApplicationTimezone(
     'Tanggal dan jam lokal yang dibentuk setelah bootstrap harus dipertahankan.'
 );
 
+\$diagnosticsSource = file_get_contents(__DIR__ . '/../prototype/phpdesktop/www/diagnostics.php');
+expectApplicationTimezone(
+    is_string(\$diagnosticsSource),
+    'Source diagnostics.php harus dapat dibaca untuk pemeriksaan urutan bootstrap.'
+);
+\$databaseBootstrapPosition = strpos(\$diagnosticsSource, "require_once __DIR__ . '/lib/Database.php';");
+\$firstDateCallPosition = strpos(\$diagnosticsSource, 'date(');
+expectApplicationTimezone(
+    \$databaseBootstrapPosition !== false
+        && \$firstDateCallPosition !== false
+        && \$databaseBootstrapPosition < \$firstDateCallPosition,
+    'diagnostics.php harus memuat Database.php sebelum operasi date() pertama.'
+);
+
 echo "PASS: application timezone is consistently Asia/Jakarta\n";
