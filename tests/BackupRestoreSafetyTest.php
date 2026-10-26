@@ -146,7 +146,7 @@ try {
     unset($db);
     echo "PASS: backup integrity, restore data, pre-restore safety, invalid files, and managed paths\n";
 } finally {
-    if ($db instanceof Database) {
+    if (isset($db) && $db instanceof Database) {
         unset($db);
     }
 
