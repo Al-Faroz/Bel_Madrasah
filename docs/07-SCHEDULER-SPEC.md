@@ -94,8 +94,7 @@ Kode resolver kalender yang ada hanya menentukan pola dan daftar kegiatan. Sampa
 - Jika klien memutus koneksi, lifecycle halaman/player bertanggung jawab menyelesaikan status run; saat halaman dimuat kembali, run `started` yang tersisa direkonsiliasi menjadi `failed`.
 - Kriteria ini mencegah riwayat pemutaran menggantung pada status `started`. Tetap perlu uji Windows untuk memastikan jalur exception dan pemutusan koneksi benar-benar terjadi seperti yang diharapkan.
 
-
-- Pembacaan stream kini juga memeriksa kondisi setelah loop: jika EOF tercapai sementara masih ada byte yang seharusnya terkirim, run ditutup sebagai `failed` dengan jumlah byte tersisa. Pemutusan koneksi oleh klien tetap ditangani sebagai lifecycle player, bukan otomatis dianggap kerusakan file.
+- Pembacaan stream juga memeriksa kondisi setelah loop: jika EOF tercapai sementara masih ada byte yang seharusnya terkirim, run ditutup sebagai `failed` dengan jumlah byte tersisa. Pemutusan koneksi oleh klien tetap ditangani sebagai lifecycle player, bukan otomatis dianggap kerusakan file.
 
 ## 11. Waktu tampilan dan pergantian tanggal (2026-10-24)
 
