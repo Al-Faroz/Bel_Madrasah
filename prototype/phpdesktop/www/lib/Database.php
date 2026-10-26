@@ -309,6 +309,16 @@ final class Database
         if (strtolower($integrity) !== 'ok') {
             throw new RuntimeException('Pemeriksaan integritas SQLite gagal: ' . $integrity);
         }
+
+        // integrity_check does not report foreign-key violations; reject a backup
+        // whose relational references are already inconsistent before restoring it.
+        $foreignKeyViolations = $candidate->query('PRAGMA foreign_key_check')->fetchAll(PDO::FETCH_ASSOC);
+        if ($foreignKeyViolations !== []) {
+            throw new InvalidArgumentException(
+                'File backup memiliki referensi relasi database yang tidak valid.'
+            );
+        }
+
         $tables = $candidate->query(
             "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'"
         )->fetchAll(PDO::FETCH_COLUMN);
@@ -321,8 +331,11 @@ final class Database
         $version = $candidate->query(
             "SELECT meta_value FROM app_meta WHERE meta_key = 'schema_version'"
         )->fetchColumn();
-        if ($version === false || !is_numeric($version) || (int) $version > self::SCHEMA_VERSION) {
-            throw new InvalidArgumentException('Versi skema backup tidak dikenal atau lebih baru daripada aplikasi ini.');
+        if ($version === false
+            || !preg_match('/^\\d+$/', (string) $version)
+            || (int) $version < 1
+            || (int) $version > self::SCHEMA_VERSION) {
+            throw new InvalidArgumentException('Versi skema backup tidak dikenal atau tidak didukung aplikasi ini.');
         }
         return ['integrity' => $integrity, 'schema_version' => (int) $version, 'table_count' => count($tables)];
     }
