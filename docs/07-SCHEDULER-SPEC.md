@@ -92,6 +92,7 @@ Kode resolver kalender yang ada hanya menentukan pola dan daftar kegiatan. Sampa
 - Jika endpoint penyaluran mengalami exception setelah ID run diketahui, endpoint mencoba menutup log tersebut sebagai `failed`; kegagalan pencatatan tidak boleh menutupi pesan kegagalan utama.
 - Jika pembacaan file berhenti sebelum seluruh byte terkirim dan bukan karena klien memutus koneksi, log ditutup sebagai `failed` dengan alasan penyaluran terhenti.
 - Jika klien memutus koneksi, lifecycle halaman/player bertanggung jawab menyelesaikan status run; saat halaman dimuat kembali, run `started` yang tersisa direkonsiliasi menjadi `failed`.
+- Jika player mencoba menutup run yang sudah ditutup endpoint stream, respons scheduler menyertakan status dan pesan yang sudah tersimpan agar UI dapat menampilkan alasan asli, bukan hanya pesan umum “log sudah ditutup”.
 - Kriteria ini mencegah riwayat pemutaran menggantung pada status `started`. Tetap perlu uji Windows untuk memastikan jalur exception dan pemutusan koneksi benar-benar terjadi seperti yang diharapkan.
 
 - Pembacaan stream juga memeriksa kondisi setelah loop: jika EOF tercapai sementara masih ada byte yang seharusnya terkirim, run ditutup sebagai `failed` dengan jumlah byte tersisa. Pemutusan koneksi oleh klien tetap ditangani sebagai lifecycle player, bukan otomatis dianggap kerusakan file.
