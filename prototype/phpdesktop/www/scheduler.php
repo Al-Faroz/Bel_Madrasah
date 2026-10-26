@@ -59,7 +59,13 @@ try {
                 if ($existingMessage !== '') {
                     $closedMessage .= ' Detail: ' . $existingMessage;
                 }
-                schedulerRespond(['ok' => false, 'message' => $closedMessage], 409);
+                schedulerRespond([
+                    'ok' => false,
+                    'state' => 'closed',
+                    'status' => $existingStatus,
+                    'stored_message' => $existingMessage,
+                    'message' => $closedMessage,
+                ], 409);
             }
 
             schedulerRespond(['ok' => false, 'message' => 'Log pemutaran tidak ditemukan atau sudah ditutup.'], 409);
