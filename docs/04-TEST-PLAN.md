@@ -280,3 +280,10 @@ Catatan: butir di atas adalah kriteria uji; belum dianggap lulus hanya karena pe
 
 - [ ] `diagnostics.php` harus memuat `lib/Database.php` sebelum operasi `date()`/`DateTime` apa pun, sehingga timestamp diagnostik mengikuti `Asia/Jakarta`.
 - [ ] Jalankan `php .\\tests\\ApplicationTimezoneTest.php` setelah perubahan; tetap lakukan pemeriksaan runtime PHP Desktop Windows.
+
+
+### Hasil tindak lanjut timezone Diagnostik — 2026-10-26
+
+- [x] Source `diagnostics.php` diverifikasi memuat `Database.php` sebelum timestamp diagnostik pertama.
+- [x] `ApplicationTimezoneTest.php` diperluas untuk mencegah regresi urutan bootstrap.
+- [ ] Jalankan tes pada checkout lengkap dan runtime PHP Desktop Windows; hasil harness terisolasi bukan bukti runtime.
