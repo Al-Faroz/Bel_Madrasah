@@ -211,6 +211,7 @@ Catatan: butir di atas adalah kriteria uji; belum dianggap lulus hanya karena pe
 - [ ] Uji navigasi Publik → Admin → Publik; tidak boleh ada dua pemutar aktif atau pemutaran ganda.
 - [ ] Uji sleep/wake dan restart; kejadian yang melewati toleransi dicatat `missed`, bukan diputar terlambat.
 - [ ] Cocokkan pesan status UI dengan status dan pesan pada database `playback_log`.
+- [ ] Jika endpoint stream sudah menutup log dengan alasan spesifik, callback player tidak boleh menimpa status/pesan itu; UI harus tetap menampilkan alasan yang tersimpan.
 - [ ] Semua hasil di atas harus diverifikasi di PHP Desktop Windows; kode dan dokumen bukan bukti runtime lulus.
 
 
