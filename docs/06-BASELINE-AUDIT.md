@@ -322,3 +322,11 @@ Metode pemanggilan itu sudah ada sejak halaman `diagnostics.php` ditambahkan pad
 - Batch hardening menambahkan token CSRF berbasis sesi untuk formulir POST pada lima modul tersebut, termasuk aksi diagnostik, aktivasi/hapus paket, edit jadwal, pengaturan aset, serta backup/restore. Ini tidak menambahkan login dan tidak mengubah skema atau lokasi database.
 - Endpoint `scheduler.php` dan `audio-stream.php` memiliki pemeriksaan `Sec-Fetch-Site`/Origin tersendiri dan tidak menggunakan formulir HTML. Perlindungan endpoint scheduler/audio tetap menjadi pemeriksaan terpisah; jangan menghapus pemeriksaan same-origin yang sudah ada.
 - Kode keamanan dan tes regresinya harus ditinjau bersama seluruh formulir POST, karena satu form yang lupa menyertakan token dapat menyebabkan aksi gagal setelah hardening.
+
+### Checkpoint implementasi CSRF — 2026-10-26
+
+- Ditambahkan `prototype/phpdesktop/www/lib/Security.php` untuk membuat token acak 256-bit di sesi PHP, membandingkan token dengan `hash_equals`, dan menolak POST tanpa token yang benar menggunakan HTTP 403.
+- Token dipasang pada semua formulir POST di lima view: Pemeriksaan (1), Paket Jadwal (3), Editor Jadwal (7), Konfigurasi (3), dan Backup & Restore (3). Form GET untuk memilih paket tidak membutuhkan token.
+- Lima controller terkait memanggil `enforceCsrfForPost()` sebelum memproses permintaan. Tidak ada login baru, perubahan skema, penghapusan data, atau perubahan lokasi AppData.
+- Ditambahkan `tests/CsrfProtectionTest.php` dan `tests/ApplicationTimezoneTest.php`. Pemeriksaan statis mengonfirmasi setiap formulir POST pada view yang diaudit memiliki field token dan setiap controller memanggil helper keamanan.
+- **Status: IMPLEMENTED, menunggu tes pada checkout repo dan runtime PHP Desktop Windows.** Uji helper CSRF terisolasi pada PHP CLI 8.4 lulus, tetapi itu bukan pengganti menjalankan file test yang ada di checkout pengguna atau menguji sesi browser PHP Desktop.
