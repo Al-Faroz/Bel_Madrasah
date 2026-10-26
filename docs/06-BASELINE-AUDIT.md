@@ -370,3 +370,11 @@ Metode pemanggilan itu sudah ada sejak halaman `diagnostics.php` ditambahkan pad
 - Ditambahkan tests/BackupRestoreSafetyTest.php untuk memeriksa integritas backup yang dibuat aplikasi, pemulihan data, isi backup pra-pemulihan, penolakan file rusak, penolakan file di luar folder backup, dan penolakan menimpa nama backup yang sudah ada.
 - Tes menggunakan APPDATA sementara dan membersihkan fixture setelah selesai; tidak mengarah ke database Bel Madrasah pengguna.
 - Status tes otomatis: belum dijalankan pada checkout lokal pengguna saat perubahan dibuat. Tes harus dijalankan terlebih dahulu sebelum smoke test Restore pada PHP Desktop Windows.
+
+
+## Hasil hardening Backup & Restore — 2026-10-26
+
+- Perbaikan tambahan: pemeriksaan integrity_check SQLite tidak mendeteksi pelanggaran foreign key. validateBackupDatabase() sekarang juga menjalankan PRAGMA foreign_key_check dan menolak backup yang mempunyai relasi yatim.
+- Validasi versi skema kini hanya menerima bilangan bulat versi yang didukung (mulai 1 sampai SCHEMA_VERSION); nilai nol, negatif, pecahan, format tidak valid, dan versi lebih baru ditolak sebelum restore.
+- tests/BackupRestoreSafetyTest.php diperluas untuk memastikan versi skema nol dan foreign-key violation ditolak. Tes juga mencakup backup valid, pemulihan nilai, backup pra-pemulihan, file rusak, path di luar folder backup, dan penolakan overwrite.
+- Perubahan source dan tes sudah di-commit, tetapi belum dijalankan oleh lingkungan ini. Jangan tandai lulus sebelum pengguna menjalankan lint dan tes dari checkout Windows.
