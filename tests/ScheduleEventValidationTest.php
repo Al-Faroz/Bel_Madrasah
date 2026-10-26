@@ -19,6 +19,31 @@ putenv('APPDATA=' . $temporaryRoot);
 
 try {
     $db = new Database();
+
+    // Managed assets are selected by filename in the editor/settings UI.
+    $audioAssetPath = $db->getAudioAssetsDirectory() . DIRECTORY_SEPARATOR . 'fixture-audio.mp3';
+    $logoAssetPath = $db->getLogoAssetsDirectory() . DIRECTORY_SEPARATOR . 'fixture-logo.png';
+    file_put_contents($audioAssetPath, 'audio fixture');
+    file_put_contents($logoAssetPath, 'logo fixture');
+    expectScheduleEventValidation(
+        realpath($db->resolveAudioAsset('fixture-audio.mp3')) === realpath($audioAssetPath),
+        'Resolver audio harus mengembalikan path penuh dari nama file aset yang dipilih.'
+    );
+    expectScheduleEventValidation(
+        realpath($db->resolveLogoAsset('fixture-logo.png')) === realpath($logoAssetPath),
+        'Resolver logo harus mengembalikan path penuh dari nama file aset yang dipilih.'
+    );
+    $invalidAssetRejected = false;
+    try {
+        $db->resolveAudioAsset('../fixture-audio.mp3');
+    } catch (InvalidArgumentException $exception) {
+        $invalidAssetRejected = true;
+    }
+    expectScheduleEventValidation(
+        $invalidAssetRejected,
+        'Resolver aset harus menolak input nama file yang berisi path traversal.'
+    );
+
     $packageId = $db->saveSchedulePackage(null, 'Schedule Time Validation Test', 'Fixture test waktu unik', '6,7');
     $ruleId = $db->saveDayRule(null, $packageId, 1, 'normal', null, null, true);
 
