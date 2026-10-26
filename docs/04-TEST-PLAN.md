@@ -287,3 +287,11 @@ Catatan: butir di atas adalah kriteria uji; belum dianggap lulus hanya karena pe
 - [x] Source `diagnostics.php` diverifikasi memuat `Database.php` sebelum timestamp diagnostik pertama.
 - [x] `ApplicationTimezoneTest.php` diperluas untuk mencegah regresi urutan bootstrap.
 - [ ] Jalankan tes pada checkout lengkap dan runtime PHP Desktop Windows; hasil harness terisolasi bukan bukti runtime.
+
+
+## Regresi keselamatan Backup & Restore — 2026-10-26
+
+- [ ] Jalankan php -l .\\tests\\BackupRestoreSafetyTest.php.
+- [ ] Jalankan php .\\tests\\BackupRestoreSafetyTest.php dan pastikan output PASS.
+- [ ] Pastikan tes berjalan dengan folder APPDATA sementara dan tidak mengubah database aktif pengguna.
+- [ ] Pada PHP Desktop Windows, lakukan smoke test hanya dengan database uji/backup uji: buat backup, pratinjau, restore, dan pastikan backup pra-pemulihan muncul. Jangan menguji restore dengan data aktif yang belum dicadangkan di media lain.
