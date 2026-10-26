@@ -354,3 +354,10 @@ Metode pemanggilan itu sudah ada sejak halaman `diagnostics.php` ditambahkan pad
 - `Database.php` sudah mengunci timezone aplikasi ke `Asia/Jakarta` saat file dimuat. Namun, `diagnostics.php` sebelumnya memuat `Database.php` di tengah alur setelah pemeriksaan persistensi; aksi simpan diagnostik dapat memanggil `date()` lebih dahulu.
 - Jika timezone bawaan PHP Desktop bukan `Asia/Jakarta`, timestamp untuk data diagnostik berpotensi menggunakan zona waktu bawaan runtime. Ini bukan perubahan pada data jadwal utama, tetapi tetap inkonsisten dengan kontrak waktu aplikasi.
 - Tindak lanjut: muat `Database.php` pada awal `diagnostics.php` sebelum operasi tanggal/waktu dan tambahkan pemeriksaan urutan bootstrap. Jangan mengubah lokasi atau isi database diagnostik.
+
+
+## Hasil tindak lanjut timezone Diagnostik — 2026-10-26
+
+- `diagnostics.php` sekarang memuat `lib/Database.php` di awal request, sebelum aksi penyimpanan diagnostik memanggil `date()`. Require lama di tengah blok pemeriksaan dihapus agar bootstrap tidak bergantung pada jalur kode yang tercapai.
+- `tests/ApplicationTimezoneTest.php` kini memeriksa juga urutan bootstrap tersebut, selain memastikan pemuatan `Database.php` menetapkan `Asia/Jakarta`.
+- Pemeriksaan source memastikan include berada sebelum pemanggilan timestamp diagnostik. Tes timezone pada harness terisolasi lulus; eksekusi tes terhadap checkout lengkap dan uji runtime PHP Desktop Windows tetap menjadi checkpoint pengguna.
