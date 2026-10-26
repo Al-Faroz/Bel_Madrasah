@@ -146,6 +146,15 @@ try {
     }
     fclose($handle);
 
+    // fread() may return a final non-empty chunk and set EOF at the same time.
+    // In that case the loop can end with bytes still expected without entering
+    // the empty-read branch above. Treat that as a truncated stream, unless the
+    // client intentionally disconnected.
+    if ($remaining > 0 && $streamFailure === '' && !connection_aborted()) {
+        $streamFailure = 'Penyaluran audio berhenti sebelum seluruh byte terkirim (tersisa '
+            . $remaining . ' byte).';
+    }
+
     if ($streamFailure !== '') {
         $db->updatePlaybackLogStatus((int) $runId, 'failed', $streamFailure);
     }
