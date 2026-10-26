@@ -2,6 +2,8 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/lib/Database.php';
+require_once __DIR__ . '/lib/Security.php';
+$csrfToken = enforceCsrfForPost();
 
 function h(mixed $value): string
 {
