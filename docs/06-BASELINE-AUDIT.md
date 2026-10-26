@@ -338,3 +338,12 @@ Metode pemanggilan itu sudah ada sejak halaman `diagnostics.php` ditambahkan pad
 - Akibatnya, origin dengan hostname sama tetapi port berbeda dapat lolos pemeriksaan, walaupun port berbeda berarti origin berbeda. Pemeriksaan juga perlu menangani permintaan tanpa header Origin secara eksplisit agar hanya permintaan browser same-origin yang diterima oleh endpoint internal.
 - Endpoint scheduler bukan sekadar baca: aksi `page_start`/`finish` mengubah log pemutaran dan `tick` dapat mencatat status `missed`, `failed`, atau `skipped`. Karena itu, pemeriksaan same-origin harus ketat tanpa menambahkan autentikasi/login.
 - Tindak lanjut: pindahkan pemeriksaan ke helper murni yang bisa diuji, bandingkan skema + host + port, tolak Fetch Metadata selain `same-origin`, dan tambahkan tes regresi. Perilaku browser PHP Desktop Windows tetap perlu smoke test setelah perubahan.
+
+
+## Hasil tindak lanjut same-origin scheduler — 2026-10-26
+
+- `lib/Security.php` kini menyediakan `isSameOriginRequest()` yang memvalidasi skema, hostname, port, dan Fetch Metadata. Jika Origin tidak tersedia, Fetch Metadata harus secara eksplisit bernilai `same-origin`.
+- `scheduler.php` menggunakan helper tersebut dan menolak permintaan yang tidak same-origin dengan HTTP 403. Tidak ada login/autentikasi baru, perubahan skema, atau perubahan data jadwal.
+- `tests/SchedulerSameOriginTest.php` mencakup host/port/skema berbeda, Fetch Metadata lintas situs, Origin hilang, dan Origin malformed.
+- Audit view menghitung 17 formulir POST pada Pemeriksaan, Paket Jadwal, Editor Jadwal, Konfigurasi, dan Backup & Restore; semuanya memiliki field `_csrf_token`. Form filter GET Editor Jadwal tidak memerlukan token.
+- PHP CLI 8.4.24: lint dan tes CSRF serta same-origin **PASS** pada salinan terisolasi dari source yang diperiksa. Checkout repository aktual dan runtime PHP Desktop Windows belum dieksekusi dari lingkungan audit ini; hasil tersebut belum membuktikan smoke test browser.
