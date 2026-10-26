@@ -266,3 +266,11 @@ Catatan: butir di atas adalah kriteria uji; belum dianggap lulus hanya karena pe
 - [ ] Jika `Origin` tidak tersedia, permintaan hanya diterima ketika `Sec-Fetch-Site: same-origin`; header yang hilang seluruhnya ditolak.
 - [ ] Jalankan `php .\\tests\\SchedulerSameOriginTest.php`.
 - [ ] Pada PHP Desktop Chrome 130.1, pastikan polling `tick`, inisialisasi `page_start`, penyelesaian `finish`, dan `sendBeacon` saat halaman ditutup tetap berjalan. Pemeriksaan helper tidak menggantikan smoke test runtime.
+
+
+### Hasil verifikasi CLI terisolasi — 2026-10-26
+
+- [x] Lint helper keamanan dan tes CSRF pada salinan terisolasi: PASS.
+- [x] Tes validasi same-origin (scheme/host/port/Fetch Metadata) pada salinan terisolasi: PASS.
+- [ ] Jalankan tes dari checkout repository setelah `git pull`: `php .\\tests\\CsrfProtectionTest.php`, `php .\\tests\\SchedulerSameOriginTest.php`, dan `php .\\tests\\ApplicationTimezoneTest.php`.
+- [ ] Lint semua file PHP yang berubah dan lakukan smoke test pada PHP Desktop Windows. Hasil CLI terisolasi bukan pengganti pengujian checkout/runtime.
