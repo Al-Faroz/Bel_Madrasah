@@ -236,3 +236,10 @@ Catatan: butir di atas adalah kriteria uji; belum dianggap lulus hanya karena pe
 - [ ] Setelah pemeriksaan database lolos, uji autoplay secara terpisah pada runtime PHP Desktop yang benar-benar dipakai. Jangan menandai uji audio lulus hanya karena endpoint scheduler mengembalikan respons; suara dan log akhir harus diverifikasi.
 
 **Tes CLI yang ditambahkan:** jalankan `php .\\tests\\DatabaseTablesTest.php` dari root repository. Setelah itu, salin source terbaru ke folder `www` runtime yang benar-benar dipakai, buka Pemeriksaan, dan pastikan tabel inti terdaftar tanpa error. Tes CLI tidak menggantikan pemeriksaan PHP Desktop Windows.
+
+## Regresi zona waktu aplikasi — 2026-10-26
+
+- [ ] Jalankan `php .\\tests\\ApplicationTimezoneTest.php`; proses yang awalnya memakai zona waktu `UTC` harus beralih ke `Asia/Jakarta` setelah memuat `Database.php`.
+- [ ] Pada runtime PHP Desktop Windows, cocokkan tanggal/hari/pasaran Publik dengan kalender WIB dan pastikan scheduler memicu kegiatan pada jam WIB yang dikonfigurasi.
+- [ ] Uji pergantian tanggal WIB; Publik harus memuat ulang data tanggal, pasaran, aturan khusus, dan daftar kegiatan tanpa mengubah data jadwal.
+- [ ] Tes CLI tidak menggantikan uji runtime Windows atau membuktikan audio benar-benar terdengar.
