@@ -23,6 +23,7 @@
     <div class="storage-path"><span>Folder backup</span><code><?= h($backupDirectory !== '' ? $backupDirectory : 'Belum tersedia') ?></code></div>
     <p>Backup tidak menghapus atau memindahkan database aktif. Untuk perlindungan tambahan, salin file backup ke USB atau penyimpanan lain.</p>
     <form method="post" action="backup.php">
+<input type="hidden" name="_csrf_token" value="<?= h($csrfToken) ?>">
         <input type="hidden" name="backup_action" value="create_backup">
         <button type="submit" <?= $db instanceof Database ? '' : 'disabled' ?>>Buat backup sekarang</button>
     </form>
@@ -48,6 +49,7 @@
                             <td><?= number_format(((int) $backup['size']) / 1024, 1, ',', '.') ?> KB</td>
                             <td>
                                 <form method="post" action="backup.php">
+<input type="hidden" name="_csrf_token" value="<?= h($csrfToken) ?>">
                                     <input type="hidden" name="backup_action" value="preview_restore">
                                     <input type="hidden" name="backup_name" value="<?= h((string) $backup['name']) ?>">
                                     <button type="submit" class="button-compact">Periksa &amp; pratinjau</button>
@@ -77,6 +79,7 @@
         <strong>Perhatian:</strong> pemulihan akan mengganti data database aktif dengan isi backup ini. Sebelum mengganti, aplikasi membuat backup pra-pemulihan dari database aktif saat ini. Jangan menutup aplikasi selama proses berlangsung.
     </div>
     <form id="restore-confirm-form" method="post" action="backup.php" class="restore-confirm-form">
+<input type="hidden" name="_csrf_token" value="<?= h($csrfToken) ?>">
         <input type="hidden" name="backup_action" value="confirm_restore">
         <input type="hidden" name="backup_name" value="<?= h((string) $restorePreview['name']) ?>">
         <label class="checkbox-line"><input type="checkbox" name="restore_confirm" value="1" required> Saya memahami bahwa data aktif akan diganti dengan data backup yang dipilih.</label>
