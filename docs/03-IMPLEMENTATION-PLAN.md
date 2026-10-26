@@ -256,3 +256,10 @@ Resolver kalender Normal/Khusus → scheduler/audio dan log status → restore a
 - Commit kode: [1dd128c](https://github.com/Al-Faroz/Bel_Madrasah/commit/1dd128ced9151b458fd808f94e4cf917a74a3ada). Spesifikasi diperbarui pada [af2b89a](https://github.com/Al-Faroz/Bel_Madrasah/commit/af2b89a8e1416f09d24ed81bf360e7778c1960ed).
 - Status: **IMPLEMENTED; belum diuji dengan file yang sengaja terpotong atau runtime PHP Desktop Windows**. Setelah pull, uji file valid MP3/WAV, file kosong, file hilang, dan file yang berubah/terpotong ketika sedang dibaca. Pastikan satu kegagalan tidak menghentikan polling bel berikutnya.
 
+## Perbaikan lanjutan — mempertahankan alasan kegagalan audio di UI (2026-10-26)
+
+- Saat endpoint stream sudah menutup log dengan alasan spesifik (misalnya file tidak terbaca atau stream terpotong), player tetap mengirim aksi `finish`. Sebelumnya respons konflik hanya mengatakan log sudah ditutup, sehingga UI tidak menampilkan alasan yang sudah dicatat.
+- Respons `scheduler.php` kini menyertakan status dan pesan log yang tersimpan ketika run sudah ditutup. UI dapat mempertahankan alasan kegagalan asli tanpa menimpa log dengan pesan browser yang lebih umum.
+- Commit kode: [fe564d6](https://github.com/Al-Faroz/Bel_Madrasah/commit/fe564d6cec3a6c29756acfe85c4cca3ae84eae41); spesifikasi diperbarui pada [8eaa021](https://github.com/Al-Faroz/Bel_Madrasah/commit/8eaa021bb40f4a13894514e56472526beca374b3).
+- Status: **IMPLEMENTED; belum diuji di PHP Desktop Windows**. Perlu uji negatif file hilang, file kosong, format tak didukung, dan stream terputus; pastikan pesan UI sesuai dengan alasan yang tersimpan di riwayat dan scheduler tetap memeriksa jadwal berikutnya.
+
