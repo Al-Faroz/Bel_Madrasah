@@ -270,7 +270,7 @@
                                                 </td>
                                                 <td>
                                                         <label class="bell-audio-input" for="event-audio-<?= (int) $event['id'] ?>">Audio dari folder aset</label>
-                                                        <select form="event-form-<?= (int) $event['id'] ?>" id="event-audio-<?= (int) $event['id'] ?>" name="audio_asset">
+                                                        <select form="event-form-<?= (int) $event['id'] ?>" id="event-audio-<?= (int) $event['id'] ?>" name="audio_asset" data-audio-preview-select>
                                                             <option value="" <?= !$currentAudioIsManaged ? 'selected' : '' ?>><?= $currentAudioPath !== '' ? 'Pertahankan audio saat ini: ' . h(basename($currentAudioPath)) : 'Tanpa audio' ?></option>
                                                             <option value="__clear__">Hapus referensi audio</option>
                                                             <?php foreach ($audioAssets as $audioAsset): ?>
@@ -278,6 +278,10 @@
                                                             <?php endforeach; ?>
                                                         </select>
                                                         <small class="bell-audio-status" data-audio-health="<?= h($currentAudioStatus) ?>"><?= h($currentAudioStatusText) ?><?php if ($currentAudioPath !== ''): ?> · <?= h(basename($currentAudioPath)) ?><?php endif; ?></small>
+                                                        <div class="bell-audio-preview">
+                                                            <button type="button" class="button-compact audio-preview-button" data-audio-preview data-audio-select="event-audio-<?= (int) $event['id'] ?>" data-audio-event-id="<?= (int) $event['id'] ?>" data-audio-preview-status="event-audio-preview-status-<?= (int) $event['id'] ?>" aria-label="Dengarkan pratinjau audio untuk <?= h((string) $event['name']) ?>" aria-pressed="false">▶ Dengarkan</button>
+                                                            <small id="event-audio-preview-status-<?= (int) $event['id'] ?>" class="audio-preview-status" role="status" aria-live="polite">Periksa apakah audio yang dipilih sudah benar.</small>
+                                                        </div>
                                                 </td>
                                                 <td>
                                                         <label class="checkbox-line bell-enabled-toggle"><input form="event-form-<?= (int) $event['id'] ?>" type="checkbox" name="event_enabled" value="1" <?= (int) $event['is_enabled'] === 1 ? 'checked' : '' ?>> Aktif</label>
@@ -320,13 +324,17 @@
                                         <label>Waktu<input type="text" name="event_time" inputmode="numeric" autocomplete="off" spellcheck="false" pattern="([01][0-9]|2[0-3]):[0-5][0-9]" maxlength="5" placeholder="HH:MM" title="Gunakan format 24 jam, misalnya 07:05" required value="07:00"><small>Format 24 jam: 00:00–23:59. Waktu harus unik pada pola hari ini.</small></label>
                                         <label>Urutan<input type="number" name="sort_order" min="0" max="9999" required value="<?= count($ruleEvents) + 1 ?>"></label>
                                         <label class="audio-upload-label">Audio dari folder aset
-                                            <select name="audio_asset">
+                                            <select id="new-event-audio-<?= (int) $rule['id'] ?>" name="audio_asset" data-audio-preview-select>
                                                 <option value="">Tanpa audio</option>
                                                 <?php foreach ($audioAssets as $audioAsset): ?>
                                                     <option value="<?= h((string) $audioAsset['name']) ?>"><?= h((string) $audioAsset['name']) ?></option>
                                                 <?php endforeach; ?>
                                             </select>
                                             <small><?= $audioAssets === [] ? 'Belum ada file audio. Salin file ke folder Audio melalui menu Konfigurasi, lalu muat ulang halaman.' : 'Pilih file yang sudah disalin ke folder Audio. Nama file tidak perlu diubah.' ?></small>
+                                            <div class="bell-audio-preview">
+                                                <button type="button" class="button-compact audio-preview-button" data-audio-preview data-audio-select="new-event-audio-<?= (int) $rule['id'] ?>" data-audio-preview-status="new-event-audio-preview-status-<?= (int) $rule['id'] ?>" aria-label="Dengarkan pratinjau audio untuk kegiatan baru" aria-pressed="false">▶ Dengarkan</button>
+                                                <small id="new-event-audio-preview-status-<?= (int) $rule['id'] ?>" class="audio-preview-status" role="status" aria-live="polite">Pilih audio lalu tekan Dengarkan.</small>
+                                            </div>
                                         </label>
                                     </div>
                                     <label class="checkbox-line"><input type="checkbox" name="event_enabled" value="1" checked> Kegiatan aktif</label>
