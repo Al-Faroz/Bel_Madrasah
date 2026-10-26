@@ -167,6 +167,22 @@ final class Database
         return (int) $value;
     }
 
+    /**
+     * Return application tables in the main SQLite database for diagnostics.
+     *
+     * @return list<string>
+     */
+    public function getTables(): array
+    {
+        $tables = $this->pdo->query(
+            "SELECT name FROM sqlite_master
+             WHERE type = 'table' AND name NOT LIKE 'sqlite_%'
+             ORDER BY name"
+        )->fetchAll(PDO::FETCH_COLUMN);
+
+        return array_values(array_map('strval', $tables));
+    }
+
     /** Perform a write/read/rollback check without leaving test data behind. */
     public function runSelfTest(): bool
     {
