@@ -967,3 +967,57 @@ body.admin-area { color: var(--admin-text); font-size: 14px; background: var(--a
     color: #a83232;
     font-weight: 600;
 }
+
+
+/* Compact per-row audio preview for Editor Jadwal. */
+.admin-area .bell-audio-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    margin-top: 7px;
+    min-width: 112px;
+}
+.admin-area .audio-preview-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    min-height: 30px;
+    padding: 5px 9px;
+    border: 1px solid #b8d4c2;
+    border-radius: 5px;
+    color: #245d3d;
+    background: #f3faf5;
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+}
+.admin-area .audio-preview-button:hover {
+    border-color: #6eaa84;
+    background: #e8f5ec;
+}
+.admin-area .audio-preview-button:focus-visible {
+    outline: 2px solid #34865b;
+    outline-offset: 2px;
+}
+.admin-area .audio-preview-status {
+    display: block;
+    max-width: 190px;
+    color: #66756a;
+    font-size: 10px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+.admin-area .audio-preview-status[data-preview-state="playing"] {
+    color: #267247;
+    font-weight: 700;
+}
+.admin-area .audio-preview-status[data-preview-state="error"] {
+    color: #a83232;
+    font-weight: 600;
+}
+.admin-area .audio-preview-status[data-preview-state="loading"] {
+    color: #775d17;
+}
