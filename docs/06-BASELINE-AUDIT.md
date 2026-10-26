@@ -308,3 +308,10 @@ Metode pemanggilan itu sudah ada sejak halaman `diagnostics.php` ditambahkan pad
 **Temuan terpisah — autoplay:** `assets/scheduler.js` memang memetakan penolakan `player.play()` oleh kebijakan autoplay menjadi pesan “Browser menolak autoplay”. Ini masalah terpisah dari `getTables()`. Konfigurasi runtime PHP Desktop yang benar-benar dijalankan tidak disimpan dalam repo, sehingga kebijakan autoplay belum dapat dipastikan hanya dari source code. Jangan menyimpulkan kegagalan audio disebabkan file rusak, dan jangan mengubah file audio/database untuk menanganinya.
 
 **Batas bukti:** audit source code tidak dapat memastikan apakah folder `www` yang sedang berjalan di komputer Windows identik dengan `main` repo. Verifikasi runtime dilakukan setelah cacat kontrak di atas diperbaiki; tidak boleh menghapus atau membuat ulang `%APPDATA%\\BelMadrasah` sebagai langkah diagnosis.
+
+## Audit zona waktu aplikasi — 2026-10-26
+
+- Pemeriksaan kode memastikan `prototype/phpdesktop/www/lib/Database.php` menetapkan `date_default_timezone_set('Asia/Jakarta')` saat file dimuat. Entry point `public.php` dan `scheduler.php` memuat file tersebut sebelum membuat `DateTimeImmutable('now')`; karena itu, hipotesis perbedaan zona waktu PHP dan jam WIB tidak terbukti pada source saat ini.
+- Tidak ada perubahan perilaku zona waktu yang diperlukan. Jangan menambahkan setelan duplikat atau mengubah tanggal/jam penyimpanan yang sudah ada.
+- Celah yang tersisa adalah tidak adanya tes CLI khusus yang mengunci kontrak ini. Tes regresi akan memulai proses dengan zona waktu `UTC`, memuat `Database.php`, lalu memastikan zona waktu aplikasi kembali menjadi `Asia/Jakarta` dan objek waktu baru menggunakan zona tersebut.
+- Tes ini hanya mengunci konfigurasi waktu pada source; uji pergantian tanggal, jam WIB, pasaran, dan pemicu bel tetap perlu dilakukan pada runtime PHP Desktop Windows.
