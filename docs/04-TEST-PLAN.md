@@ -243,3 +243,11 @@ Catatan: butir di atas adalah kriteria uji; belum dianggap lulus hanya karena pe
 - [ ] Pada runtime PHP Desktop Windows, cocokkan tanggal/hari/pasaran Publik dengan kalender WIB dan pastikan scheduler memicu kegiatan pada jam WIB yang dikonfigurasi.
 - [ ] Uji pergantian tanggal WIB; Publik harus memuat ulang data tanggal, pasaran, aturan khusus, dan daftar kegiatan tanpa mengubah data jadwal.
 - [ ] Tes CLI tidak menggantikan uji runtime Windows atau membuktikan audio benar-benar terdengar.
+
+## Regresi perlindungan formulir POST — 2026-10-26
+
+- [ ] Jalankan `php .\\tests\\CsrfProtectionTest.php`; token sesi harus dibuat, token valid diterima, dan token hilang/salah ditolak.
+- [ ] Pada PHP Desktop Windows, simpan konfigurasi, buat/edit paket, simpan pola/kegiatan, buka folder aset, buat backup, dan pratinjau restore; seluruh formulir normal harus tetap berfungsi.
+- [ ] Kirim POST tanpa token atau token yang salah ke setiap controller yang dilindungi; permintaan harus ditolak dengan HTTP 403 dan tidak mengubah data.
+- [ ] Pastikan aksi pratinjau/simpan tidak kehilangan pilihan paket/hari dan bahwa backup/restore tetap menampilkan pesan valid.
+- [ ] Pemeriksaan ini tidak menambahkan autentikasi dan tidak mengubah data jadwal; endpoint scheduler/audio tetap menggunakan pemeriksaan same-origin tersendiri.
