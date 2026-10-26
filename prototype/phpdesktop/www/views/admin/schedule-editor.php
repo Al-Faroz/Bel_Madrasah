@@ -42,6 +42,7 @@
         </div>
         <?php if ($copyPreview === null): ?>
             <form method="post" action="schedule-editor.php?package_id=<?= $selectedPackageId ?>" class="copy-schedule-form">
+<input type="hidden" name="_csrf_token" value="<?= h($csrfToken) ?>">
                 <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>">
                 <input type="hidden" name="editor_action" value="preview_copy_schedule">
                 <div class="copy-schedule-route">
@@ -97,6 +98,7 @@
                 <?php endif; ?>
                 <div class="copy-preview-actions">
                     <form id="copy-confirm-form" method="post" action="schedule-editor.php?package_id=<?= $selectedPackageId ?>">
+<input type="hidden" name="_csrf_token" value="<?= h($csrfToken) ?>">
                         <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>">
                         <input type="hidden" name="editor_action" value="confirm_copy_schedule">
                         <input type="hidden" name="source_weekday" value="<?= (int) $copyPreview['source_weekday'] ?>">
@@ -112,6 +114,7 @@
     <section class="editor-grid">
         <section class="panel editor-rule-form">
             <form id="day-rule-form" method="post" action="schedule-editor.php">
+<input type="hidden" name="_csrf_token" value="<?= h($csrfToken) ?>">
             <div class="section-heading editor-rule-heading"><div><p class="eyebrow"><?= $editingRuleId > 0 ? 'EDIT ATURAN' : 'ATURAN HARI BARU' ?></p><h2><?= $editingRuleId > 0 ? 'Ubah pola hari' : 'Tambah pola hari' ?></h2></div><button type="submit" class="rule-submit-button rule-submit-button-top"><?= $editingRuleId > 0 ? 'Simpan Perubahan' : '+ Tambah Aturan Hari' ?></button></div>
                 <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>">
                 <input type="hidden" name="editor_action" value="save_rule">
@@ -198,7 +201,8 @@
                             </p>
                         <?php endif; ?>
                         <div class="rule-card-actions">
-                            <form method="post" action="schedule-editor.php?package_id=<?= $selectedPackageId ?>"><input type="hidden" name="package_id" value="<?= $selectedPackageId ?>"><input type="hidden" name="editor_action" value="edit_rule"><input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>"><button type="submit" class="button-compact rule-edit-button">Ubah Pola Hari</button></form>
+                            <form method="post" action="schedule-editor.php?package_id=<?= $selectedPackageId ?>">
+<input type="hidden" name="_csrf_token" value="<?= h($csrfToken) ?>"><input type="hidden" name="package_id" value="<?= $selectedPackageId ?>"><input type="hidden" name="editor_action" value="edit_rule"><input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>"><button type="submit" class="button-compact rule-edit-button">Ubah Pola Hari</button></form>
                             <span class="rule-event-summary"><strong><?= $enabledEventCount ?> aktif</strong><span>dari <?= count($ruleEvents) ?> kegiatan</span></span>
                         </div>
                         <?php if ($rule['rule_mode'] === 'special'): ?>
@@ -250,6 +254,7 @@
                                             <tr>
                                                 <td class="bell-time-cell">
                                                     <form id="event-form-<?= (int) $event['id'] ?>" class="bell-event-row-form" method="post" action="schedule-editor.php?package_id=<?= $selectedPackageId ?>">
+<input type="hidden" name="_csrf_token" value="<?= h($csrfToken) ?>">
                                                         <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>"><input type="hidden" name="editor_action" value="save_event"><input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>"><input type="hidden" name="event_id" value="<?= (int) $event['id'] ?>">
                                                     </form>
                                                     <label class="sr-only" for="event-time-<?= (int) $event['id'] ?>">Jam</label>
@@ -282,6 +287,7 @@
                                                     <div class="delete-event-action">
                                                         <button type="button" class="text-danger" onclick="this.hidden=true; this.nextElementSibling.hidden=false;">Hapus</button>
                                                         <form method="post" action="schedule-editor.php?package_id=<?= $selectedPackageId ?>" class="delete-event-form" hidden>
+<input type="hidden" name="_csrf_token" value="<?= h($csrfToken) ?>">
                                                             <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>">
                                                             <input type="hidden" name="editor_action" value="delete_event">
                                                             <input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>">
@@ -307,6 +313,7 @@
                             <?php endif; ?>
                             <details class="add-event-details"><summary><span aria-hidden="true">＋</span> Tambah Kegiatan Bel</summary>
                                 <form class="event-edit-card" method="post" action="schedule-editor.php">
+<input type="hidden" name="_csrf_token" value="<?= h($csrfToken) ?>">
                                     <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>"><input type="hidden" name="editor_action" value="save_event"><input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>"><input type="hidden" name="event_id" value="0">
                                     <div class="event-form-grid">
                                         <label>Nama kegiatan<input name="event_name" maxlength="100" required placeholder="Contoh: Bel masuk"></label>
