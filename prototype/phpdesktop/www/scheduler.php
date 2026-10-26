@@ -59,6 +59,17 @@ try {
         }
 
         if (!$db->updatePlaybackLogStatus((int) $runId, $status, $message)) {
+            $existingLog = $db->getPlaybackLog((int) $runId);
+            if ($existingLog !== null && (string) $existingLog['status'] !== 'started') {
+                $existingStatus = (string) $existingLog['status'];
+                $existingMessage = trim((string) ($existingLog['message'] ?? ''));
+                $closedMessage = 'Log pemutaran sudah ditutup dengan status ' . $existingStatus . '.';
+                if ($existingMessage !== '') {
+                    $closedMessage .= ' Detail: ' . $existingMessage;
+                }
+                schedulerRespond(['ok' => false, 'message' => $closedMessage], 409);
+            }
+
             schedulerRespond(['ok' => false, 'message' => 'Log pemutaran tidak ditemukan atau sudah ditutup.'], 409);
         }
 
