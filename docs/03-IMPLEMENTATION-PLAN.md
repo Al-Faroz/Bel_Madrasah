@@ -249,3 +249,10 @@ Resolver kalender Normal/Khusus → scheduler/audio dan log status → restore a
 - Pemeriksaan statis setelah commit memastikan referensi jalur antrean lama sudah tidak ada pada file yang diperiksa dan kurung kurawal CSS seimbang. **PHP lint dan fixture belum dijalankan**: lingkungan pemeriksaan ini tidak menyediakan PDO SQLite, dan runtime PHP Desktop Windows pengguna tidak dapat diuji dari sini.
 - Sebelum status batch dinyatakan PASS, jalankan `php tests/ScheduleEventValidationTest.php`, `php tests/ScheduleResolverTest.php`, dan `php tests/SchedulerPlaybackLogTest.php` dengan PHP CLI yang memiliki PDO SQLite; kemudian uji Editor, Salin Jadwal, serta status scheduler di PHP Desktop Windows. Status penerimaan pengguna tetap belum PASS sampai hasil aktual dilaporkan.
 
+## Perbaikan lanjutan — deteksi stream audio terpotong (2026-10-26)
+
+- Audit penanganan kegagalan audio menemukan celah kecil pada `audio-stream.php`: jika `fread()` mengembalikan chunk terakhir yang tidak kosong sambil mencapai EOF, loop dapat berhenti saat masih ada byte yang diharapkan tanpa melewati cabang empty-read.
+- Setelah loop, endpoint kini memeriksa jumlah byte tersisa. Jika belum seluruh byte terkirim dan klien tidak memutus koneksi, log run ditutup sebagai `failed` dengan alasan dan jumlah byte yang tersisa. Pemutusan koneksi klien tetap mengikuti lifecycle player.
+- Commit kode: [1dd128c](https://github.com/Al-Faroz/Bel_Madrasah/commit/1dd128ced9151b458fd808f94e4cf917a74a3ada). Spesifikasi diperbarui pada [af2b89a](https://github.com/Al-Faroz/Bel_Madrasah/commit/af2b89a8e1416f09d24ed81bf360e7778c1960ed).
+- Status: **IMPLEMENTED; belum diuji dengan file yang sengaja terpotong atau runtime PHP Desktop Windows**. Setelah pull, uji file valid MP3/WAV, file kosong, file hilang, dan file yang berubah/terpotong ketika sedang dibaca. Pastikan satu kegagalan tidak menghentikan polling bel berikutnya.
+
