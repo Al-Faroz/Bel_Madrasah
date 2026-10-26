@@ -58,12 +58,14 @@
                             <a class="text-action" href="packages.php?edit=<?= (int) $package['id'] ?>">Edit</a>
                             <?php if ((int) $package['is_active'] !== 1): ?>
                                 <form method="post" action="packages.php" class="package-activate-form" data-package-name="<?= h((string) $package['name']) ?>">
+<input type="hidden" name="_csrf_token" value="<?= h($csrfToken) ?>">
                                     <input type="hidden" name="package_action" value="activate">
                                     <input type="hidden" name="package_id" value="<?= (int) $package['id'] ?>">
                                     <button type="submit" class="button-compact">Aktifkan paket</button>
                                 </form>
                                 <?php if (count($packages) > 1): ?>
                                     <form method="post" action="packages.php" class="package-delete-form" data-package-name="<?= h((string) $package['name']) ?>">
+<input type="hidden" name="_csrf_token" value="<?= h($csrfToken) ?>">
                                         <input type="hidden" name="package_action" value="delete">
                                         <input type="hidden" name="package_id" value="<?= (int) $package['id'] ?>">
                                         <button type="submit" class="text-danger">Hapus permanen</button>
@@ -85,6 +87,7 @@
             </div>
         </div>
         <form method="post" action="packages.php<?= $editId > 0 ? '?edit=' . $editId : '' ?>">
+<input type="hidden" name="_csrf_token" value="<?= h($csrfToken) ?>">
             <input type="hidden" name="package_action" value="save">
             <input type="hidden" name="package_id" value="<?= $editId > 0 ? $editId : 0 ?>">
             <label for="package-name">Nama paket <span class="required-mark">*</span>
