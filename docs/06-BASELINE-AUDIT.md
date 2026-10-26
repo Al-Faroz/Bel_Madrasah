@@ -361,3 +361,12 @@ Metode pemanggilan itu sudah ada sejak halaman `diagnostics.php` ditambahkan pad
 - `diagnostics.php` sekarang memuat `lib/Database.php` di awal request, sebelum aksi penyimpanan diagnostik memanggil `date()`. Require lama di tengah blok pemeriksaan dihapus agar bootstrap tidak bergantung pada jalur kode yang tercapai.
 - `tests/ApplicationTimezoneTest.php` kini memeriksa juga urutan bootstrap tersebut, selain memastikan pemuatan `Database.php` menetapkan `Asia/Jakarta`.
 - Pemeriksaan source memastikan include berada sebelum pemanggilan timestamp diagnostik. Tes timezone pada harness terisolasi lulus; eksekusi tes terhadap checkout lengkap dan uji runtime PHP Desktop Windows tetap menjadi checkpoint pengguna.
+
+
+## Audit keselamatan Backup & Restore — 2026-10-26
+
+- Pemeriksaan statis Database.php menunjukkan backup memakai VACUUM INTO, sumber restore dibatasi ke file .sqlite di folder backup terkelola, dan sumber divalidasi dengan PRAGMA integrity_check, tabel minimum, serta versi skema sebelum restore.
+- Restore membuat backup pra-pemulihan sebelum mengganti file database aktif. Jika penggantian/reinisialisasi gagal, kode mencoba mengembalikan salinan pra-pemulihan. Alur ini berisiko tinggi dan perlu tes regresi otomatis, bukan hanya pemeriksaan manual UI.
+- Ditambahkan tests/BackupRestoreSafetyTest.php untuk memeriksa integritas backup yang dibuat aplikasi, pemulihan data, isi backup pra-pemulihan, penolakan file rusak, penolakan file di luar folder backup, dan penolakan menimpa nama backup yang sudah ada.
+- Tes menggunakan APPDATA sementara dan membersihkan fixture setelah selesai; tidak mengarah ke database Bel Madrasah pengguna.
+- Status tes otomatis: belum dijalankan pada checkout lokal pengguna saat perubahan dibuat. Tes harus dijalankan terlebih dahulu sebelum smoke test Restore pada PHP Desktop Windows.
