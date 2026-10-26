@@ -298,3 +298,13 @@ Fungsi database juga menghitung ulang aturan serta kegiatan pada hari tujuan seb
 
 **Status:** perubahan sudah masuk ke branch utama dan diperiksa secara statis; tetap belum LOCAL TEST PASS sampai alur salin dijalankan di PHP Desktop Windows.
 
+
+## Regresi terkonfirmasi: Pemeriksaan memanggil metode database yang tidak ada — 2026-10-26
+
+**Temuan terkonfirmasi:** `prototype/phpdesktop/www/diagnostics.php` memanggil `$appDatabase->getTables()`, tetapi kelas `Database` tidak mendeklarasikan metode publik `getTables()`. Akibatnya, setelah constructor database dan pembacaan versi skema berjalan, pemeriksaan melempar `Call to undefined method Database::getTables()`, menangkapnya sebagai kegagalan database, lalu menampilkan status FAIL. Pesan FAIL ini adalah **negatif palsu dari halaman Pemeriksaan**; pesan tersebut sendiri tidak membuktikan bahwa koneksi SQLite atau skema database gagal.
+
+Metode pemanggilan itu sudah ada sejak halaman `diagnostics.php` ditambahkan pada 2026-10-11; perubahan audio terbaru pada `scheduler.php` dan `audio-stream.php` tidak mengubah halaman Pemeriksaan atau kelas `Database`. Jadi ini adalah cacat kontrak yang sudah tertanam dan baru terungkap saat pemeriksaan tersebut dijalankan, bukan bukti bahwa pengujian audio menghapus atau merusak database. Perbaikan yang dituju: tambahkan `Database::getTables()` yang membaca nama tabel dari `sqlite_master`, lalu uji regresi agar hasil pemeriksaan menghitung minimal enam tabel aplikasi.
+
+**Temuan terpisah — autoplay:** `assets/scheduler.js` memang memetakan penolakan `player.play()` oleh kebijakan autoplay menjadi pesan “Browser menolak autoplay”. Ini masalah terpisah dari `getTables()`. Konfigurasi runtime PHP Desktop yang benar-benar dijalankan tidak disimpan dalam repo, sehingga kebijakan autoplay belum dapat dipastikan hanya dari source code. Jangan menyimpulkan kegagalan audio disebabkan file rusak, dan jangan mengubah file audio/database untuk menanganinya.
+
+**Batas bukti:** audit source code tidak dapat memastikan apakah folder `www` yang sedang berjalan di komputer Windows identik dengan `main` repo. Verifikasi runtime dilakukan setelah cacat kontrak di atas diperbaiki; tidak boleh menghapus atau membuat ulang `%APPDATA%\\BelMadrasah` sebagai langkah diagnosis.
