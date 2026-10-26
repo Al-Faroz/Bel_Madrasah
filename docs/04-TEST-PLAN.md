@@ -274,3 +274,9 @@ Catatan: butir di atas adalah kriteria uji; belum dianggap lulus hanya karena pe
 - [x] Tes validasi same-origin (scheme/host/port/Fetch Metadata) pada salinan terisolasi: PASS.
 - [ ] Jalankan tes dari checkout repository setelah `git pull`: `php .\\tests\\CsrfProtectionTest.php`, `php .\\tests\\SchedulerSameOriginTest.php`, dan `php .\\tests\\ApplicationTimezoneTest.php`.
 - [ ] Lint semua file PHP yang berubah dan lakukan smoke test pada PHP Desktop Windows. Hasil CLI terisolasi bukan pengganti pengujian checkout/runtime.
+
+
+## Regresi urutan bootstrap timezone Diagnostik — 2026-10-26
+
+- [ ] `diagnostics.php` harus memuat `lib/Database.php` sebelum operasi `date()`/`DateTime` apa pun, sehingga timestamp diagnostik mengikuti `Asia/Jakarta`.
+- [ ] Jalankan `php .\\tests\\ApplicationTimezoneTest.php` setelah perubahan; tetap lakukan pemeriksaan runtime PHP Desktop Windows.
