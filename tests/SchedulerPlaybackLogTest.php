@@ -53,7 +53,34 @@ try {
     );
     $completedLog = $db->getPlaybackLog($firstRunId);
     expectSchedulerLog($completedLog !== null && $completedLog['status'] === 'completed', 'Status completed harus persisten.');
-    $missedEventId = $db->saveBellEvent(null, $ruleId, 'Tes terlewat', '07:10', '', true, 2);
+
+    $failureDetail = 'File audio tidak ditemukan atau tidak dapat dibaca.';
+    $failureEventId = $db->saveBellEvent(null, $ruleId, 'Tes detail kegagalan', '07:03', '', true, 2);
+    $failureRunId = $db->recordPlaybackLogIfMissing(
+        $packageId,
+        $failureEventId,
+        '2026-10-19 07:03',
+        'started',
+        'Fixture mulai untuk uji kegagalan.'
+    );
+    expectSchedulerLog(is_int($failureRunId) && $failureRunId > 0, 'Kejadian untuk uji kegagalan harus dapat diklaim.');
+    expectSchedulerLog(
+        $db->updatePlaybackLogStatus($failureRunId, 'failed', $failureDetail),
+        'Log started harus dapat ditutup sebagai failed dengan detail error.'
+    );
+    expectSchedulerLog(
+        !$db->updatePlaybackLogStatus($failureRunId, 'completed', 'Pesan generik yang tidak boleh menimpa detail.'),
+        'Status akhir failed tidak boleh ditimpa oleh callback player.'
+    );
+    $preservedFailureLog = $db->getPlaybackLog($failureRunId);
+    expectSchedulerLog(
+        $preservedFailureLog !== null
+            && $preservedFailureLog['status'] === 'failed'
+            && $preservedFailureLog['message'] === $failureDetail,
+        'Status dan detail kegagalan asli harus tetap tersimpan.'
+    );
+
+    $missedEventId = $db->saveBellEvent(null, $ruleId, 'Tes terlewat', '07:10', '', true, 3);
     $db->recordPlaybackLogIfMissing($packageId, $missedEventId, '2026-10-19 07:10', 'missed', 'Fixture terlewat.');
     $secondEventId = $db->saveBellEvent(null, $ruleId, 'Tes interupsi', '07:05', '', true, 2);
     $secondRunId = $db->recordPlaybackLogIfMissing(
