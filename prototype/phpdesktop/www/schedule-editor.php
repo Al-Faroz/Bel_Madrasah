@@ -27,6 +27,7 @@ $message = '';
 $selectedPackageId = filter_var($_POST['package_id'] ?? $_GET['package_id'] ?? 0, FILTER_VALIDATE_INT);
 $selectedPackageId = $selectedPackageId !== false && $selectedPackageId > 0 ? $selectedPackageId : 0;
 $editingRuleId = 0;
+$showRuleModal = false;
 $ruleForm = ['weekday' => '1', 'rule_mode' => 'normal', 'special_type' => 'pasaran', 'special_value' => 'Legi', 'is_enabled' => '1'];
 $eventFormErrors = [];
 $copyPreview = null;
@@ -53,7 +54,30 @@ try {
 
     if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         $action = (string) ($_POST['editor_action'] ?? '');
-        if ($action === 'preview_copy_schedule') {
+        if ($action === 'toggle_rule_enabled') {
+            $ruleId = (int) ($_POST['rule_id'] ?? 0);
+            $rule = $db->getDayRule($ruleId);
+            if ($rule === null || (int) $rule['package_id'] !== $selectedPackageId) {
+                throw new InvalidArgumentException('Aturan hari yang dipilih tidak ditemukan pada paket ini.');
+            }
+
+            $targetEnabled = filter_var($_POST['target_enabled'] ?? null, FILTER_VALIDATE_INT);
+            if ($targetEnabled !== 0 && $targetEnabled !== 1) {
+                throw new InvalidArgumentException('Status aturan yang diminta tidak valid.');
+            }
+
+            $db->setDayRuleEnabled($ruleId, $selectedPackageId, $targetEnabled === 1);
+            $ruleForm['weekday'] = (string) $rule['weekday'];
+            $weekdayName = $weekdays[(int) $rule['weekday']] ?? 'hari terpilih';
+            $patternName = $rule['rule_mode'] === 'normal'
+                ? 'Normal'
+                : 'Khusus · ' . ($rule['special_type'] === 'pasaran'
+                    ? (string) $rule['special_value']
+                    : ($weekOptions[(string) $rule['special_value']] ?? (string) $rule['special_value']));
+            $message = 'Aturan ' . $weekdayName . ' · ' . $patternName . ' berhasil '
+                . ($targetEnabled === 1 ? 'diaktifkan.' : 'dinonaktifkan.')
+                . ' Kegiatan bel dan aturan lain tidak diubah.';
+        } elseif ($action === 'preview_copy_schedule') {
             $sourceWeekday = $copySourceWeekday;
             $targetWeekday = $copyTargetWeekday;
             if ($sourceWeekday < 1 || $sourceWeekday > 7 || $targetWeekday < 1 || $targetWeekday > 7
@@ -133,6 +157,7 @@ try {
                 . $copyResult['rules'] . ' aturan dan ' . $copyResult['events']
                 . ' kegiatan. Daftar pola sekarang menampilkan ' . $targetDayName . '. Hari sumber dan hari lain tidak diubah.';
         } elseif ($action === 'save_rule') {
+            $showRuleModal = true;
             $editingRuleId = (int) ($_POST['rule_id'] ?? 0);
             $ruleForm = [
                 'weekday' => (string) ($_POST['weekday'] ?? '1'),
@@ -155,12 +180,14 @@ try {
             $savedWeekday = $ruleForm['weekday'];
             $editingRuleId = 0;
             $ruleForm = ['weekday' => $savedWeekday, 'rule_mode' => 'normal', 'special_type' => 'pasaran', 'special_value' => 'Legi', 'is_enabled' => '1'];
+            $showRuleModal = false;
         } elseif ($action === 'edit_rule') {
             $editingRuleId = (int) ($_POST['rule_id'] ?? 0);
             $rule = $db->getDayRule($editingRuleId);
             if ($rule === null || (int) $rule['package_id'] !== $selectedPackageId) {
                 throw new InvalidArgumentException('Aturan hari yang dipilih tidak ditemukan.');
             }
+            $showRuleModal = true;
             $ruleForm = [
                 'weekday' => (string) $rule['weekday'],
                 'rule_mode' => (string) $rule['rule_mode'],
