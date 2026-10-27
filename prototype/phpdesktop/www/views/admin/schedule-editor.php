@@ -500,7 +500,7 @@ toggleSpecialFields();
     const cards = Array.from(document.querySelectorAll('.day-rule-card[data-weekday]'));
     const emptyMessage = document.getElementById('no-rules-for-day');
     const countLabel = document.getElementById('rules-count');
-    const genericEmpty = document.querySelector('.schedule-empty-state');
+    const genericEmpty = document.querySelector('.editor-rules-list .schedule-empty-state');
 
     function applyDayFilter(day) {
         let visible = 0;
