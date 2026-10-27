@@ -2,7 +2,7 @@
 
 Aplikasi bel otomatis untuk kebutuhan operasional madrasah/sekolah di Windows.
 
-**Status proyek:** PoC runtime `phpdesktop-chrome-130.1-php-8.3`, SQLite lokal, dan audio internal telah dilaporkan berjalan untuk skenario uji awal. Alur utama Backup & Restore juga dilaporkan FIX oleh pengguna pada Windows. Fondasi scheduler dan stream audio internal kini tersedia di repository, tetapi **belum diuji di PHP Desktop Windows**; autoplay, ketepatan waktu, dan perilaku saat minimize/sleep-wake masih harus diverifikasi.
+**Status proyek:** Runtime `phpdesktop-chrome-130.1-php-8.3`, SQLite lokal, alur Backup & Restore, scheduler, serta pemutaran audio terjadwal telah dilaporkan PASS oleh pengguna untuk skenario yang diuji pada Windows. Uji lanjutan ketepatan waktu, perilaku minimize/sleep-wake, dan installer Windows masih terbuka; status PASS tidak otomatis berlaku untuk skenario yang belum diuji.
 
 ## Tujuan
 
