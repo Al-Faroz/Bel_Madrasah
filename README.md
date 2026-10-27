@@ -45,6 +45,7 @@ Dokumen desain: [docs/05-UI-UX-MATERIAL-DESIGN.md](docs/05-UI-UX-MATERIAL-DESIGN
 - [Rencana pengujian](docs/04-TEST-PLAN.md)
 - [Acuan UI/UX](docs/05-UI-UX-MATERIAL-DESIGN.md)
 - [Spesifikasi scheduler dan audio otomatis](docs/07-SCHEDULER-SPEC.md)
+- [Pengemasan Windows dan installer](docs/08-WINDOWS-PACKAGING.md)
 
 ## Pola kolaborasi
 
