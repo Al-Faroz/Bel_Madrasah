@@ -74,6 +74,7 @@ if ($runtimeFull.Equals($stageFull, [System.StringComparison]::OrdinalIgnoreCase
 }
 
 New-Item -ItemType Directory -Path $buildRoot -Force | Out-Null
+New-Item -ItemType Directory -Path (Join-Path $buildRoot 'installer-output') -Force | Out-Null
 if (Test-Path -LiteralPath $stageDir) {
     Remove-Item -LiteralPath $stageDir -Recurse -Force
 }
