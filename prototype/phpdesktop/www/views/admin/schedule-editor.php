@@ -6,7 +6,7 @@
  */
 ?>
 <?php if ($message !== ''): ?><p class="action-feedback success" role="status"><?= h($message) ?></p><?php endif; ?>
-    <?php if ($error !== ''): ?><p class="action-feedback error" role="alert"><?= h($error) ?></p><?php endif; ?>
+    <?php if ($error !== '' && !$showRuleModal): ?><p class="action-feedback error" role="alert"><?= h($error) ?></p><?php endif; ?>
 
     <section class="panel editor-package-select" aria-label="Paket jadwal yang dipilih">
         <div><p class="eyebrow">PAKET YANG DIEDIT</p><h2><?= $selectedPackage !== null ? h((string) $selectedPackage['name']) : 'Pilih paket' ?></h2>
@@ -111,9 +111,111 @@
         <?php endif; ?>
     </section>
 
+    <section class="panel editor-rules-summary" aria-label="Ringkasan aturan hari">
+        <div class="section-heading editor-rules-summary-heading">
+            <div><p class="eyebrow">POLA YANG TERSIMPAN</p><h2>Daftar aturan hari</h2><p class="form-note">Tabel ini menampilkan semua aturan pada paket yang dipilih. Setiap baris mewakili satu pola Normal atau satu pola Khusus.</p></div>
+            <button type="button" class="button-compact" data-open-rule-dialog>+ Tambah Aturan Hari</button>
+        </div>
+        <?php if (($rules ?? []) === []): ?>
+            <div class="schedule-empty-state">
+                <strong>Belum ada aturan hari untuk paket ini</strong>
+                <p>Tambahkan pola Normal terlebih dahulu, lalu tambahkan aturan Khusus bila diperlukan.</p>
+                <button type="button" class="schedule-empty-cta" data-open-rule-dialog>+ Tambah Aturan Hari</button>
+            </div>
+        <?php else: ?>
+            <div class="day-rules-table-wrap">
+                <table class="day-rules-table">
+                    <thead><tr><th>Hari</th><th>Pola / Kekhususan</th><th>Status aturan</th><th>Kegiatan bel</th><th>Aksi</th></tr></thead>
+                    <tbody>
+                    <?php foreach ($rules as $rule): ?>
+                        <?php
+                        $summaryWeekdayName = $weekdays[(int) $rule['weekday']] ?? 'Hari tidak dikenal';
+                        $summarySpecialLabel = '';
+                        if ($rule['rule_mode'] === 'special') {
+                            $summarySpecialLabel = $rule['special_type'] === 'pasaran'
+                                ? 'Pasaran Jawa: ' . (string) $rule['special_value']
+                                : 'Minggu kalender: ' . ($weekOptions[(string) $rule['special_value']] ?? (string) $rule['special_value']);
+                        }
+                        $summaryEvents = $eventsByRule[(int) $rule['id']] ?? [];
+                        $summaryEnabledEvents = count(array_filter($summaryEvents, static fn (array $event): bool => (int) $event['is_enabled'] === 1));
+                        ?>
+                        <tr>
+                            <td><strong><?= h($summaryWeekdayName) ?></strong></td>
+                            <td><strong><?= $rule['rule_mode'] === 'normal' ? 'Normal' : 'Khusus' ?></strong><small><?= $rule['rule_mode'] === 'normal' ? 'Jadwal dasar hari ini' : h($summarySpecialLabel) ?></small></td>
+                            <td><span class="package-badge <?= (int) $rule['is_enabled'] === 1 ? 'active' : '' ?>"><?= (int) $rule['is_enabled'] === 1 ? 'AKTIF' : 'NONAKTIF' ?></span></td>
+                            <td><strong><?= count($summaryEvents) ?> kegiatan</strong><small><?= $summaryEnabledEvents ?> aktif</small></td>
+                            <td>
+                                <div class="day-rule-row-actions">
+                                    <form method="post" action="schedule-editor.php?package_id=<?= $selectedPackageId ?>">
+                                        <input type="hidden" name="_csrf_token" value="<?= h($csrfToken) ?>">
+                                        <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>">
+                                        <input type="hidden" name="editor_action" value="edit_rule">
+                                        <input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>">
+                                        <button type="submit" class="button-compact rule-edit-button">Ubah Pola Hari</button>
+                                    </form>
+                                    <form method="post" action="schedule-editor.php?package_id=<?= $selectedPackageId ?>">
+                                        <input type="hidden" name="_csrf_token" value="<?= h($csrfToken) ?>">
+                                        <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>">
+                                        <input type="hidden" name="editor_action" value="toggle_rule_enabled">
+                                        <input type="hidden" name="rule_id" value="<?= (int) $rule['id'] ?>">
+                                        <input type="hidden" name="target_enabled" value="<?= (int) $rule['is_enabled'] === 1 ? '0' : '1' ?>">
+                                        <button type="submit" class="button-compact <?= (int) $rule['is_enabled'] === 1 ? 'button-secondary' : '' ?>"><?= (int) $rule['is_enabled'] === 1 ? 'Nonaktifkan' : 'Aktifkan' ?></button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php endif; ?>
+    </section>
+
+    <dialog id="day-rule-dialog" class="day-rule-dialog" aria-labelledby="rule-dialog-title" data-open-on-load="<?= $showRuleModal ? '1' : '0' ?>">
+        <div class="day-rule-dialog-heading">
+            <div><p class="eyebrow" id="rule-dialog-eyebrow"><?= $editingRuleId > 0 ? 'EDIT ATURAN' : 'ATURAN HARI BARU' ?></p><h2 id="rule-dialog-title"><?= $editingRuleId > 0 ? 'Ubah pola hari' : 'Tambah pola hari' ?></h2></div>
+            <button type="button" class="button-secondary day-rule-dialog-close" data-close-rule-dialog aria-label="Tutup modal">×</button>
+        </div>
+        <?php if ($error !== '' && $showRuleModal): ?><p class="action-feedback error" role="alert"><?= h($error) ?></p><?php endif; ?>
+        <form id="day-rule-form" method="post" action="schedule-editor.php">
+            <input type="hidden" name="_csrf_token" value="<?= h($csrfToken) ?>">
+            <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>">
+            <input type="hidden" name="editor_action" value="save_rule">
+            <input type="hidden" name="rule_id" value="<?= $editingRuleId ?>">
+            <label for="rule-weekday">Hari
+                <select id="rule-weekday" name="weekday" required>
+                    <?php foreach ($weekdays as $dayNumber => $dayName): ?><option value="<?= $dayNumber ?>" <?= (int) $ruleForm['weekday'] === $dayNumber ? 'selected' : '' ?>><?= h($dayName) ?></option><?php endforeach; ?>
+                </select>
+            </label>
+            <fieldset class="pattern-choice"><legend>Pola hari</legend>
+                <label class="choice-row"><input type="radio" name="rule_mode" value="normal" <?= $ruleForm['rule_mode'] === 'normal' ? 'checked' : '' ?> onchange="toggleSpecialFields()" required><span><strong>Normal</strong><small>Jadwal umum untuk hari ini.</small></span></label>
+                <label class="choice-row"><input type="radio" name="rule_mode" value="special" <?= $ruleForm['rule_mode'] === 'special' ? 'checked' : '' ?> onchange="toggleSpecialFields()" required><span><strong>Khusus</strong><small>Jadwal yang berlaku saat atribut cocok.</small></span></label>
+            </fieldset>
+            <div id="special-fields" <?= $ruleForm['rule_mode'] !== 'special' ? 'hidden' : '' ?>>
+                <label for="special_type">Jenis kekhususan
+                    <select name="special_type" id="special_type" onchange="toggleSpecialValue()">
+                        <option value="pasaran" <?= $ruleForm['special_type'] === 'pasaran' ? 'selected' : '' ?>>Pasaran Jawa</option>
+                        <option value="month_week" <?= $ruleForm['special_type'] === 'month_week' ? 'selected' : '' ?>>Minggu dalam bulan (Model A)</option>
+                    </select>
+                </label>
+                <label for="special_value">Nilai kekhususan
+                    <select name="special_value" id="special_value">
+                        <?php foreach ($pasarans as $value): ?><option data-kind="pasaran" value="<?= h($value) ?>" <?= $ruleForm['special_type'] === 'pasaran' && $ruleForm['special_value'] === $value ? 'selected' : '' ?>><?= h($value) ?></option><?php endforeach; ?>
+                        <?php foreach ($weekOptions as $value => $label): ?><option data-kind="month_week" value="<?= h($value) ?>" <?= $ruleForm['special_type'] === 'month_week' && $ruleForm['special_value'] === $value ? 'selected' : '' ?>><?= h($label) ?></option><?php endforeach; ?>
+                    </select>
+                </label>
+            </div>
+            <label class="checkbox-line"><input type="checkbox" name="is_enabled" value="1" <?= $ruleForm['is_enabled'] === '1' ? 'checked' : '' ?>> Aturan aktif</label>
+            <p class="form-note rule-form-help"><strong>Normal</strong> adalah jadwal dasar hari tersebut. <strong>Khusus</strong> menggantikan Normal saat pasaran atau minggu kalender cocok. Status aturan terpisah dari status kegiatan bel.</p>
+            <div class="form-actions rule-submit-actions">
+                <button type="button" class="button-secondary" data-close-rule-dialog>Batal</button>
+                <button type="submit" class="rule-submit-button" data-rule-submit><?= $editingRuleId > 0 ? 'Simpan Perubahan Aturan' : '+ Tambah Aturan Hari' ?></button>
+            </div>
+        </form>
+    </dialog>
+
     <section class="editor-grid">
-        <section class="panel editor-rule-form">
-            <form id="day-rule-form" method="post" action="schedule-editor.php">
+        <section class="panel editor-rules-list">
 <input type="hidden" name="_csrf_token" value="<?= h($csrfToken) ?>">
             <div class="section-heading editor-rule-heading"><div><p class="eyebrow"><?= $editingRuleId > 0 ? 'EDIT ATURAN' : 'ATURAN HARI BARU' ?></p><h2><?= $editingRuleId > 0 ? 'Ubah pola hari' : 'Tambah pola hari' ?></h2></div><button type="submit" class="rule-submit-button rule-submit-button-top"><?= $editingRuleId > 0 ? 'Simpan Perubahan' : '+ Tambah Aturan Hari' ?></button></div>
                 <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>">
@@ -161,7 +263,7 @@
                 <div class="schedule-empty-state">
                     <strong>Belum ada aturan hari untuk paket ini</strong>
                     <p>Buat aturan Normal terlebih dahulu. Setelah aturan tersimpan, tombol <b>Edit aturan</b> dan <b>+ Tambah kegiatan bel</b> akan tersedia pada kartu aturan tersebut.</p>
-                    <a class="schedule-empty-cta" href="#day-rule-form">+ Tambah Aturan Hari</a>
+                    <button type="button" class="schedule-empty-cta" data-open-rule-dialog>+ Tambah Aturan Hari</button>
                 </div>
             <?php else: ?>
                 <?php foreach ($rules as $rule): ?>
@@ -313,7 +415,7 @@
                                     </table>
                                 </div>
                             <?php else: ?>
-                                <p class="empty-event">Belum ada kegiatan bel untuk aturan ini. Tambahkan kegiatan melalui formulir di bawah.</p>
+                                <p class="empty-event">Belum ada kegiatan bel untuk aturan ini. Gunakan bagian Tambah Kegiatan Bel di bawah.</p>
                             <?php endif; ?>
                             <details class="add-event-details"><summary><span aria-hidden="true">＋</span> Tambah Kegiatan Bel</summary>
                                 <form class="event-edit-card" method="post" action="schedule-editor.php">
@@ -382,6 +484,48 @@ function toggleSpecialValue() {
     }
 }
 toggleSpecialFields();
+
+// Modal tunggal untuk menambah dan mengubah pola hari.
+(function () {
+    const dialog = document.getElementById('day-rule-dialog');
+    const form = document.getElementById('day-rule-form');
+    const daySelect = document.getElementById('schedule-day-filter');
+    if (!dialog || !form) return;
+
+    function resetForNewRule() {
+        form.querySelector('input[name="rule_id"]').value = '0';
+        form.querySelector('select[name="weekday"]').value = daySelect ? daySelect.value : '1';
+        const normal = form.querySelector('input[name="rule_mode"][value="normal"]');
+        if (normal) normal.checked = true;
+        form.querySelector('select[name="special_type"]').value = 'pasaran';
+        form.querySelector('select[name="special_value"]').value = 'Legi';
+        const enabled = form.querySelector('input[name="is_enabled"]');
+        if (enabled) enabled.checked = true;
+        const eyebrow = document.getElementById('rule-dialog-eyebrow');
+        const title = document.getElementById('rule-dialog-title');
+        const submit = form.querySelector('[data-rule-submit]');
+        if (eyebrow) eyebrow.textContent = 'ATURAN HARI BARU';
+        if (title) title.textContent = 'Tambah pola hari';
+        if (submit) submit.textContent = '+ Tambah Aturan Hari';
+        toggleSpecialFields();
+    }
+
+    document.querySelectorAll('[data-open-rule-dialog]').forEach(button => {
+        button.addEventListener('click', function () {
+            resetForNewRule();
+            if (!dialog.open) dialog.showModal();
+        });
+    });
+    document.querySelectorAll('[data-close-rule-dialog]').forEach(button => {
+        button.addEventListener('click', function () {
+            if (dialog.open) dialog.close();
+        });
+    });
+
+    if (dialog.dataset.openOnLoad === '1' && !dialog.open) {
+        dialog.showModal();
+    }
+})();
 
 // Sinkronkan pilihan hari dengan daftar aturan yang terlihat.
 (function () {
