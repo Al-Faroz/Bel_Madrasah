@@ -358,6 +358,8 @@ Implementasi tersedia pada branch `main`:
 - [ ] Modal berisi seluruh field aturan yang sudah tersedia, termasuk Normal/Khusus, Pasaran Jawa/Minggu dalam bulan, dan status aktif.
 - [ ] Batal/penutup modal tidak mengubah data; simpan valid menutup modal dan memperbarui daftar.
 - [ ] Jika validasi simpan aturan gagal, modal tetap terbuka, pilihan operator dipertahankan, dan pesan error terlihat.
+- [ ] Setelah menutup modal yang menampilkan error lalu membuka Tambah Aturan Hari, pesan error lama tidak ikut muncul pada formulir baru.
+- [ ] Pesan ketika belum ada aturan mengarahkan operator ke tombol Tambah Aturan Hari, bukan ke formulir di sebelah kiri.
 - [ ] Kartu/tabel kegiatan bel per aturan tetap tersedia; tambah/edit/hapus kegiatan, audio preview, dan filter hari tidak rusak.
 - [ ] Status aturan nonaktif terlihat jelas dan tidak disamakan dengan status kegiatan bel.
 - [ ] Hari libur mingguan paket tetap dijelaskan: aturan dapat aktif tetapi tidak dijalankan pada hari yang ditetapkan sebagai libur.
