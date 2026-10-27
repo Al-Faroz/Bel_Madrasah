@@ -332,14 +332,16 @@ Implementasi tersedia pada branch `main`:
 - Kontrol tersedia pada tabel kegiatan di setiap aturan hari dan pada formulir Tambah Kegiatan Bel.
 - Pratinjau pilihan baru memakai file yang sedang dipilih di dropdown tanpa harus menyimpan perubahan terlebih dahulu. Pratinjau tidak mengubah data jadwal atau riwayat pemutaran otomatis.
 
-### Checklist pengguna — belum dinyatakan PASS
-- [ ] `git pull origin main`, lalu salin `prototype/phpdesktop/www/audio-preview.php` ke `www/audio-preview.php`; `assets/audio-preview.js` ke `www/assets/audio-preview.js`; `assets/admin.css` ke `www/assets/admin.css`; `views/admin/schedule-editor.php` ke `www/views/admin/schedule-editor.php`; dan `layouts/admin.php` ke `www/layouts/admin.php`. Pastikan `www/lib/AudioAsset.php` dari perbaikan audio sebelumnya sudah ikut tersalin.
-- [ ] `php -l .\\prototype\\phpdesktop\\www\\audio-preview.php`.
-- [ ] Di Editor Jadwal, pilih MP3 dan tekan **Dengarkan**; pastikan audio yang terdengar sesuai file yang dipilih sebelum menekan Simpan.
-- [ ] Ubah dropdown ke file audio lain lalu Dengarkan; file baru yang diputar harus sesuai pilihan terbaru, meski belum disimpan.
-- [ ] Hentikan pratinjau; pastikan audio benar-benar berhenti.
-- [ ] Uji WAV valid; pastikan dapat diputar.
-- [ ] Uji file hilang/kosong atau format tidak didukung; status harus menjelaskan kegagalan tanpa membuat log pemutaran scheduler.
-- [ ] Saat pratinjau berlangsung, pastikan scheduler/riwayat pemutaran terjadwal tidak berubah hanya karena pratinjau.
-- [ ] Simpan kegiatan setelah memilih audio; setelah halaman dimuat ulang, pratinjau harus memutar audio yang tersimpan.
-- [ ] Uji pratinjau pada tabel dan pada formulir Tambah Kegiatan Bel.
+### Checklist pengguna — PASS dilaporkan pengguna (2026-10-27)
+**Hasil:** pengguna melaporkan seluruh checklist pratinjau audio di bawah sudah PASS.
+
+- [x] `git pull origin main`, lalu salin `prototype/phpdesktop/www/audio-preview.php` ke `www/audio-preview.php`; `assets/audio-preview.js` ke `www/assets/audio-preview.js`; `assets/admin.css` ke `www/assets/admin.css`; `views/admin/schedule-editor.php` ke `www/views/admin/schedule-editor.php`; dan `layouts/admin.php` ke `www/layouts/admin.php`. Pastikan `www/lib/AudioAsset.php` dari perbaikan audio sebelumnya sudah ikut tersalin.
+- [x] `php -l .\\prototype\\phpdesktop\\www\\audio-preview.php`.
+- [x] Di Editor Jadwal, pilih MP3 dan tekan **Dengarkan**; pastikan audio yang terdengar sesuai file yang dipilih sebelum menekan Simpan.
+- [x] Ubah dropdown ke file audio lain lalu Dengarkan; file baru yang diputar harus sesuai pilihan terbaru, meski belum disimpan.
+- [x] Hentikan pratinjau; pastikan audio benar-benar berhenti.
+- [x] Uji WAV valid; pastikan dapat diputar.
+- [x] Uji file hilang/kosong atau format tidak didukung; status harus menjelaskan kegagalan tanpa membuat log pemutaran scheduler.
+- [x] Saat pratinjau berlangsung, pastikan scheduler/riwayat pemutaran terjadwal tidak berubah hanya karena pratinjau.
+- [x] Simpan kegiatan setelah memilih audio; setelah halaman dimuat ulang, pratinjau harus memutar audio yang tersimpan.
+- [x] Uji pratinjau pada tabel dan pada formulir Tambah Kegiatan Bel.
