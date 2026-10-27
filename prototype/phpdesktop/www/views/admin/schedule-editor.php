@@ -216,41 +216,7 @@
 
     <section class="editor-grid">
         <section class="panel editor-rules-list">
-<input type="hidden" name="_csrf_token" value="<?= h($csrfToken) ?>">
-            <div class="section-heading editor-rule-heading"><div><p class="eyebrow"><?= $editingRuleId > 0 ? 'EDIT ATURAN' : 'ATURAN HARI BARU' ?></p><h2><?= $editingRuleId > 0 ? 'Ubah pola hari' : 'Tambah pola hari' ?></h2></div><button type="submit" class="rule-submit-button rule-submit-button-top"><?= $editingRuleId > 0 ? 'Simpan Perubahan' : '+ Tambah Aturan Hari' ?></button></div>
-                <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>">
-                <input type="hidden" name="editor_action" value="save_rule">
-                <input type="hidden" name="rule_id" value="<?= $editingRuleId ?>">
-                <label for="rule-weekday">Hari
-                    <select id="rule-weekday" name="weekday" required>
-                        <?php foreach ($weekdays as $dayNumber => $dayName): ?><option value="<?= $dayNumber ?>" <?= (int) $ruleForm['weekday'] === $dayNumber ? 'selected' : '' ?>><?= h($dayName) ?></option><?php endforeach; ?>
-                    </select>
-                </label>
-                <fieldset class="pattern-choice"><legend>Pola hari</legend>
-                    <label class="choice-row"><input type="radio" name="rule_mode" value="normal" <?= $ruleForm['rule_mode'] === 'normal' ? 'checked' : '' ?> onchange="toggleSpecialFields()" required><span><strong>Normal</strong><small>Jadwal umum untuk hari ini.</small></span></label>
-                    <label class="choice-row"><input type="radio" name="rule_mode" value="special" <?= $ruleForm['rule_mode'] === 'special' ? 'checked' : '' ?> onchange="toggleSpecialFields()" required><span><strong>Khusus</strong><small>Jadwal yang berlaku saat atribut cocok.</small></span></label>
-                </fieldset>
-                <div id="special-fields" <?= $ruleForm['rule_mode'] !== 'special' ? 'hidden' : '' ?>>
-                    <label for="special_type">Jenis kekhususan
-                        <select name="special_type" id="special_type" onchange="toggleSpecialValue()">
-                            <option value="pasaran" <?= $ruleForm['special_type'] === 'pasaran' ? 'selected' : '' ?>>Pasaran Jawa</option>
-                            <option value="month_week" <?= $ruleForm['special_type'] === 'month_week' ? 'selected' : '' ?>>Minggu dalam bulan (Model A)</option>
-                        </select>
-                    </label>
-                    <label for="special_value">Nilai kekhususan
-                        <select name="special_value" id="special_value">
-                            <?php foreach ($pasarans as $value): ?><option data-kind="pasaran" value="<?= h($value) ?>" <?= $ruleForm['special_type'] === 'pasaran' && $ruleForm['special_value'] === $value ? 'selected' : '' ?>><?= h($value) ?></option><?php endforeach; ?>
-                            <?php foreach ($weekOptions as $value => $label): ?><option data-kind="month_week" value="<?= h($value) ?>" <?= $ruleForm['special_type'] === 'month_week' && $ruleForm['special_value'] === $value ? 'selected' : '' ?>><?= h($label) ?></option><?php endforeach; ?>
-                        </select>
-                    </label>
-                </div>
-                <label class="checkbox-line"><input type="checkbox" name="is_enabled" value="1" <?= $ruleForm['is_enabled'] === '1' ? 'checked' : '' ?>> Aturan aktif</label>
-                <p class="form-note rule-form-help"><strong>Normal</strong> adalah jadwal dasar hari tersebut. <strong>Khusus</strong> menggantikan Normal saat pasaran atau minggu kalender cocok. Pastikan centang <strong>Aturan aktif</strong> menyala agar pola bisa dipakai.</p>
-                <div class="form-actions rule-submit-actions"><button type="submit" class="rule-submit-button"><?= $editingRuleId > 0 ? 'Simpan Perubahan Aturan' : '+ Tambah Aturan Hari' ?></button><?php if ($editingRuleId > 0): ?><a class="button-link-secondary" href="schedule-editor.php?package_id=<?= $selectedPackageId ?>">Batal Edit</a><?php endif; ?></div>
-            </form>
-        </section>
 
-        <section class="panel editor-rules-list">
             <div class="section-heading"><div><p class="eyebrow">POLA YANG TERSIMPAN</p><h2>Aturan per hari</h2></div><span class="section-note" id="rules-count"><?= count($rules ?? []) ?> aturan</span></div>
             <p class="form-note rules-list-help">Pilih hari untuk memfilter kartu. Status <strong>aturan</strong> berlaku untuk seluruh polanya; status <strong>kegiatan</strong> di tabel berlaku per bel. Keduanya perlu aktif agar kegiatan bisa muncul di Publik. Jam, nama, urutan, audio, dan status kegiatan dapat diubah langsung di tabel lalu tekan <strong>Simpan</strong>. Setiap pola hanya boleh memiliki satu kegiatan pada satu jam-menit; waktu duplikat ditolak.</p>
             <label class="schedule-day-filter">Tampilkan data hari
