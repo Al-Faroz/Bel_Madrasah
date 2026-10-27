@@ -1021,3 +1021,103 @@ body.admin-area { color: var(--admin-text); font-size: 14px; background: var(--a
 .admin-area .audio-preview-status[data-preview-state="loading"] {
     color: #775d17;
 }
+
+/* Schedule editor redesign: rule summary table and shared native dialog. */
+.admin-area .editor-rules-summary {
+    margin: 0 0 22px;
+    padding: 22px;
+    border: 1px solid var(--admin-line);
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 2px 7px rgba(29,44,54,.025);
+}
+.admin-area .editor-rules-summary-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 0 0 16px;
+}
+.admin-area .editor-rules-summary-heading h2 { margin-bottom: 5px; }
+.admin-area .editor-rules-summary-heading .form-note { margin: 0; }
+.admin-area .day-rules-table-wrap { width: 100%; overflow-x: auto; border: 1px solid var(--admin-line); border-radius: 6px; }
+.admin-area .day-rules-table { width: 100%; min-width: 780px; table-layout: fixed; }
+.admin-area .day-rules-table th:nth-child(1) { width: 12%; }
+.admin-area .day-rules-table th:nth-child(2) { width: 27%; }
+.admin-area .day-rules-table th:nth-child(3) { width: 13%; }
+.admin-area .day-rules-table th:nth-child(4) { width: 15%; }
+.admin-area .day-rules-table th:nth-child(5) { width: 33%; }
+.admin-area .day-rules-table th { padding: 11px 12px; }
+.admin-area .day-rules-table td { padding: 11px 12px; overflow-wrap: anywhere; }
+.admin-area .day-rules-table td strong { display: block; color: var(--admin-text); font-size: 12px; }
+.admin-area .day-rules-table td small { display: block; margin-top: 4px; color: var(--admin-muted); font-size: 10px; line-height: 1.45; }
+.admin-area .day-rule-row-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.admin-area .day-rule-row-actions form { margin: 0; }
+.admin-area .day-rule-row-actions button { min-height: 32px; padding: 6px 9px; font-size: 10px; }
+.admin-area .editor-rules-summary .schedule-empty-state { margin-top: 12px; }
+.admin-area .schedule-empty-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 36px;
+    padding: 8px 12px;
+    border: 1px solid var(--admin-primary);
+    border-radius: 5px;
+    color: #fff;
+    background: var(--admin-primary);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+}
+.admin-area .schedule-empty-cta:hover { background: var(--admin-primary-hover); }
+.admin-area .day-rule-dialog {
+    box-sizing: border-box;
+    width: min(620px, calc(100vw - 28px));
+    max-width: 620px;
+    max-height: min(88vh, 820px);
+    margin: auto;
+    padding: 24px;
+    overflow-y: auto;
+    border: 1px solid #dfe7e2;
+    border-radius: 10px;
+    color: var(--admin-text);
+    background: #fff;
+    box-shadow: 0 20px 70px rgba(17,32,24,.24);
+}
+.admin-area .day-rule-dialog::backdrop { background: rgba(20,31,26,.48); }
+.admin-area .day-rule-dialog-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 0 0 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--admin-line);
+}
+.admin-area .day-rule-dialog-heading h2 { margin: 3px 0 0; font-size: 20px; line-height: 1.35; }
+.admin-area .day-rule-dialog-heading .eyebrow { margin: 0; }
+.admin-area .day-rule-dialog-close { min-width: 36px; padding: 4px 10px; font-size: 20px; line-height: 1; }
+.admin-area .day-rule-dialog form { display: grid; gap: 14px; }
+.admin-area .day-rule-dialog label:not(.choice-row):not(.checkbox-line) { display: grid; gap: 6px; color: #394750; font-size: 12px; font-weight: 700; }
+.admin-area .day-rule-dialog input:not([type="radio"]):not([type="checkbox"]),
+.admin-area .day-rule-dialog select { box-sizing: border-box; width: 100%; min-height: 39px; padding: 8px 10px; }
+.admin-area .day-rule-dialog .pattern-choice { margin: 0; }
+.admin-area .day-rule-dialog .rule-form-help { margin: 0; }
+.admin-area .day-rule-dialog .rule-submit-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
+.admin-area .day-rule-dialog .action-feedback { margin: 0 0 16px; }
+.admin-area .day-rule-dialog[open] { animation: day-rule-dialog-enter .14s ease-out; }
+@keyframes day-rule-dialog-enter {
+    from { opacity: .85; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@media (max-width: 600px) {
+    .admin-area .editor-rules-summary { padding: 16px; }
+    .admin-area .editor-rules-summary-heading { flex-direction: column; align-items: stretch; }
+    .admin-area .editor-rules-summary-heading > button { align-self: flex-start; }
+    .admin-area .day-rule-dialog { padding: 18px; }
+    .admin-area .day-rule-dialog .rule-submit-actions { justify-content: stretch; }
+    .admin-area .day-rule-dialog .rule-submit-actions button { flex: 1 1 100%; }
+}
+
