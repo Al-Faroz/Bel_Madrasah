@@ -159,3 +159,12 @@ Ini target migrasi, bukan perintah memindahkan semua halaman sekaligus. Pertahan
 - Pratinjau tersedia pula pada formulir Tambah Kegiatan Bel.
 - Endpoint pratinjau tidak mencatat kejadian sebagai pemutaran bel terjadwal dan tidak boleh mengubah data jadwal.
 - Status: kode diimplementasikan; **belum local test PASS** sampai operator menguji pada PHP Desktop Windows.
+
+## Redesain Editor Jadwal: tabel aturan dan modal
+
+Editor Jadwal mempertahankan pemilih paket, panduan status tiga tingkat, dan panel Salin Jadwal. Setelahnya, ringkasan aturan ditampilkan sebagai tabel yang berisi satu baris untuk setiap aturan tersimpan pada paket terpilih. Baris menampilkan hari/pola, kekhususan, status aturan, jumlah kegiatan, serta aksi Ubah Pola Hari dan Aktifkan/Nonaktifkan.
+
+Form tambah dan edit aturan menggunakan satu modal yang sama. Modal mempertahankan field hari, pola Normal/Khusus, jenis dan nilai kekhususan, serta status aktif. Validasi gagal harus mempertahankan nilai masukan dan membiarkan modal terbuka. Aksi status hanya mengubah kolom status dari satu aturan milik paket terpilih; status aturan tidak boleh dicampur dengan status kegiatan bel.
+
+Daftar kegiatan bel per aturan tetap tersedia di bawah ringkasan agar pengeditan jam, nama, urutan, audio, status kegiatan, pratinjau audio, dan penghapusan kegiatan yang sudah ada tidak hilang. Filter hari hanya mengatur kartu kegiatan yang terlihat dan tidak menyembunyikan ringkasan seluruh aturan.
+
