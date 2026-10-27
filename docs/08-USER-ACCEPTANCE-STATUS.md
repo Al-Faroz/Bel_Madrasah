@@ -1,6 +1,6 @@
 # 08 — Status Penerimaan Berdasarkan Checklist Pengguna
 
-Tanggal pencatatan: 2026-10-18
+Tanggal pembaruan: 2026-10-27
 
 Dokumen ini mencatat hasil yang dilaporkan langsung oleh pengguna. Status ini bukan hasil klaim pengujian otomatis oleh pengembang.
 
@@ -31,18 +31,20 @@ Dokumen ini mencatat hasil yang dilaporkan langsung oleh pengguna. Status ini bu
 - [x] Kegiatan yang dinonaktifkan tidak ikut berbunyi.
 - [x] Tanggal dan waktu WIB berjalan benar.
 
-## 2. Belum diuji oleh pengguna
+## 2. Tambahan yang sudah lulus setelah catatan awal
 
-- [ ] Validasi Editor menolak waktu duplikat dalam satu pola hari; data lama yang sudah memiliki duplikasi ditandai untuk koreksi tanpa penghapusan otomatis.
-- [ ] Penanganan file audio yang referensinya hilang atau tidak dapat dibaca.
+- [x] Validasi waktu kegiatan menolak duplikasi saat tambah/edit dan menjaga data lama; `ScheduleEventValidationTest.php` dilaporkan PASS pada PHP CLI.
+- [x] Validasi referensi audio dan penanganan file hilang/kosong/tidak didukung; tes otomatis dan skenario runtime PHP Desktop dilaporkan PASS pada checklist `docs/04-TEST-PLAN.md`.
+- [x] Pratinjau MP3/WAV dari tabel kegiatan dan formulir Tambah Kegiatan Bel; seluruh checklist dilaporkan PASS pada 2026-10-27.
+- [x] Redesain ringkasan aturan hari, modal tambah/edit, reset pesan validasi, serta status aktif/nonaktif aturan; pengguna melaporkan PASS pada 2026-10-27.
+- [x] Tes `DayRuleStatusTest.php` dilaporkan PASS; perubahan status tidak mengubah pola/kegiatan dan aksi lintas paket ditolak.
 
-## 3. Tindak lanjut Batch 1
+## 3. Tindak lanjut yang masih terbuka
 
-1. Audit sumber scheduler, audio-stream, JavaScript player, database playback log, dan resolver.
-2. Tambahkan tes otomatis untuk penolakan waktu duplikat saat tambah/edit, serta deduplikasi kejadian pada waktu yang sama untuk satu kegiatan.
-3. Periksa perilaku ketika satu audio gagal, agar scheduler tetap berjalan dan kegiatan pada waktu berikutnya tetap diproses.
-4. Rencanakan uji file hilang/tidak terbaca tanpa merusak jadwal produksi.
-5. Minta pengguna menguji hanya skenario yang belum terkonfirmasi di PHP Desktop Windows.
+- [ ] Uji PHP Desktop Windows untuk pemulihan scheduler setelah jendela kembali fokus/terlihat, termasuk minimize/restore dan sleep/wake. Jadwal yang melewati toleransi 30 detik harus tercatat `missed`, bukan diputar terlambat. Checklist rinci ada di `docs/04-TEST-PLAN.md`.
+- [ ] Uji negatif Restore pada PHP Desktop Windows menggunakan database/backup uji: file kosong/rusak, skema tidak cocok, folder tidak dapat ditulis, dan rollback saat penggantian gagal.
+- [ ] Selesaikan hanya checklist UI/runtime lain yang masih terbuka di `docs/04-TEST-PLAN.md`; jangan menyimpulkan seluruh aplikasi lulus dari satu batch PASS.
+- [ ] Pengemasan/installer Windows masih ditunda sesuai keputusan pengguna; jangan memulai kembali tanpa instruksi.
 
 ## 4. Batas validasi
 
