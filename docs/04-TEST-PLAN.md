@@ -367,3 +367,17 @@ Implementasi tersedia pada branch `main`:
 - [ ] Jalankan tes PHP CLI yang tersedia dan pemeriksaan sintaks pada file PHP yang berubah.
 - [ ] Uji seluruh alur di PHP Desktop Windows, termasuk setelah restart; pemeriksaan kode/CLI tidak menggantikan uji runtime.
 
+## Audit respons scheduler saat aplikasi kembali aktif — 2026-10-27
+
+**Tujuan:** mengurangi jeda pemeriksaan jadwal ketika jendela PHP Desktop kembali mendapat fokus/terlihat, tanpa mengubah aturan toleransi keterlambatan 30 detik dan tanpa memutar ulang kejadian lama.
+
+- [ ] Setelah jendela dipulihkan dari minimize, scheduler segera memeriksa jadwal tanpa menunggu interval polling berikutnya.
+- [ ] Setelah aplikasi kembali terlihat melalui perpindahan jendela/tab, pemeriksaan langsung terjadi dan tidak membuat dua request tick berjalan bersamaan.
+- [ ] Jika audio sedang diputar, fokus/visibility/pageshow tidak memulai run kedua, tidak mengubah log run aktif, dan tidak menghentikan audio.
+- [ ] Setelah sleep/wake, kejadian yang sudah melewati toleransi 30 detik tercatat `missed` dan tidak diputar terlambat.
+- [ ] Setelah wake, jadwal berikutnya yang belum waktunya tetap diproses normal; tidak ada pemutaran ganda setelah polling kembali stabil.
+- [ ] Setelah restart/reload, log `started` sesi sebelumnya direkonsiliasi sebagai `failed`; penambahan pemicu polling tidak mengubah perilaku rekonsiliasi.
+- [ ] Perubahan jam/tanggal Windows dan pergantian tanggal tetap memakai waktu aplikasi Asia/Jakarta serta aturan kalender hari yang benar.
+- [ ] Uji dilakukan pada PHP Desktop Windows. Uji kode/CLI tidak menggantikan pengamatan minimize, restore, sleep/wake, dan suara aktual.
+
+**Batas perubahan:** pemicu pemeriksaan saat aplikasi kembali aktif hanya mempercepat pemeriksaan; scheduler tetap tidak melakukan catch-up playback untuk jadwal yang melewati toleransi.
