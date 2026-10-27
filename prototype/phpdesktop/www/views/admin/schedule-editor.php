@@ -176,7 +176,7 @@
             <div><p class="eyebrow" id="rule-dialog-eyebrow"><?= $editingRuleId > 0 ? 'EDIT ATURAN' : 'ATURAN HARI BARU' ?></p><h2 id="rule-dialog-title"><?= $editingRuleId > 0 ? 'Ubah pola hari' : 'Tambah pola hari' ?></h2></div>
             <button type="button" class="button-secondary day-rule-dialog-close" data-close-rule-dialog aria-label="Tutup modal">×</button>
         </div>
-        <?php if ($error !== '' && $showRuleModal): ?><p class="action-feedback error" role="alert"><?= h($error) ?></p><?php endif; ?>
+        <?php if ($error !== '' && $showRuleModal): ?><p class="action-feedback error" role="alert" data-rule-form-error><?= h($error) ?></p><?php endif; ?>
         <form id="day-rule-form" method="post" action="schedule-editor.php">
             <input type="hidden" name="_csrf_token" value="<?= h($csrfToken) ?>">
             <input type="hidden" name="package_id" value="<?= $selectedPackageId ?>">
@@ -224,7 +224,7 @@
                     <?php foreach ($weekdays as $dayNumber => $dayName): ?><option value="<?= $dayNumber ?>" <?= (int) $ruleForm['weekday'] === $dayNumber ? 'selected' : '' ?>><?= h($dayName) ?></option><?php endforeach; ?>
                 </select>
             </label>
-            <p class="empty-record" id="no-rules-for-day" hidden>Belum ada aturan tersimpan untuk hari ini. Gunakan formulir di sebelah kiri untuk menambahkan aturan bagi hari yang dipilih.</p>
+            <p class="empty-record" id="no-rules-for-day" hidden>Belum ada aturan tersimpan untuk hari ini. Gunakan tombol <strong>+ Tambah Aturan Hari</strong> di atas untuk menambahkan aturan bagi hari yang dipilih.</p>
             <?php if (($rules ?? []) === []): ?>
                 <div class="schedule-empty-state">
                     <strong>Belum ada aturan hari untuk paket ini</strong>
@@ -459,6 +459,9 @@ toggleSpecialFields();
     if (!dialog || !form) return;
 
     function resetForNewRule() {
+        // Error dari percobaan simpan sebelumnya tidak boleh menempel pada formulir baru.
+        const previousError = dialog.querySelector('[data-rule-form-error]');
+        if (previousError) previousError.remove();
         form.querySelector('input[name="rule_id"]').value = '0';
         form.querySelector('select[name="weekday"]').value = daySelect ? daySelect.value : '1';
         const normal = form.querySelector('input[name="rule_mode"][value="normal"]');
