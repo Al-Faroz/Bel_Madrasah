@@ -361,7 +361,7 @@ Implementasi tersedia pada branch `main`:
 - [ ] Kartu/tabel kegiatan bel per aturan tetap tersedia; tambah/edit/hapus kegiatan, audio preview, dan filter hari tidak rusak.
 - [ ] Status aturan nonaktif terlihat jelas dan tidak disamakan dengan status kegiatan bel.
 - [ ] Hari libur mingguan paket tetap dijelaskan: aturan dapat aktif tetapi tidak dijalankan pada hari yang ditetapkan sebagai libur.
-- [ ] Jalankan `php .\\tests\\DayRuleStatusTest.php`; status aturan dapat diaktifkan/nonaktifkan tanpa mengubah atribut pola atau kegiatan, dan aksi lintas paket ditolak.
+- [ ] Jalankan `php .\tests\DayRuleStatusTest.php`; status aturan dapat diaktifkan/nonaktifkan tanpa mengubah atribut pola atau kegiatan, dan aksi lintas paket ditolak.
 - [ ] Jalankan tes PHP CLI yang tersedia dan pemeriksaan sintaks pada file PHP yang berubah.
 - [ ] Uji seluruh alur di PHP Desktop Windows, termasuk setelah restart; pemeriksaan kode/CLI tidak menggantikan uji runtime.
 
