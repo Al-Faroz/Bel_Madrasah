@@ -14,6 +14,7 @@
     let polling = false;
     let isPlaying = false;
     let activeRunId = 0;
+    let schedulerInitialized = false;
 
     const statusLabels = {
         completed: 'selesai',
@@ -204,12 +205,26 @@
         isPlaying = false;
     });
 
+    function requestImmediatePoll() {
+        if (!schedulerInitialized || document.visibilityState === 'prerender') return;
+        poll();
+    }
+
+    window.addEventListener('focus', requestImmediatePoll);
+    window.addEventListener('pageshow', requestImmediatePoll);
+    document.addEventListener('visibilitychange', function () {
+        if (document.visibilityState === 'visible') {
+            requestImmediatePoll();
+        }
+    });
+
     async function initialize() {
         try {
             await postForm({ action: 'page_start' });
         } catch (error) {
             setStatus('Scheduler belum siap: ' + error.message, 'error');
         }
+        schedulerInitialized = true;
         poll();
         window.setInterval(poll, 1000);
     }
