@@ -762,6 +762,37 @@ final class Database
         return $row === false ? null : $row;
     }
 
+    /**
+     * Change only the enabled flag of one rule belonging to the selected package.
+     * Schedule pattern fields and linked bell events are deliberately untouched.
+     */
+    public function setDayRuleEnabled(int $id, int $packageId, bool $enabled): void
+    {
+        if ($this->getSchedulePackage($packageId) === null) {
+            throw new InvalidArgumentException('Paket jadwal tidak ditemukan.');
+        }
+
+        $statement = $this->pdo->prepare(
+            'UPDATE day_rules
+             SET is_enabled = :is_enabled, updated_at = :updated_at
+             WHERE id = :id AND package_id = :package_id'
+        );
+        $statement->execute([
+            ':is_enabled' => $enabled ? 1 : 0,
+            ':updated_at' => date('Y-m-d H:i:s'),
+            ':id' => $id,
+            ':package_id' => $packageId,
+        ]);
+
+        $rule = $this->getDayRule($id);
+        if ($rule === null || (int) $rule['package_id'] !== $packageId) {
+            throw new InvalidArgumentException('Aturan hari tidak sesuai dengan paket yang dipilih.');
+        }
+        if ((int) $rule['is_enabled'] !== ($enabled ? 1 : 0)) {
+            throw new RuntimeException('Status aturan hari tidak berhasil diperbarui.');
+        }
+    }
+
     public function saveDayRule(?int $id, int $packageId, int $weekday, string $mode, ?string $specialType, ?string $specialValue, bool $enabled): int
     {
         if ($weekday < 1 || $weekday > 7) {
