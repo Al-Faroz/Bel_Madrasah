@@ -345,3 +345,22 @@ Implementasi tersedia pada branch `main`:
 - [x] Saat pratinjau berlangsung, pastikan scheduler/riwayat pemutaran terjadwal tidak berubah hanya karena pratinjau.
 - [x] Simpan kegiatan setelah memilih audio; setelah halaman dimuat ulang, pratinjau harus memutar audio yang tersimpan.
 - [x] Uji pratinjau pada tabel dan pada formulir Tambah Kegiatan Bel.
+
+## Redesain Editor Jadwal: tabel aturan dan modal (2026-10-27)
+
+- [ ] Pemilih paket, panduan tiga tingkat status, dan Salin Jadwal tetap tampil dan berfungsi.
+- [ ] Tabel ringkasan menampilkan satu baris untuk setiap aturan pada paket yang sedang dipilih (Normal dan setiap pola Khusus dihitung sebagai aturan terpisah).
+- [ ] Kolom ringkasan memperlihatkan hari/pola, kekhususan jika ada, status aturan, jumlah kegiatan, dan aksi.
+- [ ] Tombol Aktifkan/Nonaktifkan hanya mengubah status satu aturan yang dipilih; hari, jenis pola, kegiatan, dan aturan lain tidak berubah.
+- [ ] Tindakan perubahan status dilindungi CSRF dan memvalidasi bahwa aturan memang milik paket yang sedang dipilih.
+- [ ] Tombol Tambah Aturan Hari membuka modal kosong yang sama dengan modal edit.
+- [ ] Tombol Ubah Pola Hari dari tabel ringkasan maupun kartu kegiatan membuka modal dengan nilai aturan yang benar.
+- [ ] Modal berisi seluruh field aturan yang sudah tersedia, termasuk Normal/Khusus, Pasaran Jawa/Minggu dalam bulan, dan status aktif.
+- [ ] Batal/penutup modal tidak mengubah data; simpan valid menutup modal dan memperbarui daftar.
+- [ ] Jika validasi simpan aturan gagal, modal tetap terbuka, pilihan operator dipertahankan, dan pesan error terlihat.
+- [ ] Kartu/tabel kegiatan bel per aturan tetap tersedia; tambah/edit/hapus kegiatan, audio preview, dan filter hari tidak rusak.
+- [ ] Status aturan nonaktif terlihat jelas dan tidak disamakan dengan status kegiatan bel.
+- [ ] Hari libur mingguan paket tetap dijelaskan: aturan dapat aktif tetapi tidak dijalankan pada hari yang ditetapkan sebagai libur.
+- [ ] Jalankan tes PHP CLI yang tersedia dan pemeriksaan sintaks pada file PHP yang berubah.
+- [ ] Uji seluruh alur di PHP Desktop Windows, termasuk setelah restart; pemeriksaan kode/CLI tidak menggantikan uji runtime.
+
