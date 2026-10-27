@@ -80,8 +80,10 @@ if (Test-Path -LiteralPath $stageDir) {
 New-Item -ItemType Directory -Path $stageDir -Force | Out-Null
 
 Write-Host 'Menyalin runtime PHP Desktop ke staging...'
-Get-ChildItem -LiteralPath $runtimePath -Force | ForEach-Object {
-    Copy-Item -LiteralPath $_.FullName -Destination $stageDir -Recurse -Force
+& "$env:SystemRoot\System32\robocopy.exe" $runtimePath $stageDir /E /COPY:DAT /DCOPY:DAT /R:2 /W:1 /NFL /NDL /NJH /NJS
+$copyExit = $LASTEXITCODE
+if ($copyExit -ge 8) {
+    throw "Penyalinan runtime gagal dengan kode Robocopy $copyExit."
 }
 
 # Replace the runtime's sample web root with the repository's current app.
@@ -89,7 +91,12 @@ $stageWww = Join-Path $stageDir 'www'
 if (Test-Path -LiteralPath $stageWww) {
     Remove-Item -LiteralPath $stageWww -Recurse -Force
 }
-Copy-Item -LiteralPath $appSource -Destination $stageWww -Recurse -Force
+New-Item -ItemType Directory -Path $stageWww -Force | Out-Null
+& "$env:SystemRoot\System32\robocopy.exe" $appSource $stageWww /E /COPY:DAT /DCOPY:DAT /R:2 /W:1 /NFL /NDL /NJH /NJS
+$appCopyExit = $LASTEXITCODE
+if ($appCopyExit -ge 8) {
+    throw "Penyalinan source aplikasi gagal dengan kode Robocopy $appCopyExit."
+}
 
 # Do not ship logs copied from a developer's runtime folder.
 Get-ChildItem -LiteralPath $stageDir -File -Recurse -Filter '*.log' -ErrorAction SilentlyContinue |
